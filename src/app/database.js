@@ -514,6 +514,12 @@ var Database = {
 					});
 				// we skip the initDB (not needed in current version)
 			})
+			.then(function () {
+
+				var packageManager = new App.PackageManager();
+				packageManager.loadPackages();
+
+			})			
 			.catch(function (err) {
 				win.error('Error starting up');
 				win.error(err);
