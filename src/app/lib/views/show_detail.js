@@ -392,7 +392,9 @@ var health_checked = false;
 			} else {
 				episodes_data = null;
 			}
-			var torrentStart = new Backbone.Model({
+
+
+			var torrentStart = {
 				torrent: $(e.currentTarget).attr('data-torrent'),
 				backdrop: that.model.get('images').fanart,
 				type: 'episode',
@@ -409,12 +411,12 @@ var health_checked = false;
 				cover: that.model.get('images').poster,
 				episodes: episodes,
 				auto_play: auto_play,
-				auto_id: parseInt(season) * 100 + parseInt(episode),
+				auto_play_id: parseInt(season) * 100 + parseInt(episode),
 				auto_play_data: episodes_data
-			});
+			}
 			win.info('Playing next episode automatically:', AdvSettings.get('playNextEpisodeAuto'));
 			_this.unbindKeyboardShortcuts();
-			App.vent.trigger('stream:start', torrentStart);
+			App.vent.trigger('streamer:start', torrentStart);
 		},
 
 		closeDetails: function (e) {

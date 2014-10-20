@@ -165,6 +165,33 @@
 		});
 	};
 
+	
+	TraktTv.prototype.infoByName = function (name) {
+		if (name === false || name.length === 0) {
+			return Q.reject('Invalid name');
+		}
+
+		var title = $.trim(name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
+		
+		var isTvShow = title.match(/(.*)S(\d\d)E(\d\d)/i);
+
+		if (isTvShow !== null) {
+			var tvshowname = $.trim(isTvShow[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+
+			return this.show.episodeSummary(tvshowname, isTvShow[2], isTvShow[3]).then(function (data) {
+				if (!data) {
+					return Q.reject('Unable to fetch data from Trakt.tv');
+				} else {
+					return {type: 'tvshow', result: data};
+				}
+			});
+
+		} else {
+			// TODO: return movie detail from trakt
+			return Q.reject('Not supported yet');
+		}
+	};
+
 	TraktTv.prototype.sync = function () {
 		var that = this;
 

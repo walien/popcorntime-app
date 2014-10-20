@@ -163,7 +163,7 @@
 		},
 
 		startStreaming: function () {
-			var torrentStart = new Backbone.Model({
+			var torrentStart = {
 				imdb_id: this.model.get('imdb_id'),
 				torrent: this.model.get('torrents')[this.model.get('quality')].url,
 				backdrop: this.model.get('backdrop'),
@@ -174,8 +174,8 @@
 				type: 'movie',
 				device: App.Device.Collection.selected,
 				cover: this.model.get('image')
-			});
-			App.vent.trigger('stream:start', torrentStart);
+			};
+			App.vent.trigger('streamer:start', torrentStart);
 		},
 
 		toggleDropdown: function (e) {
