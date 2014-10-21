@@ -48,7 +48,7 @@
     "node-webkit-fdialogs": "latest",
     "opensrt_js": "https://github.com/SlashmanX/OpenSRTJS/archive/c07d18983d7a6409dee4cacc056ed5cc01e2ed09.tar.gz",
     "peerflix": "^0.17.0",
-    "popcorn-app": "^0.0.4",
+    "popcorn-app": "^0.0.5",
     "q": "^2.0.2",
     "raven": "^0.6.3",
     "read-torrent": "1.0.0",
