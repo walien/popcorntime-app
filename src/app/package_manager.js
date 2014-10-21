@@ -8,6 +8,9 @@
         __slice = [].slice,
         packagePaths;
 
+    /*
+     * Construction
+     */
     function PackageManager(options) {
         if (!(this instanceof PackageManager)) {
             return new PackageManager(options);
@@ -26,6 +29,9 @@
         this.packageDirPaths.push(path.join(this.options.path, 'src', 'app', 'packages'));
     }
 
+    /*
+     * Paths
+     */
     PackageManager.prototype.getAvailablePackagePaths = function() {
         var packageDirPath,
             packageVersion,
@@ -67,6 +73,27 @@
         return _.uniq(packagePaths);
     };
 
+    PackageManager.prototype.resolvePackagePath = function(name) {
+        var packagePath;
+        if (fs.isDirectorySync(name)) {
+            return name;
+        }
+        packagePath = fs.resolve.apply(fs, __slice.call(this.packageDirPaths).concat([name]));
+
+        if (fs.isDirectorySync(packagePath)) {
+            return packagePath;
+        }
+
+        packagePath = path.join(this.resourcePath, 'node_modules', name);
+        if (this.hasAtomEngine(packagePath)) {
+            return packagePath;
+        }
+    };    
+
+    /*
+     * Deps
+     * Not supported in 0.0.1
+     */
     PackageManager.prototype.getPackageDependencies = function() {
         var metadataPath, _ref;
 
@@ -86,37 +113,12 @@
         return this.packageDependencies;
     };
 
-    PackageManager.prototype.isPackageDisabled = function(name) {
-        return false;
-    };
 
-    PackageManager.prototype.getLoadedPackages = function() {
-        return _.values(this.loadedPackages);
-    };
-
-    PackageManager.prototype.getLoadedPackage = function(name) {
-        return this.loadedPackages[name];
-    };
-
-    PackageManager.prototype.resolvePackagePath = function(name) {
-        var packagePath;
-        if (fs.isDirectorySync(name)) {
-            return name;
-        }
-        packagePath = fs.resolve.apply(fs, __slice.call(this.packageDirPaths).concat([name]));
-
-        if (fs.isDirectorySync(packagePath)) {
-            return packagePath;
-        }
-
-        packagePath = path.join(this.resourcePath, 'node_modules', name);
-        if (this.hasAtomEngine(packagePath)) {
-            return packagePath;
-        }
-    };
-
+    /*
+     * Load all packages
+     */
     PackageManager.prototype.loadPackages = function() {
-        var _i, _len, packagePath;
+        var _len, packagePath;
 
         console.log('Load All Packages');
 
@@ -132,13 +134,17 @@
             return path.basename(packagePath);
         });
 
-        for (_i = 0, _len = packagePaths.length; _i < _len; _i++) {
+        for (var _i in packagePaths) {
             packagePath = packagePaths[_i];
             this.loadPackage(packagePath);
         }
 
+        return true;
     };
 
+    /*
+     * Load Package using name or path
+     */
     PackageManager.prototype.loadPackage = function(nameOrPath) {
         var error, metadata, name, pack, packagePath, _ref, _ref1;
         if (pack = this.getLoadedPackage(nameOrPath)) {
@@ -156,6 +162,8 @@
                 pack = new Package(packagePath, metadata);
 
                 pack.load();
+                pack.activate();
+
                 this.loadedPackages[pack.name] = pack;
                 return pack;
 
@@ -166,6 +174,22 @@
         } else {
             throw new Error('Could not resolve ' + nameOrPath + ' to a package path');
         }
+    };
+
+    /*
+     * Helper functions
+     */    
+
+    PackageManager.prototype.isPackageDisabled = function(name) {
+        return false;
+    };
+
+    PackageManager.prototype.getLoadedPackages = function() {
+        return _.values(this.loadedPackages);
+    };
+
+    PackageManager.prototype.getLoadedPackage = function(name) {
+        return this.loadedPackages[name];
     };
 
     App.PackageManager = PackageManager;
