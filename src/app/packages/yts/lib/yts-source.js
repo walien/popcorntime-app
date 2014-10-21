@@ -13,16 +13,17 @@ var App = require('popcorn-app'),
 */
 YTSProvider = App.extend({
 
-    hooks: {
-        registerProvider: {
-            type: 'movie', // tvshow/movie
-            handleProvider: this.handleProvider
-        }
+    config: {
+        type: 'provider:movie'
     },
 
-    handleProvider: function (filters) {
-        console.log("YEAH! WE CAN HANDLE NOW :D")
-        return false;
+    hooks: {
+        handleProvider: 'handleMovies'
+    },
+
+    handleMovies: function (filters) {        
+        console.log("YEAH! WE CAN HANDLE NOW :D");
+        process.exit();
     }
 
 });
