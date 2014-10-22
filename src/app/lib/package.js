@@ -132,7 +132,7 @@ Package.prototype.activateNow = function() {
 
             var _app;
             if (_.isFunction(this.mainModule)) {
-                _app = new this.mainModule(App);
+                _app = new this.mainModule(App, this.metadata);
             } else {
                 _app = this.mainModule;
             }

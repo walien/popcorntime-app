@@ -50,12 +50,11 @@
 
 		win.info('Spawning new provider', name);
 
-
 		// TODO: HARDCODED FIX FOR PACKAGE
-		if (name != 'Yts') {
+		if (name !== 'yts') {
 			cache[name] = new provider();
 		} else {
-			cache[name] = name;
+			cache[name] = App.Providers[name];
 		}
 		
 
@@ -65,7 +64,7 @@
 	}
 
 	function setProvider(name, fn) {
-		App.Providers.Yts = fn;
+		App.Providers[name] = fn;
 	}
 
 	App.Providers.get = getProvider;

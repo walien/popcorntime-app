@@ -98,7 +98,7 @@
 		},
 
 		providers: {
-			movie: ['Yts'],
+			movie: ['yts'],
 			tvshow: ['Eztv'],
 			anime: ['Haruhichan'],
 			subtitle: 'YSubs',

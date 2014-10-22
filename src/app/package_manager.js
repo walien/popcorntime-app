@@ -73,6 +73,12 @@
         return _.uniq(packagePaths);
     };
 
+   
+
+    /*
+     * Deps
+     * Not supported in 0.0.1
+     */
     PackageManager.prototype.resolvePackagePath = function(name) {
         var packagePath;
         if (fs.isDirectorySync(name)) {
@@ -83,17 +89,8 @@
         if (fs.isDirectorySync(packagePath)) {
             return packagePath;
         }
+    }; 
 
-        packagePath = path.join(this.resourcePath, 'node_modules', name);
-        if (this.hasAtomEngine(packagePath)) {
-            return packagePath;
-        }
-    };    
-
-    /*
-     * Deps
-     * Not supported in 0.0.1
-     */
     PackageManager.prototype.getPackageDependencies = function() {
         var metadataPath, _ref;
 

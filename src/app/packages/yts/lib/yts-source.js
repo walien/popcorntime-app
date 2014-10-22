@@ -88,14 +88,13 @@ module.exports = App.extend({
 
 
     queryTorrent: function (torrent_id, old_data) {
+        var self = this;
         return Q.Promise(function (resolve, reject) {
             var params = {
                 imdb_id: torrent_id
             };
             var url = 'http://yts.re/api/listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
-            win.info('Request to YTS API');
-            win.debug(url);
             request({
                 url: url,
                 json: true
@@ -104,10 +103,10 @@ module.exports = App.extend({
                     reject(error);
                 } else if (!data || (data.error && data.error !== 'No movies found')) {
                     var err = data ? data.error : 'No data returned';
-                    win.error('YTS error:', err);
+                    console.log('YTS error:', err);
                     reject(err);
                 } else {
-                    var ptt = formatForPopcorn(data.MovieList || []);
+                    var ptt = self.formatForPopcorn(data.MovieList || []);
                     var torrents = ptt.results.pop().torrents || {};
                     old_data.torrents = _.extend(old_data.torrents, torrents);
                     resolve(old_data);
