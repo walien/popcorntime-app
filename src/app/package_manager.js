@@ -57,6 +57,9 @@
             }
         }
 
+        /*
+         * Used if we want to extract package from node_modules
+
         packagesPath = path.join(this.options.path, 'node_modules');
         var _ref2 = this.getPackageDependencies();
 
@@ -69,47 +72,10 @@
             }
 
         }
-
+         */
+        
         return _.uniq(packagePaths);
     };
-
-   
-
-    /*
-     * Deps
-     * Not supported in 0.0.1
-     */
-    PackageManager.prototype.resolvePackagePath = function(name) {
-        var packagePath;
-        if (fs.isDirectorySync(name)) {
-            return name;
-        }
-        packagePath = fs.resolve.apply(fs, __slice.call(this.packageDirPaths).concat([name]));
-
-        if (fs.isDirectorySync(packagePath)) {
-            return packagePath;
-        }
-    }; 
-
-    PackageManager.prototype.getPackageDependencies = function() {
-        var metadataPath, _ref;
-
-        if (this.packageDependencies == null) {
-            try {
-
-                metadataPath = path.join(this.options.path, 'package.json');
-                this.packageDependencies = ((_ref = JSON.parse(fs.readFileSync(metadataPath))) != null ? _ref : {}).packageDependencies;
-
-            } catch (_error) {}
-
-            if (this.packageDependencies == null) {
-                this.packageDependencies = {};
-            }
-        }
-
-        return this.packageDependencies;
-    };
-
 
     /*
      * Load all packages
@@ -189,6 +155,42 @@
         return this.loadedPackages[name];
     };
 
+    PackageManager.prototype.resolvePackagePath = function(name) {
+        var packagePath;
+        if (fs.isDirectorySync(name)) {
+            return name;
+        }
+        packagePath = fs.resolve.apply(fs, __slice.call(this.packageDirPaths).concat([name]));
+
+        if (fs.isDirectorySync(packagePath)) {
+            return packagePath;
+        }
+    }; 
+    
+    /*
+     * Deps
+     * Not supported in 0.0.1
+
+    PackageManager.prototype.getPackageDependencies = function() {
+        var metadataPath, _ref;
+
+        if (this.packageDependencies == null) {
+            try {
+
+                metadataPath = path.join(this.options.path, 'package.json');
+                this.packageDependencies = ((_ref = JSON.parse(fs.readFileSync(metadataPath))) != null ? _ref : {}).packageDependencies;
+
+            } catch (_error) {}
+
+            if (this.packageDependencies == null) {
+                this.packageDependencies = {};
+            }
+        }
+
+        return this.packageDependencies;
+    };
+     */
+    
     App.PackageManager = PackageManager;
 
 })(window.App);
