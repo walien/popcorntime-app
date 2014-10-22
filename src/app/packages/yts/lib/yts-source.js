@@ -10,15 +10,16 @@ var App = require('popcorn-app'),
 /*
 * We create our new function
 */
-module.exports = App.extend({
+module.exports = App.Providers.extend({
 
     config: {
-        type: 'provider:movie'
+        type: 'movie'
     },
 
     hooks: {},
 
-    fetch: function (filters) {            
+    fetch: function (filters) {         
+
         return this.queryTorrents(filters)
             .then(this.formatForPopcorn);
 
