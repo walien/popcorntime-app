@@ -80,6 +80,17 @@ Settings.defaultHeight = Math.round(window.screen.availHeight * 0.8);
 
 Settings.tv_detail_jump_to = 'next';
 
+// Default provider
+Settings.providers = {
+	movie: ['yts'],
+	tvshow: ['Eztv'],
+	anime: ['Haruhichan'],
+	subtitle: 'YSubs',
+	metadata: 'Trakttv',
+
+	tvshowsubtitle: 'OpenSubtitles',
+	torrentCache: 'TorrentCache'
+};
 
 var ScreenResolution = {
 	get SD() {

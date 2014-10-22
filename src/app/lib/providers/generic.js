@@ -50,8 +50,8 @@
 
 		win.info('Spawning new provider', name);
 
-		// TODO: HARDCODED FIX FOR PACKAGE
-		if (name !== 'yts') {
+		// its not coming from the package manager
+		if (typeof App.Providers[name].metadata === 'undefined') {
 			cache[name] = new provider();
 		} else {
 			cache[name] = App.Providers[name];

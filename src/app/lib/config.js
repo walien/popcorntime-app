@@ -96,20 +96,9 @@
 			version: 3,
 			tables: ['metadata']
 		},
-
-		providers: {
-			movie: ['yts'],
-			tvshow: ['Eztv'],
-			anime: ['Haruhichan'],
-			subtitle: 'YSubs',
-			metadata: 'Trakttv',
-
-			tvshowsubtitle: 'OpenSubtitles',
-			torrentCache: 'TorrentCache'
-		},
-
+		
 		getProvider: function (type) {
-			var provider = App.Config.providers[type];
+			var provider = Settings.providers[type];
 			if (provider instanceof Array) {
 				return _.map(provider, function (t) {
 					return App.Providers.get(t);
