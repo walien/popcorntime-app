@@ -10,7 +10,5 @@
   "engines": {
     "popcorntime": "*"
   },
-  "dependencies": {
-    "q": "*"
-  }
+  "dependencies": {}
 }

@@ -41,9 +41,17 @@
 			 * provider declare a unique id, and then lookthem up in
 			 * a hash.
 			 */
+						
 			var torrentPromises = _.map(torrents, function (torrentProvider, pid) { //XXX(xaiki): provider hack
 				var deferred = Q.defer();
 
+				// TODO: HARDCODED FIX FOR PACKAGE
+				if (torrentProvider === 'Yts') {
+					
+					torrentProvider = App.Providers.Yts;
+
+				}
+					
 				var promises = [torrentProvider.fetch(self.filter)];
 
 				var idsPromise = promises[0].then(_.bind(torrentProvider.extractIds, torrentProvider));

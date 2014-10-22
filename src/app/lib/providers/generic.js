@@ -2,6 +2,7 @@
 	'use strict';
 	var memoize = require('memoizee');
 	var cache = {};
+	var inherits = require('util').inherits;
 
 	var Provider = function () {
 		var memopts = {
@@ -48,13 +49,28 @@
 		}
 
 		win.info('Spawning new provider', name);
-		cache[name] = new provider();
+
+
+		// TODO: HARDCODED FIX FOR PACKAGE
+		if (name != 'Yts') {
+			cache[name] = new provider();
+		} else {
+			cache[name] = name;
+		}
+		
+
 		//HACK(xaiki): set the provider name in the returned object.
 		cache[name].name = name;
 		return cache[name];
 	}
 
+	function setProvider(name, fn) {
+		App.Providers.Yts = fn;
+	}
+
 	App.Providers.get = getProvider;
+	App.Providers.set = setProvider;
+
 	App.Providers.Generic = Provider;
 
 })(window.App);
