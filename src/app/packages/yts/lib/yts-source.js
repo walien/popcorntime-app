@@ -12,10 +12,18 @@ var App = require('popcorn-app'),
 */
 module.exports = App.Providers.extend({
 
+    /*
+    * Package config
+    * as we extend from Providers, we need
+    * to set detail for the source.
+    */
     config: {
         type: 'movie'
     },
 
+    /*
+    * Not used
+    */
     hooks: {},
 
     /*
