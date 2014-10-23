@@ -62,7 +62,9 @@ module.exports = App.Providers.Metadata.extend({
     /*
      * Default Function used by PT
      */
-    auth: function() {
+    activate: function() {
+
+        var self = this;
 
         this.authenticated = false;
         this._credentials = {
@@ -70,11 +72,11 @@ module.exports = App.Providers.Metadata.extend({
             password: ''
         };
 
-        this.watchlist = this.app.Providers.get('Watchlist');
+        this.watchlist = this.app.api.providers.get('Watchlist');
 
         // Login with stored credentials
-        if (this.app.advsettings.get('traktUsername') !== '' && this.app.advsettings.get('traktPassword') !== '') {
-            this._authenticationPromise = this.authenticate(this.app.advsettings.get('traktUsername'), this.app.advsettings.get('traktPassword'), true);
+        if (this.app.api.settings.get('traktUsername') !== '' && this.app.api.settings.get('traktPassword') !== '') {
+            this._authenticationPromise = this.authenticate(this.app.api.settings.get('traktUsername'), this.app.api.settings.get('traktPassword'), true);
         }
 
         var self = this;
@@ -85,6 +87,55 @@ module.exports = App.Providers.Metadata.extend({
 
         _.each(this.show, function(method, key) {
             self.show[key] = method.bind(self);
+        });
+
+        this.app.hooks.register('show:watched', function(show, channel) {
+            console.log('Mark TV Show as watched, on channel:', channel);
+            switch (channel) {
+                case 'scrobble':
+                    this.app.Trakt.show
+                        .scrobble(show.tvdb_id, show.season, show.episode, 100);
+                    break;
+                case 'seen':
+                    /* falls through */
+                default:
+                    this.app.Trakt.show
+                        .episodeSeen(show.tvdb_id, show);
+                    break;
+            }
+        });
+
+
+        this.app.hooks.register('show:unwatched', function(show, channel) {
+            console.log('Mark TV Show as unwatched, on channel:', channel);
+            switch (channel) {
+                case 'scrobble':
+                    this.app.Trakt.show
+                        .scrobble(show.tvdb_id, show.season, show.episode, 0);
+                    break;
+                case 'seen':
+                    /* falls through */
+                default:
+                    this.app.Trakt.show
+                        .episodeUnseen(show.tvdb_id, show);
+                    break;
+            }
+        });
+
+        this.app.hooks.register('movie:watched', function(movie, channel) {
+            console.log('Mark Movie as watched, on channel:', channel);
+            switch (channel) {
+                case 'scrobble':
+                    self.app.Trakt.movie
+                        .scrobble(movie.imdb_id, 100);
+                    break;
+                case 'seen':
+                    /* falls through */
+                default:
+                    self.app.Trakt.movie
+                        .seen(movie.imdb_id);
+                    break;
+            }
         });
 
     },
@@ -784,54 +835,6 @@ module.exports = App.Providers.Metadata.extend({
             return uri.filename(file + '-' + width + '.' + ext).toString();
         }
     },
-
-    onShowWatched: function(show, channel) {
-        console.log('Mark TV Show as watched, on channel:', channel);
-        switch (channel) {
-            case 'scrobble':
-                this.app.Trakt.show
-                    .scrobble(show.tvdb_id, show.season, show.episode, 100);
-                break;
-            case 'seen':
-                /* falls through */
-            default:
-                this.app.Trakt.show
-                    .episodeSeen(show.tvdb_id, show);
-                break;
-        }
-    },
-
-    onShowUnWatched: function(show, channel) {
-        console.log('Mark TV Show as unwatched, on channel:', channel);
-        switch (channel) {
-            case 'scrobble':
-                this.app.Trakt.show
-                    .scrobble(show.tvdb_id, show.season, show.episode, 0);
-                break;
-            case 'seen':
-                /* falls through */
-            default:
-                this.app.Trakt.show
-                    .episodeUnseen(show.tvdb_id, show);
-                break;
-        }
-    },
-
-    onMoviesWatched: function(movie, channel) {
-        console.log('Mark Movie as watched, on channel:', channel);
-        switch (channel) {
-            case 'scrobble':
-                this.app.Trakt.movie
-                    .scrobble(movie.imdb_id, 100);
-                break;
-            case 'seen':
-                /* falls through */
-            default:
-                this.app.Trakt.movie
-                    .seen(movie.imdb_id);
-                break;
-        }
-    }
 
 
 });

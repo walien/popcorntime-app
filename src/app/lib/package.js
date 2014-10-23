@@ -4,6 +4,7 @@ var CSON = require('season'),
     _ = require('underscore'),
     Q = require('q'),
     App = window.App,
+    ProxyApp,
     __slice = [].slice,
     Package;
 
@@ -20,6 +21,15 @@ function Package(path, metadata) {
     }
 
     this.name = (_ref1 = (_ref2 = this.metadata) != null ? _ref2.name : void 0) != null ? _ref1 : path.basename(this.path);
+
+    // setup proxy app
+    ProxyApp = appProxy = new App.Proxy({
+        name: this.name,
+        permissions: {
+            providers: ['set', 'get']
+        }
+    });
+
     console.log('Loading package: ' + this.name);
 }
 
@@ -132,15 +142,15 @@ Package.prototype.activateNow = function() {
 
             var _app;
             if (_.isFunction(this.mainModule)) {
-                _app = new this.mainModule(App, this.metadata);
+                _app = new this.mainModule(ProxyApp, this.metadata);
             } else {
                 _app = this.mainModule;
             }
 
             // activate the package
-            if (_.isFunction(_app.activate)) {
+            if (_.isFunction(_app._activate)) {
 
-                _app.activate();
+                _app._activate();
                 this.mainActivated = true;
 
             } else {

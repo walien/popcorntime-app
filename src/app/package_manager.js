@@ -127,6 +127,8 @@
                 pack.load();
                 pack.activate();
 
+                console.log('Loaded ' + name + ' in ' + pack.loadTime + 's');
+
                 this.loadedPackages[pack.name] = pack;
                 return pack;
 
