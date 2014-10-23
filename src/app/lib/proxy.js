@@ -17,9 +17,11 @@
     }
 
     function generateProxyFunctions(name, permissions) {
+
         var getPermission = function(perm) {
                 return permissions[perm];
             },
+
             checkRegisterPermissions = function(perm, registerMethod) {
                 return true;
             },
@@ -54,12 +56,9 @@
 
                 providers: passThruAppContextToApi('providers',
                     _.pick(App.Providers, 'get', 'set')
-                )
-            },
+                ),
 
-            hooks: {
-                register: App.vent.on,
-                trigger: App.vent.trigger,
+                vent: App.vent
             },
 
             cache: {

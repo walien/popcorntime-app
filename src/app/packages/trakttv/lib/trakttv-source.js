@@ -89,7 +89,7 @@ module.exports = App.Providers.Metadata.extend({
             self.show[key] = method.bind(self);
         });
 
-        this.app.hooks.register('show:watched', function(show, channel) {
+        this.app.api.vent.on('show:watched', function(show, channel) {
             console.log('Mark TV Show as watched, on channel:', channel);
             switch (channel) {
                 case 'scrobble':
@@ -106,7 +106,7 @@ module.exports = App.Providers.Metadata.extend({
         });
 
 
-        this.app.hooks.register('show:unwatched', function(show, channel) {
+        this.app.api.vent.on('show:unwatched', function(show, channel) {
             console.log('Mark TV Show as unwatched, on channel:', channel);
             switch (channel) {
                 case 'scrobble':
@@ -122,7 +122,7 @@ module.exports = App.Providers.Metadata.extend({
             }
         });
 
-        this.app.hooks.register('movie:watched', function(movie, channel) {
+        this.app.api.vent.on('movie:watched', function(movie, channel) {
             console.log('Mark Movie as watched, on channel:', channel);
             switch (channel) {
                 case 'scrobble':
