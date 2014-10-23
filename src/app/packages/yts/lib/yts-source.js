@@ -3,7 +3,7 @@
 /*
 * We import our depedencies
 */
-var App = require('popcorn-app'),
+var App = require('pdk'),
     _ = require('underscore'),
     helpers = require('./helpers');
 
