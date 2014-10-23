@@ -1,6 +1,6 @@
 (function (App) {
 	'use strict';
-
+	var updateInfo;
 	var Loading = Backbone.Marionette.ItemView.extend({
 		template: '#loading-tpl',
 		className: 'app-overlay',
@@ -37,30 +37,30 @@
 		},
 
 		initialize: function () {
-			var _this = this;
+			var that = this;
 
 			//If a child was removed from above this view
 			App.vent.on('viewstack:pop', function () {
-				if (_.last(App.ViewStack) === _this.className) {
-					_this.initKeyboardShortcuts();
+				if (_.last(App.ViewStack) === that.className) {
+					that.initKeyboardShortcuts();
 				}
 			});
 
 			//If a child was added above this view
 			App.vent.on('viewstack:push', function () {
-				if (_.last(App.ViewStack) !== _this.className) {
-					_this.unbindKeyboardShortcuts();
+				if (_.last(App.ViewStack) !== that.className) {
+					that.unbindKeyboardShortcuts();
 				}
 			});
 
 			win.info('Loading torrent');
-			this.listenTo(this.model, 'change:state', this.onStateUpdate);
+
 		},
 
 		initKeyboardShortcuts: function () {
-			var _this = this;
+			var that = this;
 			Mousetrap.bind(['esc', 'backspace'], function (e) {
-				_this.cancelStreaming();
+				that.cancelStreaming();
 			});
 		},
 
@@ -73,54 +73,49 @@
 			$('#header').addClass('header-shadow');
 
 			this.initKeyboardShortcuts();
+
+			this.ui.title.text(this.model.get('title'));
+
+			this.StateUpdate();
+
 		},
-		onStateUpdate: function () {
-			var state = this.model.get('state');
-			var streamInfo = this.model.get('streamInfo');
-			win.info('Loading torrent:', state);
+		StateUpdate: function () {
+			var that = this;
+			var BUFFERING_SIZE = 10 * 1024 * 1024;
 
-			this.ui.stateTextDownload.text(i18n.__(state));
+			var update = function () {
+				var streamInfo = App.streamer.streamInfo;
+				if (streamInfo) {
+					that.ui.seedStatus.css('visibility', 'visible');
+					var downloaded = streamInfo.downloaded / (1024 * 1024);
 
-			if (state === 'downloading') {
-				this.listenTo(this.model.get('streamInfo'), 'change:downloaded', this.onProgressUpdate);
-			}
+					that.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
+					that.ui.progressTextPeers.text(streamInfo.active_peers);
+					that.ui.progressTextSeeds.text(streamInfo.total_peers);
 
-			if (state === 'playingExternally') {
-				this.ui.stateTextDownload.hide();
-				if (streamInfo.get('player') && streamInfo.get('player').get('type') === 'chromecast') {
-					this.ui.controls.css('visibility', 'visible');
-					this.ui.cancel_button.hide();
+					var percent = streamInfo.downloaded / (BUFFERING_SIZE / 100);
+
+					that.ui.downloadPercent.text(percent.toFixed() + '%');
+					that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
+					that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
+					that.ui.progressbar.css('width', percent.toFixed() + '%');
+
+					if (streamInfo.percent > 99) {
+						clearInterval(updateInfo);
+						if (that.model.get('player') && that.model.get('player').get('type') !== 'local') {
+							that.ui.player.text(that.model.get('player').get('name'));
+							that.ui.streaming.css('visibility', 'visible');
+						}
+					}
 				}
-			}
-		},
+			};
+			updateInfo = setInterval(update, 200);
 
-		onProgressUpdate: function () {
-
-			// TODO: Translate peers / seeds in the template
-			this.ui.seedStatus.css('visibility', 'visible');
-			var streamInfo = this.model.get('streamInfo');
-			var downloaded = streamInfo.get('downloaded') / (1024 * 1024);
-			this.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
-
-			this.ui.progressTextPeers.text(streamInfo.get('active_peers'));
-			this.ui.progressTextSeeds.text(streamInfo.get('total_peers'));
-			this.ui.downloadPercent.text(streamInfo.get('percent').toFixed() + '%');
-
-			this.ui.downloadSpeed.text(streamInfo.get('downloadSpeed'));
-			this.ui.uploadSpeed.text(streamInfo.get('uploadSpeed'));
-			this.ui.progressbar.css('width', streamInfo.get('percent').toFixed() + '%');
-
-			if (streamInfo.get('title') !== '') {
-				this.ui.title.text(streamInfo.get('title'));
-			}
-			if (streamInfo.get('player') && streamInfo.get('player').get('type') !== 'local') {
-				this.ui.player.text(streamInfo.get('player').get('name'));
-				this.ui.streaming.css('visibility', 'visible');
-			}
 		},
 
 		cancelStreaming: function () {
-			App.vent.trigger('stream:stop');
+			clearInterval(updateInfo);
+			App.vent.trigger('streamer:stop');
 			App.vent.trigger('player:close');
 			App.vent.trigger('torrentcache:stop');
 		},

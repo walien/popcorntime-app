@@ -6,7 +6,7 @@
 		<div class="title"></div>
 		<div class="external-play" style="visibility:hidden"><%= i18n.__("Streaming to") %> <span class="player-name"></span></div>
 		<!-- download -->
-		<div class="text_download"><%= i18n.__(state) %></div>
+		<div class="text_download"></div>
 
 		<div class="seed_status" style="visibility:hidden">
 			<!-- loading bar -->
