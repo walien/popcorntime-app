@@ -8,13 +8,13 @@
 	var WebTorrent = require('webtorrent');
 	var http = require('http');
 	var portfinder = require('portfinder');
-	var client = new WebTorrent();
 
-	var engine = null;
-	var stream = null;
+	var engine, stream, client;
 
 	var Streamerv2 = {
 		start: function (data) {
+
+			client = new WebTorrent();
 
 			var torrenturl = data.torrent;
 
@@ -34,9 +34,17 @@
 				})
 			});
 
-			Streamerv2.updateInfo(data);
 
 		},
+
+		stop: function (torrent) {
+			engine.close();
+			client.destroy();
+			client = null;
+			engine = null;
+		},
+
+
 		updateInfo: function (data) {
 
 			var stateModel = new Backbone.Model({
@@ -57,55 +65,31 @@
 					state = 'ready';
 				} else if (swarm.downloaded) {
 					state = 'downloading';
+					// Fix for loading modal
+
+					App.streamInfo.update(stream).then(function (data) {
+						console.log(data)
+					});
+
 				} else if (swarm.wires.length) {
 					state = 'startingDownload';
 				}
-				console.log(state);
+
 				stateModel.set('state', state);
 			}
 
-			App.vent.trigger('stream:started', stateModel);
-			/*
-			switch (type) {
-			case 'init':
-				stateModel = new Backbone.Model({
-					state: 'connecting',
-					backdrop: data.backdrop,
-					title: data.title,
-					player: '',
-					show_controls: false
-				});
-				break;
-			case 'update':
-				stateModel = new Backbone.Model({
-					state: 'connecting',
-					backdrop: data.backdrop,
-					title: data.title,
-					player: '',
-					show_controls: false
-				});
-				break;
+			if (state !== 'ready') {
+				_.delay(Streamerv2.updateInfo, 100, data);
 			}
-
+			console.log(stateModel);
 			App.vent.trigger('stream:started', stateModel);
-			*/
-		},
-		destroy: function () {
-			engine.close();
-			client.destroy();
-		},
-		stop: function (torrent) {
-			client.remove(torrent, function (err) {
-				if (err) {
-					win.error(err);
-				}
-			});
+
 		}
 	};
 
 
 	App.vent.on('streamer:start', Streamerv2.start); //Start a new torrent stream, ops: torrent file, magnet
-	App.vent.on('streamer:stop', Streamerv2.stop); //stop a torrent stream, ops: torrent file, magnet
-	App.vent.on('streamer:destroy', Streamerv2.destroy); // destroy all streams and stop server
+	App.vent.on('streamer:stop', Streamerv2.stop); //stop a torrent streaming
+
 
 })(window.App);
