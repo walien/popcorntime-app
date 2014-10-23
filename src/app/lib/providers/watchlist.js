@@ -2,7 +2,7 @@
 (function (App) {
 	'use strict';
 	var Q = require('q');
-	var Eztv = App.Providers.get('Eztv');
+	var Eztv = App.Providers.get('eztv');
 
 	var Watchlist = function () {
 		this.inhibited = false;

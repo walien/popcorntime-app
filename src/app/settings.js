@@ -83,7 +83,7 @@ Settings.tv_detail_jump_to = 'next';
 // Default provider
 Settings.providers = {
 	movie: ['yts'],
-	tvshow: ['Eztv'],
+	tvshow: ['eztv'],
 	anime: ['Haruhichan'],
 	subtitle: 'YSubs',
 	metadata: 'trakttv',
