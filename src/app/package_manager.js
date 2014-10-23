@@ -19,7 +19,7 @@
         var self = this;
 
         this.options = _.defaults(options || {}, {
-            path: App.settings.os === 'linux' ? process.execPath : process.cwd()
+            path: process.cwd()
         });
 
         this.packageDirPaths = [];
