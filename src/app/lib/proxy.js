@@ -18,15 +18,7 @@
 
     function generateProxyFunctions(name, permissions) {
 
-        var getPermission = function(perm) {
-                return permissions[perm];
-            },
-
-            checkRegisterPermissions = function(perm, registerMethod) {
-                return true;
-            },
-
-            passThruAppContextToApi = function(perm, apiMethods) {
+        var passThruAppContextToApi = function(perm, apiMethods) {
                 var appContext = {
                     app: name
                 };
@@ -44,10 +36,18 @@
 
                     return memo;
                 }, {});
-            },
-            proxy;
+        };
 
-        proxy = {
+        /*
+         * It's here we define the 'mapping' of available 
+         * class / functions via the PDK
+         * The are accessible after an extend from one of the main class
+         *
+         * Example
+         * this.app.api.settings.set will be mapped to App.AdvSettings
+         */
+
+        return {
             api: {
 
                 settings: passThruAppContextToApi('settings',
@@ -66,7 +66,6 @@
             }
         };
 
-        return proxy;
     };
 
     App.Proxy = AppProxy;
