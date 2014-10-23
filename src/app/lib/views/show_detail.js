@@ -4,8 +4,6 @@ var health_checked = false;
 (function (App) {
 	'use strict';
 
-	var resizeImage = App.Providers.Trakttv.resizeImage;
-
 	var _this, bookmarked;
 	var ShowDetail = Backbone.Marionette.ItemView.extend({
 		template: '#show-detail-tpl',
@@ -105,10 +103,10 @@ var health_checked = false;
 				_.bind(this.onUnWatched, this));
 
 			var images = this.model.get('images');
-			images.fanart = resizeImage(images.fanart, '940');
+			images.fanart = App.Providers.trakttv.resizeImage(images.fanart, '940');
 			//if ((ScreenResolution.SD || ScreenResolution.HD) && !ScreenResolution.Retina) {
 			// Screen Resolution of 720p or less is fine to have 300x450px image
-			images.poster = resizeImage(images.poster, '300');
+			images.poster = App.Providers.trakttv.resizeImage(images.poster, '300');
 			//}
 
 			App.vent.on('shortcuts:show', function () {

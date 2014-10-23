@@ -86,7 +86,7 @@ Settings.providers = {
 	tvshow: ['Eztv'],
 	anime: ['Haruhichan'],
 	subtitle: 'YSubs',
-	metadata: 'Trakttv',
+	metadata: 'trakttv',
 
 	tvshowsubtitle: 'OpenSubtitles',
 	torrentCache: 'TorrentCache'

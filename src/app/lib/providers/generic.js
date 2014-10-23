@@ -51,7 +51,7 @@
 		win.info('Spawning new provider', name);
 
 		// its not coming from the package manager
-		if (typeof App.Providers[name].metadata === 'undefined') {
+		if (App.Providers[name].metadata === undefined) {
 			cache[name] = new provider();
 		} else {
 			cache[name] = App.Providers[name];
