@@ -22,6 +22,16 @@ module.exports = App.Providers.extend({
     },
 
     /*
+    * Package Settings
+    */
+    settings: {
+        url: {
+          type: [], // not used right now
+          "default": 'http://google.com'
+        }
+    },
+
+    /*
     * Not used
     */
     hooks: {},

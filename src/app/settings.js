@@ -126,14 +126,17 @@ var AdvSettings = {
 		return false;
 	},
 
-	set: function (variable, newValue) {
-		Database.writeSetting({
-			key: variable,
-			value: newValue
-		})
-			.then(function () {
+	set: function (variable, newValue, overwrite) {
+		overwrite = overwrite || true;
+
+		if (overwrite === true || typeof Settings[variable] === 'undefined') {
+			Database.writeSetting({
+				key: variable,
+				value: newValue
+			}).then(function () {
 				Settings[variable] = newValue;
 			});
+		}
 	},
 
 	setup: function () {
