@@ -5,7 +5,6 @@
  */
 var App = require('pdk'),
     _ = require('underscore'),
-    helpers = require('./helpers'),
     request = require('request'),
     URI = require('URIjs'),
     Q = require('q'),

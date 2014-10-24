@@ -5,7 +5,7 @@
 */
 var App = require('pdk'),
     _ = require('underscore'),
-    helpers = require('./helpers');
+    helpers = require('./yts');
 
 /*
 * We build and export our new package
@@ -18,13 +18,18 @@ module.exports = App.Providers.Source.extend({
     * to set detail for the source.
     */
     config: {
-        type: 'movies'
+        type: 'movie'
     },
 
     /*
     * Package Settings
     */
-    settings: {},
+    settings: {
+        url: {
+          type: [], // not used right now
+          "default": 'http://google.com'
+        }
+    },
 
     /*
     * Not used
@@ -35,7 +40,8 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     fetch: function (filters) {         
-        return helpers.queryTorrents(filters);
+        return helpers.queryTorrents(filters)
+            .then(helpers.formatForPopcorn);
     },
 
     /*

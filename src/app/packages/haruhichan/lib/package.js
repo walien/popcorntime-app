@@ -5,7 +5,7 @@
 */
 var App = require('pdk'),
     _ = require('underscore'),
-    helpers = require('./helpers');
+    helpers = require('./haruhichan');
 
 /*
 * We build and export our new package
@@ -18,18 +18,13 @@ module.exports = App.Providers.Source.extend({
     * to set detail for the source.
     */
     config: {
-        type: 'movie'
+        type: 'movies'
     },
 
     /*
     * Package Settings
     */
-    settings: {
-        url: {
-          type: [], // not used right now
-          "default": 'http://google.com'
-        }
-    },
+    settings: {},
 
     /*
     * Not used
@@ -41,7 +36,7 @@ module.exports = App.Providers.Source.extend({
     */
     fetch: function (filters) {         
         return helpers.queryTorrents(filters)
-            .then(helpers.formatForPopcorn);
+            .then(helpers.formatForPopcorn);;
     },
 
     /*
@@ -55,7 +50,7 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     extractIds: function (items) {
-        return _.pluck(items.results, 'imdb_id');
+        return _.pluck(items.results, 'haru_id');
     }
 
 });

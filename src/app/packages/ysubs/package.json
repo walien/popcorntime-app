@@ -1,6 +1,6 @@
 {
   "name": "Ysubs",
-  "main": "./lib/ysubs-source",
+  "main": "./lib/package",
   "version": "0.0.1",
   "private": true,
   "description": "Popcorntime.io Plugin Sample using YTS API source",

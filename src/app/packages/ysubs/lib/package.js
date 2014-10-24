@@ -6,7 +6,7 @@
 var App = require('pdk'),
     _ = require('underscore'),
     Q = require('q'),
-    helpers = require('./helpers');
+    helpers = require('./ysubs');
 
 /*
 * We build and export our new package

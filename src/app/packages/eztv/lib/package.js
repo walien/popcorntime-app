@@ -5,7 +5,7 @@
 */
 var App = require('pdk'),
     _ = require('underscore'),
-    helpers = require('./helpers');
+    helpers = require('./eztv');
 
 /*
 * We build and export our new package
@@ -35,8 +35,7 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     fetch: function (filters) {         
-        return helpers.queryTorrents(filters)
-            .then(helpers.formatForPopcorn);;
+        return helpers.queryTorrents(filters);
     },
 
     /*
@@ -50,7 +49,7 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     extractIds: function (items) {
-        return _.pluck(items.results, 'haru_id');
+        return _.pluck(items.results, 'imdb_id');
     }
 
 });

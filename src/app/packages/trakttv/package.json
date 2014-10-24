@@ -1,6 +1,6 @@
 {
   "name": "Trakttv",
-  "main": "./lib/trakttv-source",
+  "main": "./lib/package",
   "version": "0.0.1",
   "private": true,
   "description": "TraktTv Metadata provider",
