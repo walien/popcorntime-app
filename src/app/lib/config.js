@@ -94,7 +94,7 @@
 		cachev2: {
 			name: 'cache',
 			version: 3,
-			tables: ['metadata']
+			tables: ['metadata','subtitle']
 		},
 		
 		getProvider: function (type) {

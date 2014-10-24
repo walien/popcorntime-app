@@ -58,6 +58,10 @@
                     _.pick(App.Providers, 'get', 'set')
                 ),
 
+                localization: passThruAppContextToApi('providers',
+                    _.pick(App.Localization, 'filterSubtitle')
+                ),
+
                 vent: App.vent
             },
 

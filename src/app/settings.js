@@ -85,7 +85,7 @@ Settings.providers = {
 	movie: ['yts'],
 	tvshow: ['eztv'],
 	anime: ['haruhichan'],
-	subtitle: 'YSubs',
+	subtitle: 'ysubs',
 	metadata: 'trakttv',
 
 	tvshowsubtitle: 'OpenSubtitles',
