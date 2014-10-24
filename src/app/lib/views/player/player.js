@@ -56,11 +56,14 @@
 				clearInterval(this._AutoPlayCheckTimer);
 			}
 			// Check if >80% is watched to mark as watched by user  (maybe add value to settings
-			var type = (this.isMovie() ? 'movie' : 'show');
-			if (this.video.currentTime() / this.video.duration() >= 0.8) {
-				App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
-			} else {
-				App.Trakt[type].cancelWatching();
+			var type = this.model.get('type');
+
+			if (type !== 'trailer') {
+				if (this.video.currentTime() / this.video.duration() >= 0.8) {
+					App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
+				} else {
+					App.Trakt[type].cancelWatching();
+				}
 			}
 
 			try {
@@ -87,7 +90,7 @@
 		},
 
 		prossessType: function () {
-			if (this.model.get('type') === 'video/youtube') {
+			if (this.model.get('type') === 'trailer') {
 
 				$('<div/>').appendTo('#main-window').addClass('trailer_mouse_catch'); // XXX Sammuel86 Trailer UI Show FIX/HACK
 
@@ -129,8 +132,6 @@
 		setUI: function () {
 			this.ui.title.text(this.model.get('title'));
 
-			this.refreshStreamStats();
-
 			this.player = this.video.player();
 
 			this.player.usingNativeControls(false);
@@ -153,25 +154,27 @@
 				event.preventDefault();
 			});
 
-			$('.eye-info-player').mouseenter(function () {
-				_this.refreshStreamStats();
-			});
-
+			if (this.model.get('type') !== 'trailer') {
+				$('.eye-info-player').mouseenter(function () {
+					_this.refreshStreamStats();
+				});
+				this.refreshStreamStats();
+			}
 
 		},
 
 
 		setPlayerEvents: function () {
 			var _this = this;
-
+			var type = this.model.get('type');
 			this.player.on('error', function (error) {
-				if (_this.isMovie()) {
+				if (type === 'movie') {
 					App.Trakt.movie.cancelWatching();
 				} else {
 					App.Trakt.show.cancelWatching();
 				}
 				// TODO: user errors
-				if (_this.model.get('type') === 'video/youtube') {
+				if (type === 'trailer') {
 					setTimeout(function () {
 						App.vent.trigger('player:close');
 					}, 2000);
@@ -196,7 +199,7 @@
 		sendToTrakt: function () {
 			var _this = this;
 
-			if (this.isMovie()) {
+			if (this.model.get('type') === 'movie') {
 				win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
 				App.Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 			} else {
@@ -208,7 +211,7 @@
 		checkAutoPlay: function () {
 			var _this = this;
 
-			if (!this.isMovie() && next_episode_model) {
+			if (this.model.get('type') !== 'movie' && next_episode_model) {
 				if ((_this.video.duration() - _this.video.currentTime()) < 60 && _this.video.currentTime() > 30) {
 
 					if (!autoplayisshown) {
@@ -253,7 +256,6 @@
 			if (percent === 0) {
 				percent = 1;
 			}
-			console.log(percent);
 			this.ui.percentCompleted.text(percent + '%');
 		},
 
@@ -638,7 +640,8 @@
 
 		onClose: function () {
 			var _this = this;
-			if (this.model.get('type') === 'video/youtube') { // XXX Sammuel86 Trailer UI Show FIX/HACK -START
+			var type = this.model.get('type');
+			if (type === 'trailer') { // XXX Sammuel86 Trailer UI Show FIX/HACK -START
 				$('.trailer_mouse_catch').remove();
 			}
 			$('#player_drag').hide();
@@ -647,8 +650,9 @@
 				win.leaveFullscreen();
 			}
 			_this.unbindKeyboardShortcuts();
-
-			App.vent.trigger('streamer:stop');
+			if (type !== 'trailer') {
+				App.vent.trigger('streamer:stop');
+			}
 			if (this._WatchingTimer) {
 				clearInterval(this._WatchingTimer);
 			}

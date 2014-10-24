@@ -99,7 +99,9 @@
 				that.ui.downloadPercent.text(percent + '%');
 				that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
 				that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
-				that.ui.progressbar.css('width', percent + '%');
+				that.ui.progressbar.stop().animate({
+					width: percent + '%'
+				}, 100, 'swing');
 				if (percent > 99) {
 
 					if (this.player === 'local') {

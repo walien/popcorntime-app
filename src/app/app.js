@@ -258,7 +258,7 @@ win.on('close', function () {
 	if (App.settings.deleteTmpOnClose) {
 		deleteFolder(App.settings.tmpLocation);
 	}
-
+	deleteFolder(path.join(os.tmpDir(), 'webtorrent'));
 	win.close(true);
 });
 
