@@ -26,7 +26,7 @@
         this.loadedPackages = {};
         this.activePackages = {};
 
-        this.packageDirPaths.push(path.join(this.options.path, 'src', 'app', 'packages'));
+        this.packageDirPaths.push(path.join(this.options.path, 'src', 'content', 'packages'));
     }
 
     /*
