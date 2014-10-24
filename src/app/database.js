@@ -487,8 +487,6 @@ var Database = {
 					window.__isNewInstall = true;
 				}
 
-				App.vent.trigger('initHttpApi');
-
 				return AdvSettings.checkApiEndpoint([{
 						original: 'yifyApiEndpoint',
 						mirror: 'yifyApiEndpointMirror',

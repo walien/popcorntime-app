@@ -10,7 +10,7 @@ var App = require('pdk'),
 /*
 * We build and export our new package
 */
-module.exports = App.Providers.Sources.extend({
+module.exports = App.Providers.Source.extend({
 
     /*
     * Package config

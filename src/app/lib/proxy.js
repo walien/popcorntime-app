@@ -67,6 +67,10 @@
 
             cache: {
                 providers: App.Providers.CacheProviderV2,
+            },
+
+            views: {
+                player: App.PlayerView,
             }
         };
 
