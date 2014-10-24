@@ -98,7 +98,6 @@
 				that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
 				that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
 				that.ui.progressbar.css('width', percent + '%');
-
 				if (percent > 99) {
 					var playerModel = new Backbone.Model(that.model.get('data'));
 					App.vent.trigger('stream:local', playerModel);

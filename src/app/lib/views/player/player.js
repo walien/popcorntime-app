@@ -16,8 +16,7 @@
 			downloadSpeed: '.download_speed_player',
 			uploadSpeed: '.upload_speed_player',
 			activePeers: '.active_peers_player',
-			title: '.player-title',
-			videosrc: '#video_player > source'
+			title: '.player-title'
 		},
 
 		events: {
@@ -79,8 +78,13 @@
 		},
 
 		onShow: function () {
+
+			win.info('Watching:', this.model.get('title'));
+
 			this.prossessType();
 			this.setUI();
+			this.setPlayerEvents();
+			this.bindKeyboardShortcuts();
 
 		},
 
@@ -125,13 +129,128 @@
 		},
 
 		setUI: function () {
-			console.log(this.model);
 			this.ui.title.text(this.model.get('title'));
-			this.ui.videosrc.src = 'test';
 
+			this.refreshStreamStats();
+
+			this.player = this.video.player();
+
+			this.player.usingNativeControls(false);
 
 			$('.player-header-background').appendTo('div#video_player');
 
+			$('li:contains("subtitles off")').text(i18n.__('Disabled'));
+
+			$('#header').removeClass('header-shadow').hide();
+			// Test to make sure we have title
+
+			$('.filter-bar').show();
+			$('#player_drag').show();
+
+			_this = this;
+			// Double Click to toggle Fullscreen
+			$('#video_player').dblclick(function (event) {
+				_this.toggleFullscreen();
+				// Stop any mouseup events pausing video
+				event.preventDefault();
+			});
+
+			$('.eye-info-player').mouseenter(function () {
+				_this.refreshStreamStats();
+			});
+
+
+		},
+
+
+		setPlayerEvents: function () {
+			var _this = this
+
+			this.player.on('error', function (error) {
+				if (_this.isMovie()) {
+					App.Trakt.movie.cancelWatching();
+				} else {
+					App.Trakt.show.cancelWatching();
+				}
+				// TODO: user errors
+				if (_this.model.get('type') === 'video/youtube') {
+					setTimeout(function () {
+						App.vent.trigger('player:close');
+					}, 2000);
+				}
+				win.error('video.js error code: ' + $('#video_player').get(0).player.error().code, $('#video_player').get(0).player.error());
+			});
+
+
+			this.player.one('play', function () {
+				player.one('durationchange', _this.sendToTrakt);
+				_this._WatchingTimer = setInterval(_this.sendToTrakt, 10 * 60 * 1000); // 10 minutes
+
+				if (_this.model.get('auto_play')) {
+					_this._AutoPlayCheckTimer = setInterval(checkAutoPlay, 10 * 100 * 1); // every 1 sec
+				}
+
+			});
+
+
+		},
+
+
+		sendToTrakt: function () {
+			var _this = this;
+
+			if (_this.isMovie()) {
+				win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
+				App.Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+			} else {
+				win.debug('Reporting we are watching ' + _this.model.get('tvdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '%');
+				App.Trakt.show.watching(_this.model.get('tvdb_id'), _this.model.get('season'), _this.model.get('episode'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+			}
+		},
+
+		checkAutoPlay: function () {
+			var _this = this;
+
+			if (!_this.isMovie() && next_episode_model) {
+				if ((_this.video.duration() - _this.video.currentTime()) < 60 && _this.video.currentTime() > 30) {
+
+					if (!autoplayisshown) {
+
+						if (!precachestarted) {
+							App.vent.trigger('preload:start', next_episode_model);
+							precachestarted = true;
+						}
+
+						console.log('Showing Auto Play message');
+						autoplayisshown = true;
+						$('.playing_next').show();
+						$('.playing_next').appendTo('div#video_player');
+						if (!_this.player.userActive()) {
+							_this.player.userActive(true);
+						}
+					}
+
+					var count = Math.round(_this.video.duration() - _this.video.currentTime());
+					$('.playing_next span').text(count + ' ' + i18n.__('Seconds'));
+
+				} else {
+					if (autoplayisshown) {
+						console.log('Hiding Auto Play message');
+						$('.playing_next').hide();
+						$('.playing_next span').text('');
+						autoplayisshown = false;
+					}
+
+
+				}
+			}
+		},
+		refreshStreamStats: function () {
+			App.Streamer.updateInfo();
+
+			this.ui.downloadSpeed.text(App.Streamer.streamInfo.downloadSpeed);
+			this.ui.uploadSpeed.text(App.Streamer.streamInfo.uploadSpeed);
+			this.ui.activePeers.text(App.Streamer.streamInfo.active_peers);
 		},
 
 
@@ -522,7 +641,7 @@
 			}
 			_this.unbindKeyboardShortcuts();
 
-			App.vent.trigger('stream:stop');
+			App.vent.trigger('streamer:stop');
 			if (this._WatchingTimer) {
 				clearInterval(this._WatchingTimer);
 			}

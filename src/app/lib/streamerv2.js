@@ -46,6 +46,7 @@
 					that.engine = torrentdata.createServer();
 					that.engine.listen(streamport);
 					win.debug('Streaming To: localhost:' + streamport + '/0');
+					that.port = streamport;
 				});
 
 			});
@@ -56,7 +57,8 @@
 				backdrop: data.backdrop,
 				title: data.title,
 				player: data.device,
-				show_controls: false
+				show_controls: false,
+				data: data
 			});
 
 			App.vent.trigger('stream:started', stateModel);
@@ -68,6 +70,7 @@
 			this.client.destroy();
 			this.client = null;
 			this.engine = null;
+			this.streamInfo = null;
 		},
 
 		updateInfo: function () {
@@ -80,13 +83,12 @@
 					state = 'ready';
 				} else if (swarm.downloaded) {
 					state = 'downloading';
-					this.prossessStreamInfo();
 				} else if (swarm.wires.length) {
 					state = 'startingDownload';
 				}
 			}
 
-			//console.log(state, swarm ? swarm.downloaded : null, BUFFERING_SIZE)
+			this.prossessStreamInfo();
 
 			if (state !== 'ready') {
 				_.delay(_.bind(this.updateInfo, this), 100);
@@ -143,7 +145,7 @@
 					formatted: total_size,
 					raw: engine.length
 				},
-				src: 'http://127.0.0.1:' + engine.client.torrentPort + '/' + 0
+				src: 'http://127.0.0.1:' + this.port + '/' + 0
 			};
 
 			this.streamInfo = streamInfo;

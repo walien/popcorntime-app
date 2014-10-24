@@ -24,5 +24,5 @@
 </div>
 	
 <video id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="auto" autoplay >
-	<source src="" type="" />
+	<source src="<%= App.Streamer.streamInfo.src  %>" type="video/mp4" />
 </video>
