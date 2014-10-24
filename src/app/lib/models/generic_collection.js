@@ -79,7 +79,19 @@
 							movie.provider = torrentProvider.name;
 
 							if (subtitles) {
-								movie.subtitle = subtitles[id];
+								
+								_.each(subtitles, function(val) {
+									if (val._id === id) {
+
+										delete val._id;
+										delete val._lastModified;
+										delete val._ttl;
+
+										console.log(val);
+										movie.subtitle = val;
+									}
+								});
+
 							}
 
 							if (metadatas) {

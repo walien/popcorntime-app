@@ -103,9 +103,6 @@ Package.prototype.load = function() {
         };
     })(this));
 
-    console.log(this.keymaps);
-    console.log(this.mainModule);
-
     return this;
 
 };
@@ -207,8 +204,6 @@ Package.prototype.activateResources = function() {
  * the require() function
  */
 Package.prototype.requireMainModule = function() {
-
-    console.log("requireMainModule");
 
     var mainModulePath;
     if (this.mainModule != null) {

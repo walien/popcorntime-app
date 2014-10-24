@@ -48,12 +48,11 @@ module.exports = App.Providers.Subtitle.extend({
 
     formatForPopcorn: function(data) {
 
-
         var self = this;
 
         var allSubs = {};
         // Iterate each movie
-        _.each(data.subs, function(langs, imdbId) {
+        _.each(data.subs, function(langs, imdbId) {            
             var movieSubs = {};
             // Iterate each language
             _.each(langs, function(subs, lang) {
@@ -76,7 +75,7 @@ module.exports = App.Providers.Subtitle.extend({
     cache: function(ids, func) {
         var self = this, key;
         return this._fetch(ids).then(function(items) {
-            var nonCachedIds = _.difference(ids, _.pluck(items, 'test'));
+            var nonCachedIds = _.difference(ids, _.pluck(items, '_id'));
             return MergePromises([
                 Q(items),
                 func(nonCachedIds).then(self._store.bind(self))
