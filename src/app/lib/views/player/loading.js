@@ -94,18 +94,26 @@
 					that.ui.progressTextSeeds.text(streamInfo.total_peers);
 
 					var percent = streamInfo.downloaded / (BUFFERING_SIZE / 100);
+					percent = percent.toFixed();
 
-					that.ui.downloadPercent.text(percent.toFixed() + '%');
+					that.ui.downloadPercent.text(percent + '%');
 					that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
 					that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
-					that.ui.progressbar.css('width', percent.toFixed() + '%');
+					that.ui.progressbar.css('width', percent + '%');
 
-					if (streamInfo.percent > 99) {
+					if (percent > 99) {
 						clearInterval(updateInfo);
 						if (that.model.get('player') && that.model.get('player').get('type') !== 'local') {
 							that.ui.player.text(that.model.get('player').get('name'));
 							that.ui.streaming.css('visibility', 'visible');
 						}
+
+						var playerModel = new Backbone.Model({
+							data: that.model.get('data')
+						});
+
+						App.vent.trigger('stream:local', playerModel);
+						console.log('starting Local Streaming');
 					}
 				}
 			};

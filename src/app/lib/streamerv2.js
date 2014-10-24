@@ -50,7 +50,8 @@
 				backdrop: data.backdrop,
 				title: data.title,
 				player: data.device,
-				show_controls: false
+				show_controls: false,
+				data: data
 			});
 
 			App.vent.trigger('stream:started', stateModel);
