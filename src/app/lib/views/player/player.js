@@ -16,6 +16,7 @@
 			downloadSpeed: '.download_speed_player',
 			uploadSpeed: '.upload_speed_player',
 			activePeers: '.active_peers_player',
+			percentCompleted: '.percent_completed',
 			title: '.player-title'
 		},
 
@@ -183,11 +184,11 @@
 
 
 			this.player.one('play', function () {
-				player.one('durationchange', _this.sendToTrakt);
+				_this.player.one('durationchange', _this.sendToTrakt);
 				_this._WatchingTimer = setInterval(_this.sendToTrakt, 10 * 60 * 1000); // 10 minutes
 
 				if (_this.model.get('auto_play')) {
-					_this._AutoPlayCheckTimer = setInterval(checkAutoPlay, 10 * 100 * 1); // every 1 sec
+					_this._AutoPlayCheckTimer = setInterval(_this.checkAutoPlay, 10 * 100 * 1); // every 1 sec
 				}
 
 			});
@@ -251,6 +252,13 @@
 			this.ui.downloadSpeed.text(App.Streamer.streamInfo.downloadSpeed);
 			this.ui.uploadSpeed.text(App.Streamer.streamInfo.uploadSpeed);
 			this.ui.activePeers.text(App.Streamer.streamInfo.active_peers);
+			var percent = App.Streamer.streamInfo.downloaded / (App.Streamer.streamInfo.total_size.raw / 100);
+			percent = percent.toFixed();
+			if (percent === 0) {
+				percent = 1;
+			}
+			console.log(percent);
+			this.ui.percentCompleted.text(percent + '%');
 		},
 
 

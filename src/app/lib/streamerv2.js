@@ -27,16 +27,29 @@
 		start: function (data) {
 			var that = this;
 			this.client = new WebTorrent();
-
+			var streamableData = ['.mp4', '.wmv', '.avi', '.ogg', '.vp9', '.vp8', '.flv', '.mkv'];
 			var torrenturl = data.torrent;
 
 			this.stream = this.client.add(torrenturl, {
 				dht: true, // Whether or not to enable dht
 				maxPeers: parseInt(Settings.connectionLimit, 10) || 100, // Max number of peers to connect to (per torrent)
 				tracker: true, // Whether or not to enable trackers
-				verify: false, // Verify previously stored data before starting
-				index: 0
+				verify: false // Verify previously stored data before starting
 			}, function (torrentdata) {
+
+				var possibleStreams = [];
+
+				_.each(torrentdata.files, function (file, index) {
+					if (new RegExp(streamableData.join('|')).test(file.name)) {
+						possibleStreams.push({
+							name: file.name,
+							fileIndex: index
+						});
+					}
+				});
+				console.log(possibleStreams);
+
+				that.fileindex = _.pluck(possibleStreams, 'fileIndex');
 
 				portfinder.getPort(function (err, port) {
 					if (err) {
@@ -45,7 +58,7 @@
 					var streamport = parseInt(Settings.streamPort, 10) || port;
 					that.engine = torrentdata.createServer();
 					that.engine.listen(streamport);
-					win.debug('Streaming To: localhost:' + streamport + '/0');
+					win.debug('Streaming To: localhost:' + streamport + '/' + that.fileindex);
 					that.port = streamport;
 				});
 
@@ -145,7 +158,7 @@
 					formatted: total_size,
 					raw: engine.length
 				},
-				src: 'http://127.0.0.1:' + this.port + '/' + 0
+				src: 'http://127.0.0.1:' + this.port + '/' + this.fileindex
 			};
 
 			this.streamInfo = streamInfo;

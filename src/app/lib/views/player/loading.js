@@ -74,6 +74,8 @@
 			this.initKeyboardShortcuts();
 
 			this.ui.title.text(this.model.get('title'));
+			this.player = this.model.get('player').get('id');
+
 
 			this.StateUpdate();
 
@@ -99,8 +101,16 @@
 				that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
 				that.ui.progressbar.css('width', percent + '%');
 				if (percent > 99) {
-					var playerModel = new Backbone.Model(that.model.get('data'));
-					App.vent.trigger('stream:local', playerModel);
+
+					if (this.player === 'local') {
+						var playerModel = new Backbone.Model(that.model.get('data'));
+						App.vent.trigger('stream:local', playerModel);
+					} else {
+
+						App.vent.trigger('stream:ready', that.model.get('player'));
+					}
+
+
 					if (that.model.get('player') && that.model.get('player').get('type') !== 'local') {
 						that.ui.player.text(that.model.get('player').get('name'));
 						that.ui.streaming.css('visibility', 'visible');

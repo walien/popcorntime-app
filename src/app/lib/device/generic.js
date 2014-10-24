@@ -64,7 +64,7 @@
 				for (var k2 in interfaces[k]) {
 					var address = interfaces[k][k2];
 					if (address.family === 'IPv4' && !address.internal) {
-						streamModel.attributes.src = streamModel.attributes.src.replace('127.0.0.1', address.address);
+						streamModel.attributes.src = App.Streamer.streamInfo.src.replace('127.0.0.1', address.address);
 						addresses.push(address.address);
 					}
 				}
