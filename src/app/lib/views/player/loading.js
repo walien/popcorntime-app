@@ -1,6 +1,5 @@
 (function (App) {
 	'use strict';
-	var updateInfo;
 	var Loading = Backbone.Marionette.ItemView.extend({
 		template: '#loading-tpl',
 		className: 'app-overlay',
@@ -82,47 +81,42 @@
 		StateUpdate: function () {
 			var that = this;
 			var BUFFERING_SIZE = 10 * 1024 * 1024;
+			var percent;
+			var streamInfo = App.Streamer.streamInfo;
+			if (streamInfo) {
+				that.ui.seedStatus.css('visibility', 'visible');
+				var downloaded = streamInfo.downloaded / (1024 * 1024);
 
-			var update = function () {
-				var streamInfo = App.streamer.streamInfo;
-				if (streamInfo) {
-					that.ui.seedStatus.css('visibility', 'visible');
-					var downloaded = streamInfo.downloaded / (1024 * 1024);
+				that.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
+				that.ui.progressTextPeers.text(streamInfo.active_peers);
+				that.ui.progressTextSeeds.text(streamInfo.total_peers);
 
-					that.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
-					that.ui.progressTextPeers.text(streamInfo.active_peers);
-					that.ui.progressTextSeeds.text(streamInfo.total_peers);
+				percent = streamInfo.downloaded / (BUFFERING_SIZE / 100);
+				percent = percent.toFixed();
 
-					var percent = streamInfo.downloaded / (BUFFERING_SIZE / 100);
-					percent = percent.toFixed();
+				that.ui.downloadPercent.text(percent + '%');
+				that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
+				that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
+				that.ui.progressbar.css('width', percent + '%');
 
-					that.ui.downloadPercent.text(percent + '%');
-					that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
-					that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
-					that.ui.progressbar.css('width', percent + '%');
-
-					if (percent > 99) {
-						clearInterval(updateInfo);
-						if (that.model.get('player') && that.model.get('player').get('type') !== 'local') {
-							that.ui.player.text(that.model.get('player').get('name'));
-							that.ui.streaming.css('visibility', 'visible');
-						}
-
-						var playerModel = new Backbone.Model({
-							data: that.model.get('data')
-						});
-
-						App.vent.trigger('stream:local', playerModel);
-						console.log('starting Local Streaming');
+				if (percent > 99) {
+					var playerModel = new Backbone.Model(that.model.get('data'));
+					App.vent.trigger('stream:local', playerModel);
+					if (that.model.get('player') && that.model.get('player').get('type') !== 'local') {
+						that.ui.player.text(that.model.get('player').get('name'));
+						that.ui.streaming.css('visibility', 'visible');
 					}
+				} else {
+					this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
 				}
-			};
-			updateInfo = setInterval(update, 200);
+			} else {
+				this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
+			}
 
 		},
 
 		cancelStreaming: function () {
-			clearInterval(updateInfo);
+			clearInterval(this.updateInfo);
 			App.vent.trigger('streamer:stop');
 			App.vent.trigger('player:close');
 			App.vent.trigger('torrentcache:stop');

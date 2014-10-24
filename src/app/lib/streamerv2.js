@@ -10,23 +10,27 @@
 	var http = require('http');
 	var portfinder = require('portfinder');
 
-	App.streamer = {
-		state: 'connecting',
-		streamInfo: null
-	};
+	var Streamerv2 = Backbone.Model.extend({
+		defaults: {
+			state: 'connecting',
+			streamInfo: null,
+			initialized: false,
+		},
+		initialize: function () {
 
-
-	var engine, stream, client;
-
-	var Streamerv2 = {
+			//Start a new torrent stream, ops: torrent file, magnet
+			App.vent.on('streamer:start', _.bind(this.start, this));
+			//stop a torrent streaming
+			App.vent.on('streamer:stop', _.bind(this.stop, this));
+			this.initialized = true;
+		},
 		start: function (data) {
-
-			client = new WebTorrent();
+			var that = this;
+			this.client = new WebTorrent();
 
 			var torrenturl = data.torrent;
 
-			console.log(torrenturl);
-			stream = client.add(torrenturl, {
+			this.stream = this.client.add(torrenturl, {
 				dht: true, // Whether or not to enable dht
 				maxPeers: parseInt(Settings.connectionLimit, 10) || 100, // Max number of peers to connect to (per torrent)
 				tracker: true, // Whether or not to enable trackers
@@ -35,23 +39,24 @@
 			}, function (torrentdata) {
 
 				portfinder.getPort(function (err, port) {
-					if (err) throw err
+					if (err) {
+						throw err
+					};
 					var streamport = parseInt(Settings.streamPort, 10) || port;
-					engine = torrentdata.createServer();
-					engine.listen(streamport);
+					that.engine = torrentdata.createServer();
+					that.engine.listen(streamport);
 					win.debug('Streaming To: localhost:' + streamport + '/0');
-				})
+				});
 
 			});
 
-			Streamerv2.updateInfo();
+			this.updateInfo();
 
 			var stateModel = new Backbone.Model({
 				backdrop: data.backdrop,
 				title: data.title,
 				player: data.device,
-				show_controls: false,
-				data: data
+				show_controls: false
 			});
 
 			App.vent.trigger('stream:started', stateModel);
@@ -59,41 +64,49 @@
 		},
 
 		stop: function (torrent) {
-			engine.close();
-			client.destroy();
-			client = null;
-			engine = null;
+			this.engine.close();
+			this.client.destroy();
+			this.client = null;
+			this.engine = null;
 		},
 
 		updateInfo: function () {
-
-			App.streamer = stream;
-			var swarm = stream.swarm;
+			var swarm = this.stream.swarm;
+			var state;
 
 			if (swarm) {
-				var state = 'connecting';
+				state = 'connecting';
 				if (swarm.downloaded > BUFFERING_SIZE) {
 					state = 'ready';
 				} else if (swarm.downloaded) {
 					state = 'downloading';
-					Streamerv2.prossessStreamInfo();
+					this.prossessStreamInfo();
 				} else if (swarm.wires.length) {
 					state = 'startingDownload';
 				}
 			}
 
-			if (state !== 'ready') {
-				_.delay(Streamerv2.updateInfo, 100);
-			}
-			App.streamer.state = state;
+			//console.log(state, swarm ? swarm.downloaded : null, BUFFERING_SIZE)
 
+			if (state !== 'ready') {
+				_.delay(_.bind(this.updateInfo, this), 100);
+			}
+
+			if (state) {
+				this.state = state;
+			}
 		},
 		prossessStreamInfo: function () {
 			var active = function (wire) {
 				return !wire.peerChoking;
 			};
-			var engine = App.streamer;
+			var engine = this.stream;
 			var swarm = engine.swarm;
+
+			if (!swarm) {
+				return;
+			}
+
 			var BUFFERING_SIZE = 10 * 1024 * 1024;
 			var converted_speed = 0;
 			var percent = 0;
@@ -130,17 +143,12 @@
 					formatted: total_size,
 					raw: engine.length
 				},
-				src: 'http://127.0.0.1:' + engine.client.torrentPort + '/'
-			}
+				src: 'http://127.0.0.1:' + engine.client.torrentPort + '/' + 0
+			};
 
-			App.streamer.streamInfo = streamInfo;
-
+			this.streamInfo = streamInfo;
 		}
-	};
+	});
 
-
-	App.vent.on('streamer:start', Streamerv2.start); //Start a new torrent stream, ops: torrent file, magnet
-	App.vent.on('streamer:stop', Streamerv2.stop); //stop a torrent streaming
-
-
+	App.Streamer = new Streamerv2();
 })(window.App);

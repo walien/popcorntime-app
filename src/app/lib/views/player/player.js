@@ -15,7 +15,9 @@
 			eyeInfo: '.eye-info-player',
 			downloadSpeed: '.download_speed_player',
 			uploadSpeed: '.upload_speed_player',
-			activePeers: '.active_peers_player'
+			activePeers: '.active_peers_player',
+			title: '.player-title',
+			videosrc: '#video_player > source'
 		},
 
 		events: {
@@ -33,6 +35,7 @@
 
 			this.video = false;
 			this.inFullscreen = win.isFullscreen;
+
 		},
 
 		updateDownloadSpeed: function () {
@@ -76,8 +79,61 @@
 		},
 
 		onShow: function () {
+			this.prossessType();
+			this.setUI();
 
 		},
+
+		prossessType: function () {
+			if (this.model.get('type') === 'video/youtube') {
+
+				$('<div/>').appendTo('#main-window').addClass('trailer_mouse_catch'); // XXX Sammuel86 Trailer UI Show FIX/HACK
+
+				this.video = videojs('video_player', {
+					techOrder: ['youtube'],
+					forceSSL: true,
+					ytcontrols: false,
+					quality: '720p'
+				}).ready(function () {
+					this.addClass('vjs-has-started');
+				});
+				this.ui.eyeInfo.hide();
+
+				$('.trailer_mouse_catch').show().mousemove(function (event) { // XXX Sammuel86 Trailer UI Show FIX/HACK
+					if (!_this.player.userActive()) {
+						_this.player.userActive(true);
+					}
+				});
+				$('.trailer_mouse_catch').click(function () { // XXX Sammuel86 Trailer UI Show FIX/HACK
+					$('.vjs-play-control').click();
+				});
+
+
+			} else {
+				this.video = videojs('video_player', {
+					nativeControlsForTouch: false,
+					trackTimeOffset: 0,
+					plugins: {
+						biggerSubtitle: {},
+						smallerSubtitle: {},
+						customSubtitles: {},
+						progressTips: {},
+						dropSubtitles: {}
+					}
+				});
+			}
+		},
+
+		setUI: function () {
+			console.log(this.model);
+			this.ui.title.text(this.model.get('title'));
+			this.ui.videosrc.src = 'test';
+
+
+			$('.player-header-background').appendTo('div#video_player');
+
+		},
+
 
 		playNextNow: function () {
 
