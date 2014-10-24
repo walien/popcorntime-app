@@ -27,10 +27,6 @@
 			'click .vjs-subtitles-button': 'toggleSubtitles'
 		},
 
-		isMovie: function () {
-			return this.model.get('tvdb_id') === undefined;
-		},
-
 		initialize: function () {
 
 			this.video = false;
@@ -86,6 +82,7 @@
 			this.setUI();
 			this.setPlayerEvents();
 			this.bindKeyboardShortcuts();
+			console.log(this.model);
 
 		},
 
@@ -165,7 +162,7 @@
 
 
 		setPlayerEvents: function () {
-			var _this = this
+			var _this = this;
 
 			this.player.on('error', function (error) {
 				if (_this.isMovie()) {
@@ -196,11 +193,10 @@
 
 		},
 
-
 		sendToTrakt: function () {
 			var _this = this;
 
-			if (_this.isMovie()) {
+			if (this.isMovie()) {
 				win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
 				App.Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 			} else {
@@ -212,7 +208,7 @@
 		checkAutoPlay: function () {
 			var _this = this;
 
-			if (!_this.isMovie() && next_episode_model) {
+			if (!this.isMovie() && next_episode_model) {
 				if ((_this.video.duration() - _this.video.currentTime()) < 60 && _this.video.currentTime() > 30) {
 
 					if (!autoplayisshown) {
@@ -261,6 +257,9 @@
 			this.ui.percentCompleted.text(percent + '%');
 		},
 
+		isMovie: function () {
+			return this.model.get('tvdb_id') === undefined;
+		},
 
 		playNextNow: function () {
 

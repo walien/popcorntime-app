@@ -413,7 +413,7 @@ var health_checked = false;
 				auto_play: auto_play,
 				auto_play_id: parseInt(season) * 100 + parseInt(episode),
 				auto_play_data: episodes_data
-			}
+			};
 			win.info('Playing next episode automatically:', AdvSettings.get('playNextEpisodeAuto'));
 			_this.unbindKeyboardShortcuts();
 			App.vent.trigger('streamer:start', torrentStart);
@@ -682,8 +682,8 @@ var health_checked = false;
 					var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
 					$('.health-icon').tooltip({
-						html: true
-					})
+							html: true
+						})
 						.removeClass('fa-spin')
 						.removeClass('fa-spinner')
 						.addClass('fa-circle')
@@ -696,8 +696,8 @@ var health_checked = false;
 
 		resetHealth: function () {
 			$('.health-icon').tooltip({
-				html: true
-			})
+					html: true
+				})
 				.removeClass('fa-spin')
 				.removeClass('fa-spinner')
 				.addClass('fa-circle')

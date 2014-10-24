@@ -53,8 +53,8 @@
 
 				portfinder.getPort(function (err, port) {
 					if (err) {
-						throw err
-					};
+						throw err;
+					}
 					var streamport = parseInt(Settings.streamPort, 10) || port;
 					that.engine = torrentdata.createServer();
 					that.engine.listen(streamport);

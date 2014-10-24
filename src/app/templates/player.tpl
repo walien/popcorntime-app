@@ -25,5 +25,9 @@
 </div>
 	
 <video id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="auto" autoplay >
-	<source src="<%= App.Streamer.streamInfo.src  %>" type="video/mp4" />
+<%
+	if (type === 'trailer') { var src = trailerSrc; } 
+	else { var src = App.Streamer.streamInfo.src;	}
+%>		
+	<source src="<%= src %>" type="<%= videotype %>" />
 </video>

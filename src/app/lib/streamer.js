@@ -345,24 +345,24 @@
 							var sub_data = {};
 							if (torrent.name) { // sometimes magnets don't have names for some reason
 
-								App.Trakt.infoByName(torrent.name).then(function(data) {
+								App.Trakt.infoByName(torrent.name).then(function (data) {
 
-									switch(data.type) {
+									switch (data.type) {
 
-										case 'tvshow':
+									case 'tvshow':
 
-											// subtitles
-											sub_data.imdbid = data.result.show.imdb_id;
-											sub_data.season = data.result.episode.season.toString();
-											sub_data.episode = data.result.episode.number.toString();
-											getSubtitles(sub_data);
+										// subtitles
+										sub_data.imdbid = data.result.show.imdb_id;
+										sub_data.season = data.result.episode.season.toString();
+										sub_data.episode = data.result.episode.number.toString();
+										getSubtitles(sub_data);
 
-											// update our model
-											model.set('tvdb_id', data.result.show.tvdb_id);
-											model.set('imdb_id', data.result.show.tvdb_id);
-											model.set('episode', sub_data.season);
-											model.set('season', sub_data.episode);
-											title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.result.episode.season + ', ' + i18n.__('Episode') + ' ' + data.result.episode.number + ' - ' + data.result.episode.title;
+										// update our model
+										model.set('tvdb_id', data.result.show.tvdb_id);
+										model.set('imdb_id', data.result.show.tvdb_id);
+										model.set('episode', sub_data.season);
+										model.set('season', sub_data.episode);
+										title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.result.episode.season + ', ' + i18n.__('Episode') + ' ' + data.result.episode.number + ' - ' + data.result.episode.title;
 
 										break;
 
@@ -380,7 +380,7 @@
 							} else {
 
 								handleTorrent_fnc();
-								
+
 							}
 
 						}

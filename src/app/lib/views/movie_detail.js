@@ -172,6 +172,7 @@
 				title: this.model.get('title'),
 				quality: this.model.get('quality'),
 				type: 'movie',
+				videotype: 'video/mp4',
 				device: App.Device.Collection.selected,
 				cover: this.model.get('image')
 			};
@@ -205,8 +206,9 @@
 		playTrailer: function () {
 
 			var trailer = new Backbone.Model({
-				src: this.model.get('trailer'),
-				type: 'video/youtube',
+				trailerSrc: this.model.get('trailer'),
+				type: 'trailer',
+				videotype: 'video/youtube',
 				subtitle: null,
 				quality: false,
 				title: this.model.get('title')
@@ -246,8 +248,8 @@
 			var ratio = torrent.peer > 0 ? torrent.seed / torrent.peer : +torrent.seed;
 
 			$('.health-icon').tooltip({
-				html: true
-			})
+					html: true
+				})
 				.removeClass('Bad Medium Good Excellent')
 				.addClass(health)
 				.attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
