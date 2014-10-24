@@ -251,7 +251,7 @@
 			this.ui.downloadSpeed.text(App.Streamer.streamInfo.downloadSpeed);
 			this.ui.uploadSpeed.text(App.Streamer.streamInfo.uploadSpeed);
 			this.ui.activePeers.text(App.Streamer.streamInfo.active_peers);
-			var percent = App.Streamer.streamInfo.downloaded / (App.Streamer.streamInfo.total_size.raw / 100);
+			var percent = App.Streamer.streamInfo.progress;
 			percent = percent.toFixed();
 			if (percent === 0) {
 				percent = 1;

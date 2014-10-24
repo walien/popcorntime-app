@@ -91,7 +91,7 @@
 
 				that.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
 				that.ui.progressTextPeers.text(streamInfo.active_peers);
-				that.ui.progressTextSeeds.text(streamInfo.total_peers);
+				that.ui.progressTextSeeds.text(streamInfo.peers);
 
 				percent = streamInfo.downloaded / (BUFFERING_SIZE / 100);
 				percent = percent.toFixed();
