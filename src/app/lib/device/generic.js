@@ -118,4 +118,11 @@
 		Collection: collection,
 		ChooserView: createChooserView
 	};
+
+	function setDevice(name, fn) {
+		App.Device[name] = fn;
+	}
+	
+	App.Device.set = setDevice;
+
 })(window.App);
