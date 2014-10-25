@@ -92,13 +92,13 @@ module.exports = App.Providers.Metadata.extend({
             console.log('Mark TV Show as watched, on channel:', channel);
             switch (channel) {
                 case 'scrobble':
-                    this.app.Trakt.show
+                    self.show
                         .scrobble(show.tvdb_id, show.season, show.episode, 100);
                     break;
                 case 'seen':
                     /* falls through */
                 default:
-                    this.app.Trakt.show
+                    self.show
                         .episodeSeen(show.tvdb_id, show);
                     break;
             }
@@ -109,13 +109,13 @@ module.exports = App.Providers.Metadata.extend({
             console.log('Mark TV Show as unwatched, on channel:', channel);
             switch (channel) {
                 case 'scrobble':
-                    this.app.Trakt.show
+                    self.show
                         .scrobble(show.tvdb_id, show.season, show.episode, 0);
                     break;
                 case 'seen':
                     /* falls through */
                 default:
-                    this.app.Trakt.show
+                    self.show
                         .episodeUnseen(show.tvdb_id, show);
                     break;
             }
@@ -125,13 +125,13 @@ module.exports = App.Providers.Metadata.extend({
             console.log('Mark Movie as watched, on channel:', channel);
             switch (channel) {
                 case 'scrobble':
-                    self.app.Trakt.movie
+                    self.movie
                         .scrobble(movie.imdb_id, 100);
                     break;
                 case 'seen':
                     /* falls through */
                 default:
-                    self.app.Trakt.movie
+                    self.movie
                         .seen(movie.imdb_id);
                     break;
             }
@@ -727,12 +727,13 @@ module.exports = App.Providers.Metadata.extend({
         },
 
         getProgress: function() {
+            var self = this;
             if (!this.authenticated) {
                 console.log('Not Authenticated');
                 return Q.reject('Not Authenticated');
             }
 
-            return this.app.Trakt.call(['user/progress/watched.json', '{KEY}', this._credentials.username])
+            return self.call(['user/progress/watched.json', '{KEY}', this._credentials.username])
                 .then(function(data) {
                     return data;
                 });

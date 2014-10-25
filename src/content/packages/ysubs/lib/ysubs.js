@@ -1,101 +1,92 @@
-var helpers = {},
-    querystring = require('querystring'),
-    request = require('request'),
-    Q = require('q')
-_ = require('underscore'),
-    EZTVAPIURL = 'http://eztvapi.re/',
-    languageMapping = {
-        'albanian': 'sq',
-        'arabic': 'ar',
-        'bengali': 'bn',
-        'brazilian-portuguese': 'pt-br',
-        'bulgarian': 'bg',
-        'bosnian': 'bs',
-        'chinese': 'zh',
-        'croatian': 'hr',
-        'czech': 'cs',
-        'danish': 'da',
-        'dutch': 'nl',
-        'english': 'en',
-        'estonian': 'et',
-        'farsi-persian': 'fa',
-        'finnish': 'fi',
-        'french': 'fr',
-        'german': 'de',
-        'greek': 'el',
-        'hebrew': 'he',
-        'hungarian': 'hu',
-        'indonesian': 'id',
-        'italian': 'it',
-        'japanese': 'ja',
-        'korean': 'ko',
-        'lithuanian': 'lt',
-        'macedonian': 'mk',
-        'malay': 'ms',
-        'norwegian': 'no',
-        'polish': 'pl',
-        'portuguese': 'pt',
-        'romanian': 'ro',
-        'russian': 'ru',
-        'serbian': 'sr',
-        'slovenian': 'sl',
-        'spanish': 'es',
-        'swedish': 'sv',
-        'thai': 'th',
-        'turkish': 'tr',
-        'urdu': 'ur',
-        'ukrainian': 'uk',
-        'vietnamese': 'vi'
-    },
-    baseUrl = 'http://api.yifysubtitles.com/subs/',
-    mirrorUrl = 'http://api.ysubs.com/subs/',
-    prefix = 'http://www.yifysubtitles.com',
-    TTL = 1000 * 60 * 60 * 4; // 4 hours    
+'use strict';
 
 /*
- * Function used to query all torents using PT filters
- */
-helpers.querySubtitles = function(imdbIds) {
+* We import our depedencies
+*/
+var App = require('pdk'),
+    _ = require('underscore'),
+    Q = require('q'),
+    helpers = require('./helper-querysubtitle');
 
-    var deferred = Q.defer();
-    
-    if (_.isEmpty(imdbIds)) {
-        return {};
-    }
+/*
+* We build and export our new package
+*/
+module.exports = App.Providers.Subtitle.extend({
 
-    var url = baseUrl + _.map(imdbIds.sort(), function(id) {
-        return id;
-    }).join('-');
-    var mirrorurl = mirrorUrl + _.map(imdbIds.sort(), function(id) {
-        return id;
-    }).join('-');
+    /*
+    * Package config
+    * as we extend from Providers, we need
+    * to set detail for the source.
+    */
+    config: {
+        cache: true
+    },
 
-    
+    /*
+    * Package Settings
+    */
+    settings: {},
 
-    console.log("Request to: " + url);
+    /*
+    * Not used
+    */
+    hooks: {},
 
-    request({
-        url: url,
-        json: true
-    }, function(error, response, data) {
-        if (error || response.statusCode >= 400 || !data || !data.success) {
-            request({
-                url: mirrorurl,
-                json: true
-            }, function(error, response, data) {
-                if (error || response.statusCode >= 400 || !data || !data.success) {
-                    deferred.reject(error);
-                } else {
-                    console.log(data);
-                    deferred.resolve(data);
-                }
+    /*
+    * Default Function used by PT
+    */
+    fetch: function (ids) {
+        var self = this;
+        return this.cache(ids, function(ids) {
+            if (_.isEmpty(ids)) {
+                return Q([]);
+            }
+            return helpers.querySubtitles(ids).then(self.formatForPopcorn);
+        });
+
+    },
+
+    formatForPopcorn: function(data) {
+
+        var self = this;
+
+        var allSubs = {};
+        // Iterate each movie
+        _.each(data.subs, function(langs, imdbId) {            
+            var movieSubs = {};
+            // Iterate each language
+            _.each(langs, function(subs, lang) {
+                // Pick highest rated
+                var langCode = languageMapping[lang];
+                movieSubs[langCode] = prefix + _.max(subs, function(s) {
+                    return s.rating;
+                }).url;
             });
-        } else {
-            deferred.resolve(data);
-        }
+
+            // Remove unsupported subtitles
+            var filteredSubtitle = movieSubs;
+
+            allSubs[imdbId] = filteredSubtitle;
+        });
+
+        return allSubs;
+    },
+
+    cache: function(ids, func) {
+        var self = this, key;
+        return this._fetch(ids).then(function(items) {
+            var nonCachedIds = _.difference(ids, _.pluck(items, '_id'));
+            return MergePromises([
+                Q(items),
+                func(nonCachedIds).then(self._store.bind(self))
+            ]);
+        });
+    },
+
+});
+
+function MergePromises(promises) {
+    return Q.all(promises).then(function(results) {
+        return _.unique(_.flatten(results));
     });
-
-    return deferred.promise;
-};
-
-module.exports = helpers;
+}

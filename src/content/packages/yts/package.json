@@ -1,6 +1,6 @@
 {
   "name": "YTS",
-  "main": "./lib/package",
+  "main": "./lib/yts",
   "version": "0.0.1",
   "private": true,
   "description": "Popcorntime.io Plugin Sample using YTS API source",
