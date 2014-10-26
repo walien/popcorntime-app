@@ -53,12 +53,12 @@
 		stop: function () {
 
 			this.server.close(function () {
-				console.log('Server closed!');
+				console.log('Streamer Server closed!');
 			});
 
 			for (var socketId in this.sockets) {
 				console.log('socket', socketId, 'destroyed');
-				sockets[socketId].destroy();
+				this.sockets[socketId].destroy();
 			}
 
 		},
@@ -67,7 +67,7 @@
 
 			// We will only accept 'GET' method. Otherwise will return 405 'Method Not Allowed'.
 			if (request.method != 'GET') {
-				sendResponse(response, 405, {
+				this.sendResponse(response, 405, {
 					'Allow': 'GET'
 				}, null);
 				return null;
@@ -77,13 +77,13 @@
 
 			// Check if file exists. If not, will return the 404 'Not Found'. 
 			if (!fs.existsSync(filename)) {
-				sendResponse(response, 404, null, null);
+				this.sendResponse(response, 404, null, null);
 				return null;
 			}
 
 			var responseHeaders = {};
 			var filesize = App.Streamer.streamInfo.size;
-			var rangeRequest = readRangeHeader(request.headers['range'], filesize);
+			var rangeRequest = this.readRangeHeader(request.headers['range'], filesize);
 
 			// If 'Range' header exists, we will parse it with Regular Expression.
 			if (rangeRequest == null) {
