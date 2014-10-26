@@ -1,9 +1,9 @@
 (function (App) {
 	'use strict';
 
-	var http = require("http");
-	var fs = require("fs");
-	var path = require("path");
+	var http = require('http');
+	var fs = require('fs');
+	var path = require('path');
 	var url = require('url');
 	var portfinder = require('portfinder');
 	var mime = require('mime');
@@ -18,29 +18,29 @@
 
 		},
 		start: function (file) {
-			var that = this;
+			var self = this;
 			this.sockets = {}, nextSocketId = 0;
 
 			portfinder.getPort(function (err, port) {
 				if (err) {
 					throw err;
 				}
-				that.port = parseInt(Settings.streamPort, 10) || port;
+				self.port = parseInt(Settings.streamPort, 10) || port;
 
-				that.server = http.createServer(that.onRequest).listen(that.port);
-				win.debug('Streamer Server Started on: localhost:' + that.port + '/');
+				self.server = http.createServer(self.onRequest).listen(self.port);
+				win.debug('Streamer Server Started on: localhost:' + self.port + '/');
 
 
-				that.server.on('connection', function (socket) {
+				self.server.on('connection', function (socket) {
 					// Add a newly connected socket
 					var socketId = nextSocketId++;
-					that.sockets[socketId] = socket;
+					self.sockets[socketId] = socket;
 					console.log('socket', socketId, 'opened');
 
 					// Remove the socket when it closes
 					socket.on('close', function () {
 						console.log('socket', socketId, 'closed');
-						delete that.sockets[socketId];
+						delete self.sockets[socketId];
 					});
 
 				});
