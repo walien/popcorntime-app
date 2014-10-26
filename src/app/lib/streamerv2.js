@@ -1,15 +1,11 @@
 (function (App) {
 	'use strict';
 
-
-	var readTorrent = require('read-torrent');
+	var semver      = require('semver');
+	var streamer    = require('popcorn-streamer');
+	var portfinder  = require('portfinder');
 
 	var BUFFERING_SIZE = 10 * 1024 * 1024;
-
-	var streamer = require('popcorn-streamer');
-
-	var portfinder = require('portfinder');
-
 
 	var Streamerv2 = Backbone.Model.extend({
 
@@ -22,17 +18,24 @@
 
 		},
 		start: function (data) {
-			var that = this;
+			var self = this;
 			var torrenturl = data.torrent;
+			var version = semver.parse(App.settings.version);
+			var torrentVersion = '';
+			torrentVersion += version.major;
+			torrentVersion += version.minor;
+			torrentVersion += version.patch;
+			torrentVersion += version.prerelease.length ? version.prerelease[0] : 0;
 
 			streamer(torrenturl, {
-				progressInterval: 100
-			})
-				.on('progress', function (data) {
-					that.data = data;
-					that.updateInfo();
-				})
-				.pipe(fs.createWriteStream('The Pirate Bay Away from Keyboard.mp4'));
+				progressInterval: 100,
+				torrent: {
+					id: '-PC' + torrentVersion + '-'
+				}
+			}).on('progress', function (data) {
+				self.data = data;
+				self.updateInfo();
+			}).pipe(fs.createWriteStream('The Pirate Bay Away from Keyboard.mp4'));
 
 			var stateModel = new Backbone.Model({
 				backdrop: data.backdrop,
@@ -43,8 +46,6 @@
 			});
 
 			App.vent.trigger('stream:started', stateModel);
-
-
 		},
 
 		stop: function () {
@@ -52,7 +53,6 @@
 		},
 
 		updateInfo: function () {
-
 			var state = 'connecting';
 
 			if (this.data.downloaded > BUFFERING_SIZE) {
