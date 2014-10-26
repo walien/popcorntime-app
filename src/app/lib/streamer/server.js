@@ -19,7 +19,10 @@
 		},
 		start: function (file) {
 			var self = this;
-			this.sockets = {}, nextSocketId = 0;
+			this.sockets = {};
+			var nextSocketId = 0;
+
+			this.filePath = file;
 
 			portfinder.getPort(function (err, port) {
 				if (err) {
@@ -27,9 +30,10 @@
 				}
 				self.port = parseInt(Settings.streamPort, 10) || port;
 
-				self.server = http.createServer(self.onRequest).listen(self.port);
+				self.server = http.createServer(function () {
+					_.bind(self.stop, self);
+				}).listen(self.port);
 				win.debug('Streamer Server Started on: localhost:' + self.port + '/');
-
 
 				self.server.on('connection', function (socket) {
 					// Add a newly connected socket
@@ -64,7 +68,6 @@
 		},
 
 		onRequest: function (request, response) {
-
 			// We will only accept 'GET' method. Otherwise will return 405 'Method Not Allowed'.
 			if (request.method != 'GET') {
 				this.sendResponse(response, 405, {
@@ -73,7 +76,7 @@
 				return null;
 			}
 
-			var filename = App.Streamer.streamInfo.src;
+			var filename = this.filePath;
 
 			// Check if file exists. If not, will return the 404 'Not Found'. 
 			if (!fs.existsSync(filename)) {
@@ -124,7 +127,6 @@
 
 
 		},
-
 		sendResponse: function (response, responseStatus, responseHeaders, readable) {
 			response.writeHead(responseStatus, responseHeaders);
 

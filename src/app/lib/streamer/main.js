@@ -1,9 +1,9 @@
 (function (App) {
 	'use strict';
 
-	var semver      = require('semver');
-	var streamer    = require('popcorn-streamer');
-	var portfinder  = require('portfinder');
+	var semver = require('semver');
+	var streamer = require('popcorn-streamer');
+	var portfinder = require('portfinder');
 
 	var BUFFERING_SIZE = 10 * 1024 * 1024;
 
@@ -46,6 +46,8 @@
 			});
 
 			App.vent.trigger('stream:started', stateModel);
+
+			App.vent.trigger('serve:start', 'The Pirate Bay Away from Keyboard.mp4');
 		},
 
 		stop: function () {
@@ -68,21 +70,21 @@
 			this.state = state;
 
 		},
-                prettySpeed: function (speed) {
+		prettySpeed: function (speed) {
 			var converted = Math.floor(Math.log(speed) / Math.log(1024));
 			return (speed / Math.pow(1024, converted)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted] + '/s';
-                },
+		},
 		prossessStreamInfo: function () {
 			var converted_speed = 0;
 			var percent = 0;
 
-                        var speed = {
-                                up: this.data.uploadSpeed,
-                                down: this.data.downloadSpeed
-                        };
+			var speed = {
+				up: this.data.uploadSpeed,
+				down: this.data.downloadSpeed
+			};
 
-                        speed.up   = speed.up  ?'0 B/s':this.prettySpeed(speed.up);
-                        speed.down = speed.down?'0 B/s':this.prettySpeed(speed.down);
+			speed.up = speed.up ? '0 B/s' : this.prettySpeed(speed.up);
+			speed.down = speed.down ? '0 B/s' : this.prettySpeed(speed.down);
 
 			/*
 			if (engine.files[this.fileindex].length) {
