@@ -112,7 +112,8 @@
 				uploadSpeed: speed.up,
 				downloadSpeed: speed.down,
 				eta: this.data.eta,
-				progress: this.data.progress
+				progress: this.data.progress,
+				size: 99999 //debuging size -- use real once when xeon adds it in popcorn - streamer callback
 			};
 
 			this.streamInfo = streamInfo;

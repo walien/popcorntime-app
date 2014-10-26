@@ -24,15 +24,11 @@
 
 			this.filePath = file;
 
-			portfinder.getPort(function (err, port) {
-				if (err) {
-					throw err;
-				}
-				self.port = parseInt(Settings.streamPort, 10) || port;
+			Q.ninvoke(portfinder.getPort).done(function (port) {
+				self.port = port;
 
-				self.server = http.createServer(function () {
-					_.bind(self.stop, self);
-				}).listen(self.port);
+				self.server = http.createServer(self.onRequest).listen(self.port);
+
 				win.debug('Streamer Server Started on: localhost:' + self.port + '/');
 
 				self.server.on('connection', function (socket) {
@@ -81,6 +77,7 @@
 			// Check if file exists. If not, will return the 404 'Not Found'. 
 			if (!fs.existsSync(filename)) {
 				this.sendResponse(response, 404, null, null);
+				console.log('File not found - server')
 				return null;
 			}
 
