@@ -69,8 +69,6 @@
 
 		},
 		prossessStreamInfo: function () {
-
-			var BUFFERING_SIZE = 10 * 1024 * 1024;
 			var converted_speed = 0;
 			var percent = 0;
 
