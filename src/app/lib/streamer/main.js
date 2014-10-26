@@ -68,24 +68,22 @@
 			this.state = state;
 
 		},
+                prettySpeed: function (speed) {
+			var converted = Math.floor(Math.log(speed) / Math.log(1024));
+			return (speed / Math.pow(1024, converted)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted] + '/s';
+                },
 		prossessStreamInfo: function () {
 			var converted_speed = 0;
 			var percent = 0;
 
-			var upload_speed = this.data.uploadSpeed; // upload speed
-			var final_upload_speed = '0 B/s';
-			if (!isNaN(upload_speed) && upload_speed !== 0) {
-				converted_speed = Math.floor(Math.log(upload_speed) / Math.log(1024));
-				final_upload_speed = (upload_speed / Math.pow(1024, converted_speed)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted_speed] + '/s';
-			}
+                        var speed = {
+                                up: this.data.uploadSpeed,
+                                down: this.data.downloadSpeed
+                        };
 
+                        speed.up   = speed.up  ?'0 B/s':this.prettySpeed(speed.up);
+                        speed.down = speed.down?'0 B/s':this.prettySpeed(speed.down);
 
-			var download_speed = this.data.downloadSpeed; // download speed
-			var final_download_speed = '0 B/s';
-			if (!isNaN(download_speed) && download_speed !== 0) {
-				converted_speed = Math.floor(Math.log(download_speed) / Math.log(1024));
-				final_download_speed = (download_speed / Math.pow(1024, converted_speed)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted_speed] + '/s';
-			}
 			/*
 			if (engine.files[this.fileindex].length) {
 				var total_size = engine.files[this.fileindex].length;
@@ -109,8 +107,8 @@
 				peers: this.data.peers,
 				connections: this.data.connections,
 				seeds: this.data.seeds,
-				uploadSpeed: final_upload_speed,
-				downloadSpeed: final_download_speed,
+				uploadSpeed: speed.up,
+				downloadSpeed: speed.down,
 				eta: this.data.eta,
 				progress: this.data.progress
 			};
