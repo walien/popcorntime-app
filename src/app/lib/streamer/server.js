@@ -7,6 +7,7 @@
 	var url = require('url');
 	var portfinder = require('portfinder');
 	var mime = require('mime');
+
 	var StreamServer = Backbone.Model.extend({
 
 		initialize: function () {
@@ -67,7 +68,7 @@
 
 		onRequest: function (request, response) {
 			// We will only accept 'GET' method. Otherwise will return 405 'Method Not Allowed'.
-			if (request.method != 'GET') {
+			if (request.method !== 'GET') {
 				this.sendResponse(response, 405, {
 					'Allow': 'GET'
 				}, null);
@@ -79,7 +80,7 @@
 			// Check if file exists. If not, will return the 404 'Not Found'. 
 			if (!fs.existsSync(filePath)) {
 				this.sendResponse(response, 404, null, null);
-				console.log('File not found - server')
+				console.log('File not found - server');
 				return null;
 			}
 
@@ -113,7 +114,7 @@
 
 			// Indicate the current range. 
 			responseHeaders['Content-Range'] = 'bytes ' + start + '-' + end + '/' + filesize;
-			responseHeaders['Content-Length'] = start == end ? 0 : (end - start + 1);
+			responseHeaders['Content-Length'] = start === end ? 0 : (end - start + 1);
 			responseHeaders['Content-Type'] = mime.lookup(filePath);
 			responseHeaders['Accept-Ranges'] = 'bytes';
 			responseHeaders['Cache-Control'] = 'no-cache';
@@ -131,13 +132,13 @@
 		sendResponse: function (response, responseStatus, responseHeaders, readable) {
 			response.writeHead(responseStatus, responseHeaders);
 
-			if (readable == null)
+			if (readable == null) {
 				response.end();
-			else
+			} else {
 				readable.on('open', function () {
 					readable.pipe(response);
 				});
-
+			}
 			return null;
 		},
 		readRangeHeader: function (range, totalLength) {
@@ -151,8 +152,9 @@
 			 * Output: [null, null, 200, null]
 			 */
 
-			if (range == null || range.length == 0)
+			if (range === null || range.length === 0) {
 				return null;
+			}
 
 			var array = range.split(/bytes=([0-9]*)-([0-9]*)/);
 			var start = parseInt(array[1]);
