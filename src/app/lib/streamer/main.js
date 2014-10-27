@@ -35,7 +35,9 @@
 			}).on('progress', function (data) {
 				self.data = data;
 				self.updateInfo();
-			}).pipe(fs.createWriteStream('The Pirate Bay Away from Keyboard.mp4'));
+			}).pipe(fs.createWriteStream(path.join(App.settings.tmpLocation, 'filename.mp4')));
+
+			win.debug('Streaming to %s', path.join(App.settings.tmpLocation, 'filename.mp4'));
 
 			var stateModel = new Backbone.Model({
 				backdrop: data.backdrop,
@@ -47,7 +49,7 @@
 
 			App.vent.trigger('stream:started', stateModel);
 
-			App.vent.trigger('serve:start', 'The Pirate Bay Away from Keyboard.mp4');
+			App.vent.trigger('serve:start', path.join(App.settings.tmpLocation, 'filename.mp4'));
 		},
 
 		stop: function () {
@@ -113,7 +115,7 @@
 				downloadSpeed: speed.down,
 				eta: this.data.eta,
 				progress: this.data.progress,
-				size: 99999 //debuging size -- use real once when xeon adds it in popcorn - streamer callback
+				size: 1000 //debuging size -- use real once when xeon adds it in popcorn - streamer callback
 			};
 
 			this.streamInfo = streamInfo;
