@@ -24,10 +24,10 @@
 
 			this.filePath = file;
 
-			Q.ninvoke(portfinder.getPort).done(function (port) {
+			Q.ninvoke(portfinder, 'getPort').done(function (port) {
 				self.port = port;
 
-				self.server = http.createServer(self.onRequest).listen(self.port);
+				self.server = http.createServer(_.bind(self.onRequest, self)).listen(self.port);
 
 				win.debug('Streamer Server Started on: localhost:' + self.port + '/');
 
