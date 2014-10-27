@@ -29,7 +29,9 @@
 
 				self.server = http.createServer(_.bind(self.onRequest, self)).listen(self.port);
 
-				win.debug('Streamer Server Started on: localhost:' + self.port + '/');
+				win.debug('Streamer Server Started on: http://127.0.0.1:' + self.port + '/');
+				self.src = 'http://127.0.0.1:' + self.port;
+
 
 				self.server.on('connection', function (socket) {
 					// Add a newly connected socket
@@ -72,10 +74,10 @@
 				return null;
 			}
 
-			var filename = this.filePath;
+			var filePath = this.filePath;
 
 			// Check if file exists. If not, will return the 404 'Not Found'. 
-			if (!fs.existsSync(filename)) {
+			if (!fs.existsSync(filePath)) {
 				this.sendResponse(response, 404, null, null);
 				console.log('File not found - server')
 				return null;
@@ -87,12 +89,12 @@
 
 			// If 'Range' header exists, we will parse it with Regular Expression.
 			if (rangeRequest == null) {
-				responseHeaders['Content-Type'] = mime.lookup(filename);
+				responseHeaders['Content-Type'] = mime.lookup(filePath);
 				responseHeaders['Content-Length'] = filesize; // File size.
 				responseHeaders['Accept-Ranges'] = 'bytes';
 
 				//  If not, will return file directly.
-				this.sendResponse(response, 200, responseHeaders, fs.createReadStream(filename));
+				this.sendResponse(response, 200, responseHeaders, fs.createReadStream(filePath));
 				return null;
 			}
 
@@ -112,12 +114,14 @@
 			// Indicate the current range. 
 			responseHeaders['Content-Range'] = 'bytes ' + start + '-' + end + '/' + filesize;
 			responseHeaders['Content-Length'] = start == end ? 0 : (end - start + 1);
-			responseHeaders['Content-Type'] = mime.lookup(filename);
+			responseHeaders['Content-Type'] = mime.lookup(filePath);
 			responseHeaders['Accept-Ranges'] = 'bytes';
 			responseHeaders['Cache-Control'] = 'no-cache';
 
+			console.log(responseHeaders);
+
 			// Return the 206 'Partial Content'.
-			this.sendResponse(response, 206, responseHeaders, fs.createReadStream(filename, {
+			this.sendResponse(response, 206, responseHeaders, fs.createReadStream(filePath, {
 				start: start,
 				end: end
 			}));
