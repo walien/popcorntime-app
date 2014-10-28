@@ -38,8 +38,8 @@
 		},
 		setactive: function (set) {
 
-			if (AdvSettings.get('startScreen') === 'Last Open') {
-				AdvSettings.set('lastTab', set);
+			if (App.Settings.get('startScreen') === 'Last Open') {
+				App.Settings.set('lastTab', set);
 			}
 
 			$('.filter-bar').find('.active').removeClass('active');
@@ -110,10 +110,10 @@
 
 			var activetab;
 
-			if (AdvSettings.get('startScreen') === 'Last Open') {
-				activetab = AdvSettings.get('lastTab');
+			if (App.Settings.get('startScreen') === 'Last Open') {
+				activetab = App.Settings.get('lastTab');
 			} else {
-				activetab = AdvSettings.get('startScreen');
+				activetab = App.Settings.get('startScreen');
 			}
 
 			if (typeof App.currentview === 'undefined') {

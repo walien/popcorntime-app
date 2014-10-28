@@ -10,8 +10,8 @@
 
 	var API_ENDPOINT = URI('https://api.trakt.tv/'),
 		API_KEY = '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
-		API_PLUGIN_VERSION = AdvSettings.get('traktTvVersion'),
-		PT_VERSION = AdvSettings.get('version');
+		API_PLUGIN_VERSION = App.Settings.get('traktTvVersion'),
+		PT_VERSION = App.Settings.get('version');
 
 	function TraktTv() {
 		App.Providers.CacheProviderV2.call(this, 'metadata');
@@ -25,8 +25,8 @@
 		this.watchlist = App.Providers.get('Watchlist');
 
 		// Login with stored credentials
-		if (AdvSettings.get('traktUsername') !== '' && AdvSettings.get('traktPassword') !== '') {
-			this._authenticationPromise = this.authenticate(AdvSettings.get('traktUsername'), AdvSettings.get('traktPassword'), true);
+		if (App.Settings.get('traktUsername') !== '' && App.Settings.get('traktPassword') !== '') {
+			this._authenticationPromise = this.authenticate(App.Settings.get('traktUsername'), App.Settings.get('traktPassword'), true);
 		}
 
 		var self = this;

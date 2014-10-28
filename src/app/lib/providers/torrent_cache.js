@@ -15,7 +15,7 @@
 	/**
 	 * takes care that magnet and .torr urls always return actual torrent file
 	 */
-	var tpmDir = path.join(App.settings.tmpLocation, 'TorrentCache'),
+	var tpmDir = path.join(App.Settings.get('tmpLocation'), 'TorrentCache'),
 		MAGNET_RESOLVE_TIMEOUT = 60 * 1000; // let's give max a minute to resolve a magnet uri
 
 	var mod = function () {

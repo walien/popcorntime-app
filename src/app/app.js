@@ -31,7 +31,10 @@ var
 
 	moment = require('moment'),
 
-	Q = require('q');
+	Q = require('q'),
+
+	Database = require('./lib/database')(require('nw.gui').App.dataPath),
+	Settings = require('./lib/settings');
 
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
@@ -105,11 +108,18 @@ _.extend(App, {
 });
 
 // set database
-App.db = Database;
+App.Database = Database;
 
 // Set settings
-App.advsettings = AdvSettings;
-App.settings = Settings;
+App.Settings = Settings;
+
+Database.find('bookmarks').then(function(data) {
+	App.userBookmarks = data;
+});
+
+Database.find('watched',{type: 'movie'}).then(function(data) {
+	App.watchedMovies = data;
+});
 
 fs.readFile('./.git.json', 'utf8', function (err, json) {
 	if (!err) {
@@ -124,6 +134,33 @@ App.addRegions({
 
 //Keeps a list of stacked views
 App.ViewStack = [];
+
+/**
+ * TO be moved
+ */
+var ScreenResolution = {
+	get SD() {
+		return window.screen.width < 1280 || window.screen.height < 720;
+	},
+	get HD() {
+		return window.screen.width >= 1280 && window.screen.width < 1920 || window.screen.height >= 720 && window.screen.height < 1080;
+	},
+	get FullHD() {
+		return window.screen.width >= 1920 && window.screen.width < 2000 || window.screen.height >= 1080 && window.screen.height < 1600;
+	},
+	get UltraHD() {
+		return window.screen.width >= 2000 || window.screen.height >= 1600;
+	},
+	get QuadHD() {
+		return window.screen.width >= 3000 || window.screen.height >= 1800;
+	},
+	get Standard() {
+		return window.devicePixelRatio <= 1;
+	},
+	get Retina() {
+		return window.devicePixelRatio > 1;
+	}
+};
 
 App.addInitializer(function (options) {
 	// this is the 'do things with resolutions and size initializer
@@ -213,8 +250,8 @@ if(process.platform === 'win32' && parseFloat(os.release(), 10) > 6.1) {
 
 */
 // Create the System Temp Folder. This is used to store temporary data like movie files.
-if (!fs.existsSync(App.settings.tmpLocation)) {
-	fs.mkdir(App.settings.tmpLocation);
+if (!fs.existsSync(Settings.get('tmpLocation'))) {
+	fs.mkdir(App.Settings.get('tmpLocation'));
 }
 
 var deleteFolder = function (path) {
@@ -256,25 +293,13 @@ win.on('move', function (x, y) {
 // Wipe the tmpFolder when closing the app (this frees up disk space)
 win.on('close', function () {
 	if (App.settings.deleteTmpOnClose) {
-		deleteFolder(App.settings.tmpLocation);
+		deleteFolder(App.Settings.get('tmpLocation'));
 	}
 
 	win.close(true);
 });
 
-String.prototype.capitalize = function () {
-	return this.charAt(0).toUpperCase() + this.slice(1);
-};
 
-String.prototype.capitalizeEach = function () {
-	return this.replace(/\w*/g, function (txt) {
-		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-	});
-};
-
-String.prototype.endsWith = function (suffix) {
-	return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
 // Developer Shortcuts
 Mousetrap.bind(['shift+f12', 'f12', 'command+0'], function (e) {
 	win.showDevTools();
@@ -379,12 +404,12 @@ window.ondrop = function (e) {
 		reader.onload = function (event) {
 			var content = reader.result;
 
-			fs.writeFile(path.join(App.settings.tmpLocation, file.name), content, function (err) {
+			fs.writeFile(path.join(App.Settings.get('tmpLocation'), file.name), content, function (err) {
 				if (err) {
 					window.alert('Error Loading Torrent: ' + err);
 				} else {
-					// startTorrentStream(path.join(App.settings.tmpLocation, file.name));
-					handleTorrent(path.join(App.settings.tmpLocation, file.name));
+					// startTorrentStream(path.join(App.Settings.get('tmpLocation'), file.name));
+					handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
 				}
 			});
 

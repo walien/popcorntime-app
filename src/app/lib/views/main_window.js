@@ -114,26 +114,25 @@
 			// Show loading modal on startup
 			var that = this;
 			this.Content.show(new App.View.InitModal());
-			App.db.initialize()
-				.then(function () {
+
 					$('head').append('<link rel="stylesheet" href="themes/' + Settings.theme + '.css" type="text/css" />');
 					// Always on top
-					win.setAlwaysOnTop(App.settings.alwaysOnTop);
+					win.setAlwaysOnTop(App.Settings.get('alwaysOnTop'));
 
 					// we check if the disclaimer is accepted
-					if (!AdvSettings.get('disclaimerAccepted')) {
+					if (!App.Settings.get('disclaimerAccepted')) {
 						that.showDisclaimer();
 					}
 
 					that.InitModal.close();
 
-					if (AdvSettings.get('startScreen') === 'Watchlist') {
+					if (App.Settings.get('startScreen') === 'Watchlist') {
 						that.showWatchlist();
-					} else if (AdvSettings.get('startScreen') === 'Favorites') {
+					} else if (App.Settings.get('startScreen') === 'Favorites') {
 						that.showFavorites();
-					} else if (AdvSettings.get('startScreen') === 'TV Series') {
+					} else if (App.Settings.get('startScreen') === 'TV Series') {
 						that.showShows();
-					} else if (AdvSettings.get('startScreen') === 'Anime') {
+					} else if (App.Settings.get('startScreen') === 'Anime') {
 						that.showAnime();
 					} else {
 						that.showMovies();
@@ -142,7 +141,6 @@
 					// Focus the window when the app opens
 					that.nativeWindow.focus();
 
-				});
 
 			// Cancel all new windows (Middle clicks / New Tab)
 			this.nativeWindow.on('new-win-policy', function (frame, url, policy) {
@@ -352,11 +350,8 @@
 
 			var that = this;
 
-			App.db.getSetting({
-				key: 'postersWidth'
-			})
-				.then(function (doc) {
-					var postersWidth = doc.value;
+	
+					var postersWidth = App.Settings.get('postersWidth');
 					var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
 					var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
 					var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;
@@ -392,7 +387,7 @@
 					if (typeof App.currentview !== 'undefined') {
 						that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
 					}
-				});
+
 		},
 
 		showSubtitles: function (model) {

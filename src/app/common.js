@@ -62,3 +62,17 @@ Common.copyFile = function (source, target, cb) {
 
 	rd.pipe(wr);
 };
+
+String.prototype.capitalize = function () {
+	return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
+String.prototype.capitalizeEach = function () {
+	return this.replace(/\w*/g, function (txt) {
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
+};
+
+String.prototype.endsWith = function (suffix) {
+	return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
