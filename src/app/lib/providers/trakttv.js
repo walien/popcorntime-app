@@ -156,8 +156,8 @@
 				self.authenticated = true;
                 App.vent.trigger('system:traktAuthenticated');
 				// Store the credentials (hashed ofc)
-				AdvSettings.set('traktUsername', self._credentials.username);
-				AdvSettings.set('traktPassword', self._credentials.password);
+				App.Settings.set('traktUsername', self._credentials.username);
+				App.Settings.set('traktPassword', self._credentials.password);
 				return true;
 			} else {
 				return false;

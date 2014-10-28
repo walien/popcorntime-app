@@ -8,7 +8,7 @@
 			<span>
 				<i class="fa fa-keyboard-o keyboard tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__("Keyboard Shortcuts") %>"></i>
 				<i class="fa fa-question-circle help tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__("Help Section") %>"></i>
-				<input id="show-advanced-settings" class="settings-checkbox" name="showAdvancedSettings" type="checkbox" <%=(Settings.showAdvancedSettings? "checked":"")%>>
+				<input id="show-advanced-settings" class="settings-checkbox" name="showAdvancedSettings" type="checkbox" <%=(App.Settings.get('showAdvancedSettings')? "checked":"")%>>
 				<label class="settings-label" for="show-advanced-settings"><%= i18n.__("Show advanced settings") %></label>
 			</span>
 		</div>
@@ -185,8 +185,8 @@
 	<section id="trakt-tv">
 		<div class="title"><%= i18n.__("Trakt.tv") %></div>
 		<div class="content">
-			<div class="trakt-options<%= App.Trakt.authenticated ? " authenticated" : "" %>">
-				<% if(App.Trakt.authenticated) { %>
+			<div class="trakt-options<%= App.Providers.Trakttv.authenticated ? " authenticated" : "" %>">
+				<% if(App.Providers.Trakttv.authenticated) { %>
 					<span>
 						<%= i18n.__("You are currently authenticated to Trakt.tv as") %> <%= Settings.traktUsername %>.
 						<a id="unauthTrakt" class="unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>

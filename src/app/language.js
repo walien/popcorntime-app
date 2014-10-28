@@ -11,13 +11,13 @@ var detectLanguage = function (preferredLanguage) {
 		// we are stillon default
 		if ($.inArray(pureLanguage, App.Localization.allTranslations) !== -1) {
 			i18n.setLocale(pureLanguage);
-			AdvSettings.set('language', pureLanguage);
+			App.Settings.set('language', pureLanguage);
 		} else if ($.inArray(baseLanguage, App.Localization.allTranslations) !== -1) {
 			i18n.setLocale(baseLanguage);
-			AdvSettings.set('language', baseLanguage);
+			App.Settings.set('language', baseLanguage);
 		} else {
 			i18n.setLocale('en');
-			AdvSettings.set('language', 'en');
+			App.Settings.set('language', 'en');
 		}
 	} else {
 		i18n.setLocale(preferredLanguage);

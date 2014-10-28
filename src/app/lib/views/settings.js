@@ -61,12 +61,12 @@
 			});
 			that = this;
 
-            AdvSettings.set('ipAddress', this.getIPAddress());
+            App.Settings.set('ipAddress', this.getIPAddress());
             
 		},
 
 		onRender: function () {
-			if (App.settings.showAdvancedSettings) {
+			if (App.Settings.get('showAdvancedSettings')) {
 				$('.advanced').css('display', 'flex');
 			}
 		},
@@ -176,7 +176,7 @@
 			case 'movies_quality':
 			case 'start_screen':
 				if ($('option:selected', field).val() === 'Last Open') {
-					AdvSettings.set('lastTab', App.currentview);
+					App.Settings.set('lastTab', App.currentview);
 				}
 				/* falls through */
 			case 'watchedCovers':
@@ -229,20 +229,20 @@
 
 
 			// update active session
-			App.settings[field.attr('name')] = value;
+			App.Settings.set(field.attr('name'), value);
 
 			if (apiDataChanged) {
 				App.vent.trigger('initHttpApi');
 			}
 
 			//save to db
-			App.db.writeSetting({
-				key: field.attr('name'),
-				value: value
-			})
+			App.Database.update('settings',
+					{key: field.attr('name')},
+					{value: value})
 				.then(function () {
 					that.ui.success_alert.show().delay(3000).fadeOut(400);
 				});
+
 			that.syncSetting(field.attr('name'), value);
 		},
 		syncSetting: function (setting, value) {
@@ -282,7 +282,7 @@
 				App.vent.trigger('updatePostersSizeStylesheet');
 				break;
 			case 'start_screen':
-				AdvSettings.set('startScreen', value);
+				App.Settings.set('startScreen', value);
 				break;
 			default:
 
@@ -376,7 +376,7 @@
 			Database.resetSettings()
 				.then(function () {
 					that.alertMessageSuccess(true);
-					AdvSettings.set('disclaimerAccepted', 1);
+					App.Settings.set('disclaimerAccepted', 1);
 				});
 		},
 

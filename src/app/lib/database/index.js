@@ -2,8 +2,7 @@ var _ = require('lodash'),
     Datastore = require('nedb'),
     path = require('path'),
     Q = require('q'),
-    DatabaseManager,
-    Settings = require('../settings');
+    DatabaseManager;
 
 process.env.TZ = 'America/New_York'; // set same api tz
 
@@ -19,11 +18,9 @@ function DatabaseManager(data_path) {
     
     var that = this;
     this.db = [];
+    this.data_path = data_path;
 
     console.debug('Database path: ' + data_path);
-
-    // Set our DB location
-    Settings.set({databaseLocation: data_path + '/data'});
 
     // Create our new Datastore for each activeDatabase
     _.each(activeDatabase, function(database) {
@@ -36,20 +33,15 @@ function DatabaseManager(data_path) {
         promisifyDatastore(_this);
 
         _.each(database.unique, function(uniqueKey) {
-
             _this.ensureIndex({
                 fieldName: uniqueKey,
                 unique: true
             });
 
         });
-
         that.db[database.name] = _this;
 
     });
-
-    this.importSettings();
-
 }
 
 DatabaseManager.prototype.initialize = function () {
@@ -71,23 +63,28 @@ DatabaseManager.prototype.find = function (database, data) {
     return promisifyDb(this.db[database].find(data));
 };
 
+// example db.update('movies', {imdb_id: 'tt736635'}, {test: '1111'})
+// or
+// example db.update('settings', {key: 'myKey'}, {value: 'ssss'})
+// 
+// the key represent the unique ID 
+DatabaseManager.prototype.update = function (database, key, data) {
+    var that = this;
+    return this.get('settings', key)
+        .then(function (result) {
+            if (result) {
+                return that.db[database].update(key, {
+                    $set: data
+                }, {});
+            } else {
+                return that.db[database].insert(_.merge(key, data));
+            }
+        });
+};
+
 // example db.remove('movies', {imdb_id: 'tt736635'})
 DatabaseManager.prototype.delete = function (database, data) {
     return this.db[database].remove(data);
-};
-
-// import settings from DB and overwrite value
-DatabaseManager.prototype.importSettings = function () {
-    // we overwrite all our saved settings
-    this.find('settings').then(function (settings) {
-        if (settings !== null) {
-            _.each(settings, function(setting) {
-                var value = {};
-                value[setting.key] = setting.value;
-                Settings.set(value);
-            });
-        }
-    });
 };
 
 // some helper

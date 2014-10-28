@@ -34,7 +34,9 @@ var
 	Q = require('q'),
 
 	Database = require('./lib/database')(require('nw.gui').App.dataPath),
-	Settings = require('./lib/settings');
+	Settings = require('./lib/settings')(Database);
+
+	console.log(Settings.get('showAdvancedSettings'));
 
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
@@ -113,12 +115,17 @@ App.Database = Database;
 // Set settings
 App.Settings = Settings;
 
+
 Database.find('bookmarks').then(function(data) {
 	App.userBookmarks = data;
 });
 
 Database.find('watched',{type: 'movie'}).then(function(data) {
-	App.watchedMovies = data;
+	App.watchedMovies = _.pluck(data, 'movie_id');
+});
+
+Database.find('watched',{type: 'episode'}).then(function(data) {
+	App.watchedShows = _.pluck(data, 'imdb_id');
 });
 
 fs.readFile('./.git.json', 'utf8', function (err, json) {
