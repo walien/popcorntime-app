@@ -91,13 +91,16 @@ DatabaseManager.prototype.delete = function (database, data) {
 // TODO MAYBE ADD A WAY TO CLEAR INDEXDB?
 DatabaseManager.prototype.deleteDatabase = function () {
 
+    var that = this;
+    
     return Q.Promise(function (resolve, reject) {
 
         _.each(activeDatabase, function(database) {
             fs.unlinkSync(path.join(that.data_path, database.path));
         });
 
-        var req = indexedDB.deleteDatabase(App.Config.cache.name);
+        /*
+        var req = window.indexedDB.deleteDatabase(App.Config.cache.name);
         req.onsuccess = function () {
             resolve();
         };
@@ -107,8 +110,9 @@ DatabaseManager.prototype.deleteDatabase = function () {
         req.onblocked = function () {
             resolve();
         };
+        */
 
-        return resolve();
+        resolve();
     });
 };
 
