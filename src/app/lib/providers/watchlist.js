@@ -2,8 +2,8 @@
 (function(App) {
 	'use strict';
 	var Q = require('q');
-	var Eztv = App.Providers.get('Eztv');
-	var Trakt = App.Providers.get('Trakttv');
+	
+	
 
 	var Watchlist = function() {
 		this.inhibited = false;
@@ -37,6 +37,7 @@
 	};
 
 	function fetchWatchlist(update) {
+		var Trakt = App.Providers.get('trakttv');
 		var deferred = Q.defer();
 		var doc = App.Settings.get('watchlist');
 
@@ -94,7 +95,8 @@
 
 	var formatForPopcorn = function(items) {
 		var showList = [];
-
+		var Eztv = App.Providers.get('eztv');
+		
 		items.forEach(function(show) {
 			show = show.value;
 			if (show === null) {
@@ -157,6 +159,7 @@
 	};
 
 	Watchlist.prototype.detail = function(torrent_id, old_data, callback) {
+		var Eztv = App.Providers.get('eztv');
 		return Eztv.detail(torrent_id, old_data, callback);
 	};
 
@@ -167,6 +170,7 @@
 	};
 
 	Watchlist.prototype.fetchWatchlist = function() {
+		var Trakt = App.Providers.get('trakttv');
 		if (this.inhibited) {
 			return Q(true);
 		}

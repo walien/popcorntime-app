@@ -480,8 +480,6 @@ var Database = {
 					window.__isNewInstall = true;
 				}
 
-				App.vent.trigger('initHttpApi');
-
 				return AdvSettings.checkApiEndpoint([{
 						original: 'yifyApiEndpoint',
 						mirror: 'yifyApiEndpointMirror',
@@ -492,6 +490,12 @@ var Database = {
 				]);
 			})
 			.then(function () {
+
+				var packageManager = new App.PackageManager();
+				packageManager.loadPackages();
+
+			})				
+			.then(function () {
 				// set app language
 				detectLanguage(Settings.language);
 				// set hardware settings and usefull stuff
@@ -499,6 +503,7 @@ var Database = {
 			})
 			.then(function () {
 				App.Trakt = App.Config.getProvider('metadata');
+
 				// check update
 				var updater = new App.Updater();
 				updater.update()
@@ -506,7 +511,7 @@ var Database = {
 						win.error(err);
 					});
 				// we skip the initDB (not needed in current version)
-			})
+			})		
 			.catch(function (err) {
 				win.error('Error starting up');
 				win.error(err);

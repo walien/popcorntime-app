@@ -26,7 +26,6 @@ function SettingsManager(dbInstance, settings) {
 }
 
 SettingsManager.prototype.set = function (key, value, updateDatabase) {
-    
     this._settings[key] = value;
 
     if(updateDatabase !== false) {

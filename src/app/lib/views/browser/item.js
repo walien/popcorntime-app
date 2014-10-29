@@ -4,8 +4,6 @@
 	var prevX = 0;
 	var prevY = 0;
 
-	var resizeImage = App.Providers.Trakttv.resizeImage;
-
 	var Item = Backbone.Marionette.ItemView.extend({
 		template: '#item-tpl',
 
@@ -46,16 +44,16 @@
 			switch (itemtype) {
 			case 'bookmarkedshow':
 				watched = App.watchedShows.indexOf(imdb) !== -1;
-				this.model.set('image', resizeImage(img, '300'));
+				this.model.set('image', App.Providers.trakttv.resizeImage(img, '300'));
 				break;
 			case 'show':
 				watched = App.watchedShows.indexOf(imdb) !== -1;
-				images.poster = resizeImage(img, '300');
+				images.poster = App.Providers.trakttv.resizeImage(img, '300');
 				break;
 			case 'bookmarkedmovie':
 			case 'movie':
 				watched = App.watchedMovies.indexOf(imdb) !== -1;
-				this.model.set('image', resizeImage(img, '300'));
+				this.model.set('image', App.Providers.trakttv.resizeImage(img, '300'));
 				break;
 			}
 			this.model.set('watched', watched);

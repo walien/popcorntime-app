@@ -81,6 +81,17 @@ Settings.defaultHeight = Math.round(window.screen.availHeight * 0.8);
 
 Settings.tv_detail_jump_to = 'next';
 
+// Default provider
+Settings.providers = {
+	movie: ['yts'],
+	tvshow: ['eztv'],
+	anime: ['haruhichan'],
+	subtitle: 'ysubs',
+	metadata: 'trakttv',
+
+	tvshowsubtitle: 'opensubtitles',
+	torrentCache: 'TorrentCache'
+};
 
 var ScreenResolution = {
 	get SD() {
@@ -116,14 +127,17 @@ var AdvSettings = {
 		return false;
 	},
 
-	set: function (variable, newValue) {
-		Database.writeSetting({
-			key: variable,
-			value: newValue
-		})
-			.then(function () {
+	set: function (variable, newValue, overwrite) {
+		overwrite = overwrite || true;
+
+		if (overwrite === true || typeof Settings[variable] === 'undefined') {
+			Database.writeSetting({
+				key: variable,
+				value: newValue
+			}).then(function () {
 				Settings[variable] = newValue;
 			});
+		}
 	},
 
 	setup: function () {

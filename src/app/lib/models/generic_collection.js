@@ -41,6 +41,7 @@
 			 * provider declare a unique id, and then lookthem up in
 			 * a hash.
 			 */
+						
 			var torrentPromises = _.map(torrents, function (torrentProvider, pid) { //XXX(xaiki): provider hack
 				var deferred = Q.defer();
 
@@ -78,7 +79,18 @@
 							movie.provider = torrentProvider.name;
 
 							if (subtitles) {
-								movie.subtitle = subtitles[id];
+
+								_.each(subtitles, function(val) {
+									if (val._id === id) {
+
+										delete val._id;
+										delete val._lastModified;
+										delete val._ttl;
+
+										movie.subtitle = val;
+									}
+								});
+
 							}
 
 							if (metadatas) {

@@ -33,6 +33,7 @@
     "airplay-xbmc": "^0.2.7",
     "async": "0.9.0",
     "chromecast-js": "*",
+    "fs-plus": "^2.3.1",
     "i18n": "0.5.0",
     "iconv-lite": "^0.4.3",
     "jschardet": "1.1.0",
@@ -57,7 +58,12 @@
     "semver": "^2.3.1",
     "sha1": "1.1.0",
     "torrent-health": "*",
-    "underscore": "^1.6.0"
+    "season": "^2.0.0",
+    "semver": "^2.3.1",
+    "sha1": "1.1.0",
+    "torrent-health": "*",
+    "underscore": "^1.6.0",
+    "pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git"
   },
   "devDependencies": {
     "bower": "1.3.6",

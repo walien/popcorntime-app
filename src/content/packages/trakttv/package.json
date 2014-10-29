@@ -1,0 +1,14 @@
+{
+  "name": "Trakttv",
+  "main": "./lib/trakttv",
+  "version": "0.0.1",
+  "private": true,
+  "description": "TraktTv Metadata provider",
+  "activationEvents": [],
+  "repository": "",
+  "license": "GPL v3",
+  "engines": {
+    "popcorntime": "*"
+  },
+  "dependencies": {}
+}

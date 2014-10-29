@@ -138,15 +138,15 @@
 		cachev2: {
 			name: 'cache',
 			version: 3,
-			tables: ['metadata']
+			tables: ['metadata', 'subtitle']
 		},
 
 		providers: {
-			movie: ['Yts'],
-			tvshow: ['Eztv'],
-			anime: ['Haruhichan'],
-			subtitle: 'YSubs',
-			metadata: 'Trakttv',
+			movie: ['yts'],
+			tvshow: ['eztv'],
+			anime: ['haruhichan'],
+			subtitle: 'ysubs',
+			metadata: 'trakttv',
 
 			tvshowsubtitle: 'OpenSubtitles',
 			torrentCache: 'TorrentCache'

@@ -35,7 +35,9 @@ var
 
 	Database = require('./lib/database')(require('nw.gui').App.dataPath),
 	Settings = require('./lib/settings')(Database),
-	Updater = require('./lib/updater')(Settings);
+	Updater = require('./lib/updater')(Settings),
+	PackagesManager = require('./lib/packages'),
+	Launch = require('./lib/launch')(PackagesManager);
 
 
 // Special Debug Console Calls!
@@ -114,6 +116,12 @@ App.Database = Database;
 
 // Set settings
 App.Settings = Settings;
+
+// Set Packages
+App.PackagesManager = PackagesManager;
+
+// Launcher
+App.Launch = Launch;
 
 Database.find('bookmarks').then(function(data) {
 	App.userBookmarks = data;

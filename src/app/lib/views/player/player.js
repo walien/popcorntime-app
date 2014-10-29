@@ -5,7 +5,7 @@
 	var autoplayisshown = false;
 	var precachestarted = false;
 	var next_episode_model = false;
-	var Trakt = App.Providers.get('Trakttv');
+	var Trakt = App.Providers.get('trakttv');
 
 
 	var Player = Backbone.Marionette.ItemView.extend({

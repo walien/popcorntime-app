@@ -52,5 +52,8 @@
 			stopServer();
 		}
 	};
+
+
+	App.Subtitles = {};
 	App.Subtitles.Server = SubtitlesServer;
 })(window.App);

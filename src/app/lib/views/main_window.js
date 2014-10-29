@@ -114,6 +114,13 @@
 			var that = this;
 			this.Content.show(new App.View.InitModal());
 
+			console.log('init');
+
+			App.Launch.init()
+				.done(function () {
+
+			console.log('loaded');
+
 					$('head').append('<link rel="stylesheet" href="themes/' + App.Settings.get('theme') + '.css" type="text/css" />');
 					// Always on top
 					win.setAlwaysOnTop(App.Settings.get('alwaysOnTop'));
@@ -139,7 +146,7 @@
 
 					// Focus the window when the app opens
 					that.nativeWindow.focus();
-
+				});
 
 			// Cancel all new windows (Middle clicks / New Tab)
 			this.nativeWindow.on('new-win-policy', function (frame, url, policy) {
