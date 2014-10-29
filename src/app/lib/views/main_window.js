@@ -1,7 +1,8 @@
 (function (App) {
 	'use strict';
 
-	var _this;
+	var _this,
+		Launch = require('./lib/launch')(App);
 
 	var MainWindow = Backbone.Marionette.Layout.extend({
 		template: '#main-window-tpl',
@@ -116,7 +117,7 @@
 
 			console.log('init');
 
-			App.Launch.init()
+			Launch.init()
 				.done(function () {
 
 			console.log('loaded');

@@ -185,8 +185,8 @@
 	<section id="trakt-tv">
 		<div class="title"><%= i18n.__("Trakt.tv") %></div>
 		<div class="content">
-			<div class="trakt-options<%= App.Providers.Trakttv.authenticated ? " authenticated" : "" %>">
-				<% if(App.Providers.get('Trakttv').authenticated) { %>
+			<div class="trakt-options<%= App.Providers.get('trakttv').authenticated ? " authenticated" : "" %>">
+				<% if(App.Providers.get('trakttv').authenticated) { %>
 					<span>
 						<%= i18n.__("You are currently authenticated to Trakt.tv as") %> <%= App.Settings.get('traktUsername') %>.
 						<a id="unauthTrakt" class="unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>

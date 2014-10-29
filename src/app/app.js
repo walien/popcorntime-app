@@ -33,11 +33,10 @@ var
 
 	Q = require('q'),
 
-	Database = require('./lib/database')(require('nw.gui').App.dataPath),
+	Database = require('./lib/database')(gui.App.dataPath),
 	Settings = require('./lib/settings')(Database),
 	Updater = require('./lib/updater')(Settings),
-	PackagesManager = require('./lib/packages'),
-	Launch = require('./lib/launch')(PackagesManager);
+	PackagesManager = require('./lib/packages');
 
 
 // Special Debug Console Calls!
@@ -120,8 +119,7 @@ App.Settings = Settings;
 // Set Packages
 App.PackagesManager = PackagesManager;
 
-// Launcher
-App.Launch = Launch;
+App.gui = gui;
 
 Database.find('bookmarks').then(function(data) {
 	App.userBookmarks = data;
