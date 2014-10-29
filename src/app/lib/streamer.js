@@ -71,16 +71,16 @@
 
 		var tmpFilename = torrent.info.infoHash;
 		tmpFilename = tmpFilename.replace(/([^a-zA-Z0-9-_])/g, '_'); // +'-'+ (new Date()*1);
-		var tmpFile = path.join(App.settings.tmpLocation, tmpFilename);
+		var tmpFile = path.join(App.Settings.get('tmpLocation'), tmpFilename);
 		subtitles = torrent.subtitle;
 
 		win.debug('Streaming movie to %s', tmpFile);
 
 		engine = peerflix(torrent.info, {
-			connections: parseInt(Settings.connectionLimit, 10) || 100, // Max amount of peers to be connected to.
-			dht: parseInt(Settings.dhtLimit, 10) || 50,
-			port: parseInt(Settings.streamPort, 10) || 0,
-			tmp: App.settings.tmpLocation,
+			connections: parseInt(App.Settings.get('connectionLimit'), 10) || 100, // Max amount of peers to be connected to.
+			dht: parseInt(App.Settings.get('dhtLimit'), 10) || 50,
+			port: parseInt(App.Settings.get('streamPort'), 10) || 0,
+			tmp: App.Settings.get('tmpLocation'),
 			path: tmpFile, // we'll have a different file name for each stream also if it's same torrent in same session
 			buffer: (1.5 * 1024 * 1024).toString(), // create a buffer on torrent-stream
 			index: torrent.file_index
@@ -180,16 +180,16 @@
 				console.log(torrent);
 				var tmpFilename = torrent.infoHash;
 				tmpFilename = tmpFilename.replace(/([^a-zA-Z0-9-_])/g, '_'); // +'-'+ (new Date()*1);
-				var tmpFile = path.join(App.settings.tmpLocation, tmpFilename);
+				var tmpFile = path.join(App.Settings.get('tmpLocation'), tmpFilename);
 				subtitles = torrent.subtitle;
 
 				win.debug('Preloading movie to %s', tmpFile);
 
 				preload_engine = peerflix(torrent_url, {
-					connections: parseInt(Settings.connectionLimit, 10) || 100, // Max amount of peers to be connected to.
-					dht: parseInt(Settings.dhtLimit, 10) || 50,
+					connections: parseInt(App.Settings.get('connectionLimit'), 10) || 100, // Max amount of peers to be connected to.
+					dht: parseInt(App.Settings.get('dhtLimit'), 10) || 50,
 					port: 2710,
-					tmp: App.settings.tmpLocation,
+					tmp: App.Settings.get('tmpLocation'),
 					path: tmpFile, // we'll have a different file name for each stream also if it's same torrent in same session
 					index: torrent.file_index
 				});
@@ -259,7 +259,7 @@
 								subtitles = subs;
 								App.vent.trigger('subtitles:ready', {
 									subtitle: subtitles,
-									defaultSubtitle: Settings.subtitle_language
+									defaultSubtitle: App.Settings.get('subtitle_language')
 								});
 								win.info(Object.keys(subs).length + ' subtitles found');
 							} else {
@@ -341,7 +341,7 @@
 							});
 							App.vent.trigger('system:openFileSelector', fileModel);
 						} else {
-							model.set('defaultSubtitle', Settings.subtitle_language);
+							model.set('defaultSubtitle', App.Settings.get('subtitle_language'));
 							var sub_data = {};
 							if (torrent.name) { // sometimes magnets don't have names for some reason
 								title = $.trim(torrent.name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
@@ -349,7 +349,7 @@
 								var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i);
 								if (se_re != null) {
 									var tvshowname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
-									App.Trakt.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
+									App.Providers.Trakttv.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
 										if (!data) {
 											win.warn('Unable to fetch data from Trakt.tv');
 											getSubtitles(sub_data);

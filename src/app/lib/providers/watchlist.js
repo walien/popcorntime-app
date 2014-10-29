@@ -58,7 +58,7 @@
 						deferred.resolve(doc.value || []);
 					} else {
 						win.info('Watchlist - Fetching new watchlist');
-						App.Trakt.show.getProgress()
+						App.Providers.Trakttv.show.getProgress()
 							.then(function (data) {
 								App.db.writeSetting({
 									key: 'watchlist',
@@ -191,7 +191,7 @@
 
 		var deferred = Q.defer();
 		win.info('Watchlist - Fetching new watchlist');
-		App.Trakt.show.getProgress()
+		App.Providers.Trakttv.show.getProgress()
 			.then(function (data) {
 				App.db.writeSetting({
 					key: 'watchlist',

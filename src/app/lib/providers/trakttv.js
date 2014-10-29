@@ -643,7 +643,7 @@
 				return Q.reject('Not Authenticated');
 			}
 
-			return App.Trakt.call(['user/progress/watched.json', '{KEY}', this._credentials.username])
+			return this.call(['user/progress/watched.json', '{KEY}', this._credentials.username])
 				.then(function (data) {
 					return data;
 				});
@@ -750,13 +750,13 @@
 		win.debug('Mark TV Show as watched, on channel:', channel);
 		switch (channel) {
 		case 'scrobble':
-			App.Trakt.show
+			this.show
 				.scrobble(show.tvdb_id, show.season, show.episode, 100);
 			break;
 		case 'seen':
 			/* falls through */
 		default:
-			App.Trakt.show
+			this.show
 				.episodeSeen(show.tvdb_id, show);
 			break;
 		}
@@ -766,13 +766,13 @@
 		win.debug('Mark TV Show as unwatched, on channel:', channel);
 		switch (channel) {
 		case 'scrobble':
-			App.Trakt.show
+			this.show
 				.scrobble(show.tvdb_id, show.season, show.episode, 0);
 			break;
 		case 'seen':
 			/* falls through */
 		default:
-			App.Trakt.show
+			this.show
 				.episodeUnseen(show.tvdb_id, show);
 			break;
 		}
@@ -782,13 +782,13 @@
 		win.debug('Mark Movie as watched, on channel:', channel);
 		switch (channel) {
 		case 'scrobble':
-			App.Trakt.movie
+			this.movie
 				.scrobble(movie.imdb_id, 100);
 			break;
 		case 'seen':
 			/* falls through */
 		default:
-			App.Trakt.movie
+			this.movie
 				.seen(movie.imdb_id);
 			break;
 		}

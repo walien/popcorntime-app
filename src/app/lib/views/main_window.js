@@ -304,7 +304,7 @@
 
 		syncTraktOnStart: function () {
 			if (Settings.syncOnStart) {
-				App.Trakt.sync();
+				App.Providers.Trakttv.sync();
 			}
 		},
 

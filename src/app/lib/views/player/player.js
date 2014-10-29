@@ -5,6 +5,8 @@
 	var autoplayisshown = false;
 	var precachestarted = false;
 	var next_episode_model = false;
+	var Trakt = App.Providers.get('Trakttv');
+
 
 	var Player = Backbone.Marionette.ItemView.extend({
 		template: '#player-tpl',
@@ -63,7 +65,7 @@
 			if (this.video.currentTime() / this.video.duration() >= 0.8) {
 				App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 			} else {
-				App.Trakt[type].cancelWatching();
+				Trakt[type].cancelWatching();
 			}
 
 			try {
@@ -214,10 +216,10 @@
 			var sendToTrakt = function () {
 				if (_this.isMovie()) {
 					win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
-					App.Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+					Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 				} else {
 					win.debug('Reporting we are watching ' + _this.model.get('tvdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '%');
-					App.Trakt.show.watching(_this.model.get('tvdb_id'), _this.model.get('season'), _this.model.get('episode'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+					Trakt.show.watching(_this.model.get('tvdb_id'), _this.model.get('season'), _this.model.get('episode'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 				}
 			};
 
@@ -259,9 +261,9 @@
 			// There was an issue with the video
 			player.on('error', function (error) {
 				if (_this.isMovie()) {
-					App.Trakt.movie.cancelWatching();
+					Trakt.movie.cancelWatching();
 				} else {
-					App.Trakt.show.cancelWatching();
+					Trakt.show.cancelWatching();
 				}
 				// TODO: user errors
 				if (_this.model.get('type') === 'video/youtube') {
@@ -292,7 +294,7 @@
 			if (this.video.currentTime() / this.video.duration() >= 0.8) {
 				App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 			} else {
-				App.Trakt[type].cancelWatching();
+				Trakt[type].cancelWatching();
 			}
 
 			try {

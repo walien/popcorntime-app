@@ -302,7 +302,7 @@
 			$('.valid-tick').hide();
 			$('.loading-spinner').show();
 			// trakt.authenticate automatically saves the username and pass on success!
-			App.Trakt.authenticate(username, password).then(function (valid) {
+			App.Providers.Trakttv.authenticate(username, password).then(function (valid) {
 				$('.loading-spinner').hide();
 				// Stop multiple requests interfering with each other
 				$('.invalid-cross').hide();
@@ -325,7 +325,7 @@
 
 			App.settings['traktUsername'] = '';
 			App.settings['traktPassword'] = '';
-			App.Trakt.authenticated = false;
+			App.Providers.Trakttv.authenticated = false;
 
 			App.db.writeSetting({
 				key: 'traktUsername',
@@ -342,7 +342,7 @@
 				});
 
 			_.defer(function () {
-				App.Trakt = App.Providers.get('Trakttv');
+				//App.Trakt = App.Providers.get('Trakttv');
 				self.render();
 			});
 		},
@@ -556,7 +556,7 @@
 		syncTrakt: function () {
 			$('#syncTrakt').text(i18n.__('Syncing...')).addClass('disabled').prop('disabled', true);
 
-			App.Trakt.sync()
+			App.Providers.Trakttv.sync()
 				.then(function () {
 					$('#syncTrakt').text(i18n.__('Done')).removeClass('disabled').addClass('green').delay(3000).queue(function () {
 						$('#syncTrakt').text(i18n.__('Sync With Trakt')).removeClass('green').prop('disabled', false);
