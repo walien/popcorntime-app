@@ -38,6 +38,15 @@
 		db.onsuccess = function () {
 			self.db = this.result;
 		};
+		db.onversionchange = function(event) {
+			console.log(event);
+			if ( !event.version ){
+				db.close();
+			}
+		};
+		db.onerror = function(event) {			
+		};
+		
 		db.onupgradeneeded = function () {
 			var self = this;
 			App.Config.cachev2.tables.forEach(function (tableName) {

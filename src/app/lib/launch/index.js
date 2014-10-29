@@ -19,13 +19,13 @@ Launcher.prototype.init = function () {
                 var currentVersion = that.app.gui.App.manifest.version;
 
                 if (currentVersion !== that.app.Settings.get('version')) {
-                    // we should clear db
+                    // we should clear indexDb ?
                 }
 
                 that.app.Settings.set('version', currentVersion);
                 that.app.Settings.set('releaseName', that.app.gui.App.manifest.releaseName);
 
-                return resolve(result);
+                return resolve();
             }
         });
     });

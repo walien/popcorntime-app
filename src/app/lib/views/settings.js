@@ -379,7 +379,7 @@ s			});
 
 			that.alertMessageWait(i18n.__('We are flushing your databases'));
 
-			Database.deleteDatabases()
+			App.Database.deleteDatabase()
 				.then(function () {
 					that.alertMessageSuccess(true);
 				});

@@ -2,6 +2,7 @@ var _ = require('lodash'),
     Datastore = require('nedb'),
     path = require('path'),
     Q = require('q'),
+    fs = require('fs'),
     DatabaseManager;
 
 process.env.TZ = 'America/New_York'; // set same api tz
@@ -86,6 +87,31 @@ DatabaseManager.prototype.update = function (database, key, data) {
 DatabaseManager.prototype.delete = function (database, data) {
     return this.db[database].remove(data);
 };
+
+// TODO MAYBE ADD A WAY TO CLEAR INDEXDB?
+DatabaseManager.prototype.deleteDatabase = function () {
+
+    return Q.Promise(function (resolve, reject) {
+
+        _.each(activeDatabase, function(database) {
+            fs.unlinkSync(path.join(that.data_path, database.path));
+        });
+
+        var req = indexedDB.deleteDatabase(App.Config.cache.name);
+        req.onsuccess = function () {
+            resolve();
+        };
+        req.onerror = function () {
+            resolve();
+        };
+        req.onblocked = function () {
+            resolve();
+        };
+
+        return resolve();
+    });
+};
+
 
 // some helper
 function promisifyDatastore (datastore) {
