@@ -34,7 +34,8 @@ var
 	Q = require('q'),
 
 	Database = require('./lib/database')(require('nw.gui').App.dataPath),
-	Settings = require('./lib/settings')(Database);
+	Settings = require('./lib/settings')(Database),
+	Updater = require('./lib/updater')(Settings);
 
 
 // Special Debug Console Calls!
