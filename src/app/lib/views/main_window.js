@@ -115,7 +115,7 @@
 			var that = this;
 			this.Content.show(new App.View.InitModal());
 
-					$('head').append('<link rel="stylesheet" href="themes/' + Settings.theme + '.css" type="text/css" />');
+					$('head').append('<link rel="stylesheet" href="themes/' + App.Settings.get('theme') + '.css" type="text/css" />');
 					// Always on top
 					win.setAlwaysOnTop(App.Settings.get('alwaysOnTop'));
 

@@ -1,4 +1,5 @@
 var path = require('path'),
+    os = require('os'),
     config;
 
 config = {
@@ -26,8 +27,43 @@ config = {
     moviesShowQuality       : false,
     movies_quality          : 'all',
     subtitle_language       : 'none',
+    subtitle_size           : '28px',
+    subtitle_color          : '#ffffff',
+    subtitle_shadows       : 'true',
 
-    yifyApiEndpoint         : 'http://yts.re/api/'
+
+    tvshowApiEndpoint       : 'http://eztvapi.re/',
+    httpApiPort             : 8008,
+    httpApiUsername         : 'popcorn',
+    httpApiPassword         : 'popcorn',
+
+
+    traktUsername           : '',
+    traktPassword           : '',
+    traktTvVersion          : '0.0.2',    
+    syncOnStart             : false,
+
+
+    connectionLimit         : 100,
+    dhtLimit                : 500,
+    streamPort              : 0, //random
+
+
+    tmpLocation             : path.join(os.tmpDir(), 'Popcorn-Time'),
+    deleteTmpOnClose        : true,
+
+    updateApiEndpoint       : 'http://popcorntime.re/',
+    yifyApiEndpoint         : 'http://yts.im/api/',
+    yifyApiEndpointMirror   : 'http://yts.re/api/',
+
+    connectionCheckUrl      : 'http://google.com/',
+
+    version                 : false,
+    dbversion               : '0.1.0',
+    font                    : 'tahoma',
+    defaultWidth            : Math.round(window.screen.availWidth * 0.8),
+    defaultHeight           : Math.round(window.screen.availHeight * 0.8)
+
 };
 
 // Export config

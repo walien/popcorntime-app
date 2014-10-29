@@ -1,8 +1,7 @@
 var
     SettingsManager,
     defaultSettings = require('./default'),
-    _ = require('lodash'),
-    Database = require('../database');
+    _ = require('lodash');
 
 function SettingsManager(dbInstance, settings) {
     var that = this;

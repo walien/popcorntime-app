@@ -25,7 +25,7 @@
 						for(var key in App.Localization.allTranslations) {
 								key = App.Localization.allTranslations[key];
 								if (App.Localization.langcodes[key] !== undefined) {
-								langs += "<option "+(Settings.language == key? "selected='selected'":"")+" value='"+key+"'>"+
+								langs += "<option "+(App.Settings.get('language') == key? "selected='selected'":"")+" value='"+key+"'>"+
 											App.Localization.langcodes[key].nativeName+"</option>";
 							}
 						}
@@ -43,7 +43,7 @@
 						var theme_files = fs.readdirSync('./src/app/themes/');
 						for (var i in theme_files) {
 							if (theme_files[i].indexOf('_theme') > -1) {
-								themes += "<option " + (Settings.theme == theme_files[i].slice(0, -4)? "selected='selected'" : "") + " value='" + theme_files[i].slice(0, -4) + "'>" +
+								themes += "<option " + (App.Settings.get('theme') == theme_files[i].slice(0, -4)? "selected='selected'" : "") + " value='" + theme_files[i].slice(0, -4) + "'>" +
 								theme_files[i].slice(0, -10).split('_').join(' '); + "</option>";
 							}
 						}
@@ -61,7 +61,7 @@
 
 							var selct_start_screen = "";
 							for(var key in arr_screens) {
-								selct_start_screen += "<option "+(Settings.start_screen == arr_screens[key]? "selected='selected'":"")+" value='"+arr_screens[key]+"'>"+i18n.__(arr_screens[key])+"</option>";
+								selct_start_screen += "<option "+(App.Settings.get('start_screen') == arr_screens[key]? "selected='selected'":"")+" value='"+arr_screens[key]+"'>"+i18n.__(arr_screens[key])+"</option>";
 							}
 						%>
 					<select name="start_screen"><%=selct_start_screen%></select>
@@ -70,12 +70,12 @@
 			</span>
 
 			<span class="advanced">
-				<input class="settings-checkbox" name="coversShowRating" id="cb3" type="checkbox" <%=(Settings.coversShowRating? "checked='checked'":"")%>>
+				<input class="settings-checkbox" name="coversShowRating" id="cb3" type="checkbox" <%=(App.Settings.get('coversShowRating')? "checked='checked'":"")%>>
 				<label class="settings-label" for="cb3"><%= i18n.__("Show rating over covers") %></label>
 			</span>
 				
 			<span class="advanced">
-				<input class="settings-checkbox" name="alwaysOnTop" id="cb4" type="checkbox" <%=(Settings.alwaysOnTop? "checked='checked'":"")%>>
+				<input class="settings-checkbox" name="alwaysOnTop" id="cb4" type="checkbox" <%=(App.Settings.get('alwaysOnTop')? "checked='checked'":"")%>>
 				<label class="settings-label" for="cb4"><%= i18n.__("Always On Top") %></label>
 			</span>
 
@@ -91,7 +91,7 @@
 
 							var select_watched_cover = "";
 							for(var key in watch_type) {
-								select_watched_cover += "<option "+(Settings.watchedCovers == key? "selected='selected'":"")+" value='"+key+"'>"+i18n.__(watch_type[key])+"</option>";
+								select_watched_cover += "<option "+(App.Settings.get('watchedCovers') == key? "selected='selected'":"")+" value='"+key+"'>"+i18n.__(watch_type[key])+"</option>";
 							}
 						%>
 					<select name="watchedCovers"><%=select_watched_cover%></select>
@@ -109,12 +109,12 @@
 				<div class="dropdown subtitles-language-default">
 					<p><%= i18n.__("Default Subtitle") %>:</p>
 					<%
-						var sub_langs = "<option "+(Settings.subtitle_language == "none"? "selected='selected'":"")+" value='none'>" +
+						var sub_langs = "<option "+(App.Settings.get('subtitle_language') == "none"? "selected='selected'":"")+" value='none'>" +
 											i18n.__("Disabled") + "</option>";
 
 						for(var key in App.Localization.langcodes) {
 							if (App.Localization.langcodes[key].subtitle !== undefined && App.Localization.langcodes[key].subtitle == true) {
-								sub_langs += "<option "+(Settings.subtitle_language == key? "selected='selected'":"")+" value='"+key+"'>"+
+								sub_langs += "<option "+(App.Settings.get('subtitle_language') == key? "selected='selected'":"")+" value='"+key+"'>"+
 												App.Localization.langcodes[key].nativeName+"</option>";
 							}
 						}
@@ -132,7 +132,7 @@
 
 						var sub_sizes = "";
 						for(var key in arr_sizes) {
-							sub_sizes += "<option "+(Settings.subtitle_size == arr_sizes[key]? "selected='selected'":"")+" value='"+arr_sizes[key]+"'>"+arr_sizes[key]+"</option>";
+							sub_sizes += "<option "+(App.Settings.get('subtitle_size') == arr_sizes[key]? "selected='selected'":"")+" value='"+arr_sizes[key]+"'>"+arr_sizes[key]+"</option>";
 						}
 					%>
 					<select name="subtitle_size"><%=sub_sizes%></select>
@@ -143,9 +143,9 @@
             <span class="advanced">
                 <div class="subtitles-custom">
                     <p><%= i18n.__("Color") + ":" %></p>
-                    <input id="subtitles_color" type="text" maxlength="7" size="7" name="subtitle_color" value="<%=Settings.subtitle_color%>">
+                    <input id="subtitles_color" type="text" maxlength="7" size="7" name="subtitle_color" value="<%=App.Settings.get('subtitle_color')%>">
 
-                    <input class="settings-checkbox" name="subtitle_shadows" id="subtitle_shadows" type="checkbox" <%=(Settings.subtitle_shadows? "checked='checked'":"")%>>
+                    <input class="settings-checkbox" name="subtitle_shadows" id="subtitle_shadows" type="checkbox" <%=(App.Settings.get('subtitle_shadows')? "checked='checked'":"")%>>
 				    <label class="settings-label" for="subtitle_shadows"><%= i18n.__("With Shadows") %></label>
                 </div>
 			</span>
@@ -159,15 +159,15 @@
 				<div class="dropdown movies-quality">
 					<p><%= i18n.__("Only list movies in") %>:</p>
 					<select name="movies_quality">
-						<option <%=(Settings.movies_quality == "all"? "selected='selected'":"") %> value="all"><%= i18n.__("All") %></option>
-						<option <%=(Settings.movies_quality == "1080p"? "selected='selected'":"") %> value="1080p">1080p</option>
-						<option <%=(Settings.movies_quality == "720p"? "selected='selected'":"") %> value="720p">720p</option>
+						<option <%=(App.Settings.get('movies_quality') == "all"? "selected='selected'":"") %> value="all"><%= i18n.__("All") %></option>
+						<option <%=(App.Settings.get('movies_quality') == "1080p"? "selected='selected'":"") %> value="1080p">1080p</option>
+						<option <%=(App.Settings.get('movies_quality') == "720p"? "selected='selected'":"") %> value="720p">720p</option>
 					</select>
 					<div class="dropdown-arrow"></div>
 				</div>
 			</span>
 			<span>
-				<input class="settings-checkbox" name="moviesShowQuality" id="cb1" type="checkbox" <%=(Settings.moviesShowQuality? "checked='checked'":"")%>>
+				<input class="settings-checkbox" name="moviesShowQuality" id="cb1" type="checkbox" <%=(App.Settings.get('moviesShowQuality')? "checked='checked'":"")%>>
 				<label class="settings-label" for="cb1"><%= i18n.__("Show movie quality on list") %></label>
 			</span>
 		</div>
@@ -176,7 +176,7 @@
 		<div class="title"><%= i18n.__("Playback") %></div>
 		<div class="content">
 			<span>
-				<input class="settings-checkbox" name="playNextEpisodeAuto" id="playNextEpisodeAuto" type="checkbox" <%=(Settings.playNextEpisodeAuto? "checked='checked'":"")%>>
+				<input class="settings-checkbox" name="playNextEpisodeAuto" id="playNextEpisodeAuto" type="checkbox" <%=(App.Settings.get('playNextEpisodeAuto')? "checked='checked'":"")%>>
 				<label class="settings-label" for="playNextEpisodeAuto"><%= i18n.__("Play next episode automatically") %></label>
 			</span>
 		</div>
@@ -188,7 +188,7 @@
 			<div class="trakt-options<%= App.Providers.Trakttv.authenticated ? " authenticated" : "" %>">
 				<% if(App.Providers.Trakttv.authenticated) { %>
 					<span>
-						<%= i18n.__("You are currently authenticated to Trakt.tv as") %> <%= Settings.traktUsername %>.
+						<%= i18n.__("You are currently authenticated to Trakt.tv as") %> <%= App.Settings.get('traktUsername') %>.
 						<a id="unauthTrakt" class="unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>
 					</span>
 					<span>
@@ -197,7 +197,7 @@
 							<%= i18n.__("Sync With Trakt") %>
 						</div>
                         <div class="sync-on-start">
-                            <input class="settings-checkbox" name="syncOnStart" id="syncOnStart" type="checkbox" <%=(Settings.syncOnStart? "checked='checked'":"")%>>
+                            <input class="settings-checkbox" name="syncOnStart" id="syncOnStart" type="checkbox" <%=(App.Settings.get('syncOnStart')? "checked='checked'":"")%>>
                             <label class="settings-label" for="syncOnStart"><%= i18n.__("Automatically Sync on Start") %></label>
                         </div>
 					</span>
@@ -229,19 +229,19 @@
 		<div class="content">
             <span>
                 <p><%= i18n.__("Local IP Address") + ":" %></p>
-                <input type="text" value="<%= Settings.ipAddress %>" readonly="readonly" size="20" /> 
+                <input type="text" value="<%= App.Settings.get('ipAddress') %>" readonly="readonly" size="20" /> 
             </span>
 			<span>
 				<p><%= i18n.__("HTTP API Port") + ":" %></p>
-				<input id="httpApiPort" type="number" size="5" name="httpApiPort" value="<%=Settings.httpApiPort%>">
+				<input id="httpApiPort" type="number" size="5" name="httpApiPort" value="<%=App.Settings.get('httpApiPort')%>">
 			</span>
 			<span>
 				<p><%= i18n.__("HTTP API Username") + ":" %></p>
-				<input id="httpApiUsername" type="text" size="50" name="httpApiUsername" value="<%=Settings.httpApiUsername%>">
+				<input id="httpApiUsername" type="text" size="50" name="httpApiUsername" value="<%=App.Settings.get('httpApiUsername')%>">
 			</span>
 			<span>
 				<p><%= i18n.__("HTTP API Password") + ":" %></p>
-				<input id="httpApiPassword" type="text" size="50" name="httpApiPassword" value="<%=Settings.httpApiPassword%>">
+				<input id="httpApiPassword" type="text" size="50" name="httpApiPassword" value="<%=App.Settings.get('httpApiPassword')%>">
 			</span>
 			<div class="btns advanced database">
 				<div class="btn-settings database qr-code"><%= i18n.__("Generate Pairing QR code") %></div>
@@ -262,19 +262,19 @@
 		<div class="content">
 			<span>
 				<p><%= i18n.__("TV Show API Endpoint") + ":" %></p>
-				<input id="tvshowApiEndpoint" type="text" size="50" name="tvshowApiEndpoint" value="<%=Settings.tvshowApiEndpoint%>">
+				<input id="tvshowApiEndpoint" type="text" size="50" name="tvshowApiEndpoint" value="<%=App.Settings.get('tvshowApiEndpoint')%>">
 			</span>
 			<span>
 				<p><%= i18n.__("Connection Limit") + ":" %></p>
-				<input id="connectionLimit" type="text" size="20" name="connectionLimit" value="<%=Settings.connectionLimit%>"/>
+				<input id="connectionLimit" type="text" size="20" name="connectionLimit" value="<%=App.Settings.get('connectionLimit')%>"/>
 			</span>
 			<span>
 				<p><%= i18n.__("DHT Limit") + ":" %></p>
-				<input type="text" id="dhtLimit" size="20" name="dhtLimit" value="<%=Settings.dhtLimit%>"/>
+				<input type="text" id="dhtLimit" size="20" name="dhtLimit" value="<%=App.Settings.get('dhtLimit')%>"/>
 			</span>
 			<span>
 				<p><%= i18n.__("Port to stream on") + ":" %></p>
-				<input id="streamPort" type="text" size="20" name="streamPort" value="<%=Settings.streamPort%>"/>&nbsp;&nbsp;<em><%= i18n.__("0 = Random") %></em>
+				<input id="streamPort" type="text" size="20" name="streamPort" value="<%=App.Settings.get('streamPort')%>"/>&nbsp;&nbsp;<em><%= i18n.__("0 = Random") %></em>
 			</span>
 		</div>
 	</section>
@@ -284,12 +284,12 @@
 		<div class="content">
 			<span>
 				<p><%= i18n.__("Cache Directory") %>: </p>
-				<input type="text" placeholder="<%= i18n.__("Cache Directory") %>" id="faketmpLocation" value="<%= Settings.tmpLocation %>" readonly="readonly" size="65" /> 
+				<input type="text" placeholder="<%= i18n.__("Cache Directory") %>" id="faketmpLocation" value="<%= App.Settings.get('tmpLocation') %>" readonly="readonly" size="65" /> 
 				<i class="open-tmp-folder fa fa-folder-open-o tooltipped" data-toggle="tooltip" data-placement="auto" title="<%= i18n.__("Open Cache Directory") %>"></i>
-				<input type="file" name="tmpLocation" id="tmpLocation" nwdirectory style="display: none;" nwworkingdir="<%= Settings.tmpLocation %>" />
+				<input type="file" name="tmpLocation" id="tmpLocation" nwdirectory style="display: none;" nwworkingdir="<%= App.Settings.get('tmpLocation') %>" />
 			</span>
 			<span>
-				<input class="settings-checkbox" name="deleteTmpOnClose" id="cb2" type="checkbox" <%=(Settings.deleteTmpOnClose? "checked='checked'":"")%>>
+				<input class="settings-checkbox" name="deleteTmpOnClose" id="cb2" type="checkbox" <%=(App.Settings.get('deleteTmpOnClose')? "checked='checked'":"")%>>
 				<label class="settings-label" for="cb2"><%= i18n.__("Clear Tmp Folder after closing app?") %></label>
 			</span>
 		</div>
@@ -300,9 +300,9 @@
 		<div class="content">
 			<span>
 				<p><%= i18n.__("Database Directory") %>: </p>
-				<input type="text" placeholder="<%= i18n.__("Database Directory") %>" id="fakedatabaseLocation" value="<%= Settings.databaseLocation %>" readonly="readonly" size="65" /> 
+				<input type="text" placeholder="<%= i18n.__("Database Directory") %>" id="fakedatabaseLocation" value="<%= App.Settings.get('databaseLocation') %>" readonly="readonly" size="65" /> 
 				<i class="open-database-folder fa fa-folder-open-o tooltipped" data-toggle="tooltip" data-placement="auto" title="<%= i18n.__("Open Database Directory") %>"></i>
-				<input type="file" name="fakedatabaseLocation" id="fakedatabaseLocation" nwdirectory style="display: none;" nwworkingdir="<%= Settings.databaseLocation %>" />
+				<input type="file" name="fakedatabaseLocation" id="fakedatabaseLocation" nwdirectory style="display: none;" nwworkingdir="<%= App.Settings.get('databaseLocation') %>" />
 			</span>
 			<div class="btns advanced database">
 				<div class="btn-settings database import-database"><%= i18n.__("Import Database") %></div>
@@ -324,7 +324,7 @@
 
 							var selected_tv_detail_jump = "";
 							for(var key in tv_detail_jump_to) {
-								selected_tv_detail_jump += "<option "+(Settings.tv_detail_jump_to == key? "selected='selected'":"")+" value='"+key+"'>"+i18n.__(tv_detail_jump_to[key])+"</option>";
+								selected_tv_detail_jump += "<option "+(App.Settings.get('tv_detail_jump_to') == key? "selected='selected'":"")+" value='"+key+"'>"+i18n.__(tv_detail_jump_to[key])+"</option>";
 							}
 						%>
 					<select name="tv_detail_jump_to"><%=selected_tv_detail_jump%></select>

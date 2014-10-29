@@ -190,7 +190,7 @@ var health_checked = false;
 
 			_this.initKeyboardShortcuts();
 
-			if (AdvSettings.get('ratingStars') === false) {
+			if (App.Settings.get('ratingStars') === false) {
 				$('.star-container-tv').addClass('hidden');
 				$('.number-container-tv').removeClass('hidden');
 			}
@@ -200,7 +200,7 @@ var health_checked = false;
 		selectNextEpisode: function () {
 
 			var episodesSeen = [];
-			Database.getEpisodesWatched(this.model.get('tvdb_id'))
+			App.Database.find('watched', {tvdb_id: this.model.get('tvdb_id').toString()})
 				.then(function (data) {
 					_.each(data, function (value, state) {
 						// we'll mark episode already watched
@@ -229,7 +229,7 @@ var health_checked = false;
 						var unseen = episodes.filter(function (item) {
 							return episodesSeen.indexOf(item) === -1;
 						});
-						if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
+						if (App.Settings.get('tv_detail_jump_to') !== 'firstUnwatched') {
 							var lastSeen = episodesSeen[episodesSeen.length - 1];
 
 							if (lastSeen !== episodes[episodes.length - 1]) {
@@ -281,11 +281,11 @@ var health_checked = false;
 			if ($('.number-container-tv').hasClass('hidden')) {
 				$('.number-container-tv').removeClass('hidden');
 				$('.star-container-tv').addClass('hidden');
-				AdvSettings.set('ratingStars', false);
+				App.Settings.set('ratingStars', false);
 			} else {
 				$('.number-container-tv').addClass('hidden');
 				$('.star-container-tv').removeClass('hidden');
-				AdvSettings.set('ratingStars', true);
+				App.Settings.set('ratingStars', true);
 			}
 		},
 
@@ -355,12 +355,12 @@ var health_checked = false;
 			var selected_quality = $(e.currentTarget).attr('data-quality');
 			var auto_play = false;
 
-			if (AdvSettings.get('playNextEpisodeAuto')) {
+			if (App.Settings.get('playNextEpisodeAuto')) {
 				_.each(this.model.get('episodes'), function (value) {
 					var epaInfo = {
 						id: parseInt(value.season) * 100 + parseInt(value.episode),
 						backdrop: that.model.get('images').fanart,
-						defaultSubtitle: Settings.subtitle_language,
+						defaultSubtitle: App.Settings.get('subtitle_language'),
 						episode: value.episode,
 						season: value.season,
 						title: that.model.get('title') + ' - ' + i18n.__('Season') + ' ' + value.season + ', ' + i18n.__('Episode') + ' ' + value.episode + ' - ' + value.title,
@@ -404,7 +404,7 @@ var health_checked = false;
 				status: that.model.get('status'),
 				extract_subtitle: epInfo,
 				quality: $(e.currentTarget).attr('data-quality'),
-				defaultSubtitle: Settings.subtitle_language,
+				defaultSubtitle: App.Settings.get('subtitle_language'),
 				device: App.Device.Collection.selected,
 				cover: that.model.get('images').poster,
 				episodes: episodes,
@@ -412,7 +412,7 @@ var health_checked = false;
 				auto_id: parseInt(season) * 100 + parseInt(episode),
 				auto_play_data: episodes_data
 			});
-			win.info('Playing next episode automatically:', AdvSettings.get('playNextEpisodeAuto'));
+			win.info('Playing next episode automatically:', App.Settings.get('playNextEpisodeAuto'));
 			_this.unbindKeyboardShortcuts();
 			App.vent.trigger('stream:start', torrentStart);
 		},

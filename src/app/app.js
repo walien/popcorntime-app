@@ -36,7 +36,6 @@ var
 	Database = require('./lib/database')(require('nw.gui').App.dataPath),
 	Settings = require('./lib/settings')(Database);
 
-	console.log(Settings.get('showAdvancedSettings'));
 
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
@@ -180,8 +179,8 @@ App.addInitializer(function (options) {
 		zoom = 1;
 	}
 
-	var width = parseInt(localStorage.width ? localStorage.width : Settings.defaultWidth);
-	var height = parseInt(localStorage.height ? localStorage.height : Settings.defaultHeight);
+	var width = parseInt(localStorage.width ? localStorage.width : App.Settings.get('defaultWidth'));
+	var height = parseInt(localStorage.height ? localStorage.height : App.Settings.get('defaultHeight'));
 	var x = parseInt(localStorage.posX ? localStorage.posX : -1);
 	var y = parseInt(localStorage.posY ? localStorage.posY : -1);
 
@@ -257,7 +256,7 @@ if(process.platform === 'win32' && parseFloat(os.release(), 10) > 6.1) {
 
 */
 // Create the System Temp Folder. This is used to store temporary data like movie files.
-if (!fs.existsSync(Settings.get('tmpLocation'))) {
+if (!fs.existsSync(App.Settings.get('tmpLocation'))) {
 	fs.mkdir(App.Settings.get('tmpLocation'));
 }
 
@@ -299,7 +298,7 @@ win.on('move', function (x, y) {
 
 // Wipe the tmpFolder when closing the app (this frees up disk space)
 win.on('close', function () {
-	if (App.settings.deleteTmpOnClose) {
+	if (App.Settings.get('deleteTmpOnClose')) {
 		deleteFolder(App.Settings.get('tmpLocation'));
 	}
 

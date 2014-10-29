@@ -99,13 +99,13 @@
 			};
 
 			// switch to default subtitle
-			this.switchSubtitle(Settings.subtitle_language);
+			this.switchSubtitle(App.Settings.get('subtitle_language'));
 
 			if (this.model.get('bookmarked') === true) {
 				this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
 			}
 
-			if (AdvSettings.get('ratingStars') === false) {
+			if (App.Settings.get('ratingStars') === false) {
 				$('.star-container').addClass('hidden');
 				$('.number-container').removeClass('hidden');
 			}
@@ -141,11 +141,11 @@
 			if ($('.number-container').hasClass('hidden')) {
 				$('.number-container').removeClass('hidden');
 				$('.star-container').addClass('hidden');
-				AdvSettings.set('ratingStars', false);
+				App.Settings.set('ratingStars', false);
 			} else {
 				$('.number-container').addClass('hidden');
 				$('.star-container').removeClass('hidden');
-				AdvSettings.set('ratingStars', true);
+				App.Settings.set('ratingStars', true);
 			}
 		},
 
