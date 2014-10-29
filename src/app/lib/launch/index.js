@@ -17,11 +17,18 @@ Launcher.prototype.init = function () {
 
                 // compare version
                 var currentVersion = that.app.gui.App.manifest.version;
-
+                /*
                 if (currentVersion !== that.app.Settings.get('version')) {
                     // we should clear indexDb ?
-                }
+                    that.app.CacheV2.deleteDatabase()
+                        .then(function() {
+                            that.app.Settings.set('version', currentVersion);
 
+                            // TODO: Ask user to restart OR reinit the cache ?
+                        });
+
+                }
+                */
                 that.app.Settings.set('version', currentVersion);
                 that.app.Settings.set('releaseName', that.app.gui.App.manifest.releaseName);
 
