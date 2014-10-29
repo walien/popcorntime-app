@@ -68,6 +68,7 @@ if (gui.App.fullArgv.indexOf('--reset') !== -1) {
 	var data_path = require('nw.gui').App.dataPath;
 
 	localStorage.clear();
+	indexedDB.deleteDatabase('cache');
 
 	fs.unlinkSync(path.join(data_path, 'data/watched.db'), function (err) {
 		if (err) {

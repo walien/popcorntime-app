@@ -378,10 +378,12 @@ s			});
 			}
 
 			that.alertMessageWait(i18n.__('We are flushing your databases'));
-
-			App.Database.deleteDatabase()
+			App.CacheV2.deleteDatabase()
 				.then(function () {
-					that.alertMessageSuccess(true);
+					App.Database.deleteDatabase()
+						.then(function () {
+							that.alertMessageSuccess(true);
+					});					
 				});
 		},
 

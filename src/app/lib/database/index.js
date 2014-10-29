@@ -99,19 +99,6 @@ DatabaseManager.prototype.deleteDatabase = function () {
             fs.unlinkSync(path.join(that.data_path, database.path));
         });
 
-        /*
-        var req = window.indexedDB.deleteDatabase(App.Config.cache.name);
-        req.onsuccess = function () {
-            resolve();
-        };
-        req.onerror = function () {
-            resolve();
-        };
-        req.onblocked = function () {
-            resolve();
-        };
-        */
-
         resolve();
     });
 };

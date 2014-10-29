@@ -58,6 +58,7 @@
 				});
 			});
 		};
+
 		this._openPromise = WrapRequest(db).promise;
 	}
 
@@ -141,5 +142,14 @@
 	};
 
 	App.CacheV2 = Cache;
+	App.CacheV2.deleteDatabase = function () {
+		var that = this;
+		
+		return Q.Promise(function (resolve, reject) {
+			indexedDB.deleteDatabase(App.Config.cachev2.name);		
+			resolve();
+		});
+	};	
 
+	
 })(window.App);
