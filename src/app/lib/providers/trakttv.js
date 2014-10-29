@@ -24,6 +24,10 @@
 
 		this.watchlist = App.Providers.get('Watchlist');
 
+		console.log(this.watchlist);
+		console.log(App.Providers.Watchlist);
+		process.exit();
+
 		// Login with stored credentials
 		if (App.Settings.get('traktUsername') !== '' && App.Settings.get('traktPassword') !== '') {
 			this._authenticationPromise = this.authenticate(App.Settings.get('traktUsername'), App.Settings.get('traktPassword'), true);

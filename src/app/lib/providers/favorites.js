@@ -6,7 +6,7 @@
 	Favorites.prototype.constructor = Favorites;
 
 	var queryTorrents = function (filters) {
-		return App.db.getBookmarks(filters)
+		return App.Database.find('bookmarks',filters)
 			.then(function (data) {
 					return data;
 				},

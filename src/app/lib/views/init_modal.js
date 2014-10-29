@@ -12,8 +12,6 @@
 
 		initialize: function () {
 			win.info('Loading DB');
-
-
 		},
 
 		onShow: function () {

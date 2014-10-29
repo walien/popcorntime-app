@@ -62,7 +62,9 @@ config = {
     dbversion               : '0.1.0',
     font                    : 'tahoma',
     defaultWidth            : Math.round(window.screen.availWidth * 0.8),
-    defaultHeight           : Math.round(window.screen.availHeight * 0.8)
+    defaultHeight           : Math.round(window.screen.availHeight * 0.8),
+
+    tv_detail_jump_to       : 'next',
 
 };
 

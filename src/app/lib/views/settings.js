@@ -5,6 +5,7 @@
 	var AdmZip = require('adm-zip');
 	var fdialogs = require('node-webkit-fdialogs');
 	var fs = require('fs');
+	var Trakt = App.Providers.get('Trakttv');
 
 	var that;
 
@@ -302,7 +303,7 @@
 			$('.valid-tick').hide();
 			$('.loading-spinner').show();
 			// trakt.authenticate automatically saves the username and pass on success!
-			App.Providers.Trakttv.authenticate(username, password).then(function (valid) {
+			Trakt.authenticate(username, password).then(function (valid) {
 				$('.loading-spinner').hide();
 				// Stop multiple requests interfering with each other
 				$('.invalid-cross').hide();
@@ -323,28 +324,16 @@
 		disconnectTrakt: function (e) {
 			var self = this;
 
-			App.settings['traktUsername'] = '';
-			App.settings['traktPassword'] = '';
-			App.Providers.Trakttv.authenticated = false;
+			Trakt.authenticated = false;
 
-			App.db.writeSetting({
-				key: 'traktUsername',
-				value: ''
-			})
-				.then(function () {
-					return App.db.writeSetting({
-						key: 'traktPassword',
-						value: ''
-					});
-				})
-				.then(function () {
-					self.ui.success_alert.show().delay(3000).fadeOut(400);
-				});
+			App.Settings.set('traktUsername','');
+			App.Settings.set('traktPassword','');
+
+			self.ui.success_alert.show().delay(3000).fadeOut(400);
 
 			_.defer(function () {
-				//App.Trakt = App.Providers.get('Trakttv');
 				self.render();
-			});
+s			});
 		},
 
 		flushBookmarks: function (e) {
@@ -556,7 +545,7 @@
 		syncTrakt: function () {
 			$('#syncTrakt').text(i18n.__('Syncing...')).addClass('disabled').prop('disabled', true);
 
-			App.Providers.Trakttv.sync()
+			Trakt.sync()
 				.then(function () {
 					$('#syncTrakt').text(i18n.__('Done')).removeClass('disabled').addClass('green').delay(3000).queue(function () {
 						$('#syncTrakt').text(i18n.__('Sync With Trakt')).removeClass('green').prop('disabled', false);

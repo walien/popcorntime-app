@@ -115,7 +115,6 @@ App.Database = Database;
 // Set settings
 App.Settings = Settings;
 
-
 Database.find('bookmarks').then(function(data) {
 	App.userBookmarks = data;
 });
