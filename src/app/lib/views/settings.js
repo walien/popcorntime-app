@@ -5,7 +5,7 @@
 	var AdmZip = require('adm-zip');
 	var fdialogs = require('node-webkit-fdialogs');
 	var fs = require('fs');
-	var Trakt = App.Providers.get('Trakttv');
+	var Trakt;
 
 	var that;
 
@@ -45,6 +45,8 @@
 		},
 
 		onShow: function () {
+
+			Trakt = App.Providers.get('Trakttv');
 
 			this.render();
 

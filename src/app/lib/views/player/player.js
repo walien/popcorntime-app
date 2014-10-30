@@ -5,7 +5,7 @@
 	var autoplayisshown = false;
 	var precachestarted = false;
 	var next_episode_model = false;
-	var Trakt = App.Providers.get('trakttv');
+	var Trakt;
 
 
 	var Player = Backbone.Marionette.ItemView.extend({
@@ -80,6 +80,8 @@
 		},
 
 		onShow: function () {
+			Trakt = App.Providers.get('trakttv');
+
 			$('#header').removeClass('header-shadow').hide();
 			// Test to make sure we have title
 			win.info('Watching:', this.model.get('title'));
