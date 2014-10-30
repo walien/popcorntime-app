@@ -57,10 +57,10 @@ module.exports = function (grunt) {
 		'css',
 		'injectgit',
 		'bower_clean',
-		'lang',
+		'submodule',
 		'nodewebkit'
 	]);
-	grunt.registerTask('lang', ['shell:language']);
+	grunt.registerTask('submodule', ['shell:submodule']);
 
 	grunt.registerTask('dist', [
 		'clean:releases',
@@ -230,28 +230,9 @@ module.exports = function (grunt) {
 		},
 
 		shell: {
-			themes: {
+			submodule: {
 				command: [
-					'git submodule init',
-					'cd src/app/styl/third_party/',
-					'git checkout master',
-					'git pull --force',
-					'cd ../../../../',
-					'git submodule update',
-					'cd src/app/styl/third_party/',
-					'git reset --hard origin/master'
-				].join('&&')
-			},
-			language: {
-				command: [
-					'git submodule init',
-					'cd src/app/language/',
-					'git checkout master',
-					'git pull --force',
-					'cd ../../../',
-					'git submodule update',
-					'cd src/app/language/',
-					'git reset --hard origin/master'
+					'git submodule update --init'
 				].join('&&')
 			}
 		},
