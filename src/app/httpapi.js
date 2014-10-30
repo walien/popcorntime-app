@@ -644,7 +644,7 @@
 	var sockets = [];
 
 	function startListening() {
-		httpServer = server.listen(Settings.httpApiPort);
+		httpServer = server.listen(App.Settings.get('httpApiPort'));
 
 		httpServer.on('connection', function (socket) {
 			sockets.push(socket);
@@ -670,7 +670,7 @@
 		if (result === undefined) {
 			result = {};
 		}
-		result['popcornVersion'] = App.settings.version;
+		result['popcornVersion'] = App.Settings.get('version');
 		callback(err, result);
 	}
 
@@ -678,7 +678,7 @@
 		console.log('Reiniting server');
 		Q.fcall(initServer)
 			.then(function () {
-				server.enableAuth(Settings.httpApiUsername, Settings.httpApiPassword);
+				server.enableAuth(App.Settings.get('httpApiUsername'), App.Settings.get('httpApiPassword'));
 				if (httpServer) {
 					closeServer(startListening);
 				} else {

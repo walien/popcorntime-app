@@ -14,6 +14,7 @@ function Launcher(App) {
 
 Launcher.prototype.init = function() {
     var that = this;
+    this.app.vent.trigger('initHttpApi');
     return this.checkEndpoint()
         .then(function() {
             return that.compareVersion();
