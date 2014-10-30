@@ -154,8 +154,8 @@ module.exports = App.Providers.Metadata.extend({
                 };
                 self.authenticated = true;
                 // Store the credentials (hashed ofc)
-                AdvSettings.set('traktUsername', self._credentials.username);
-                AdvSettings.set('traktPassword', self._credentials.password);
+                self.app.api.settings.set('traktUsername', self._credentials.username);
+                self.app.api.settings.set('traktPassword', self._credentials.password);
                 return true;
             } else {
                 return false;

@@ -45,7 +45,7 @@
 
 		onShow: function () {
 
-			Trakt = App.Providers.get('Trakttv');
+			Trakt = App.Providers.get('trakttv');
 
 			this.render();
 
