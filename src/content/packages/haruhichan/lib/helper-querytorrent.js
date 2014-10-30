@@ -1,86 +1,12 @@
 var helpers = {},
-    querystring = require('querystring'),
-    request = require('request'),
-    Q = require('q')
-_ = require('underscore'),
-    URL = 'http://ptp.haruhichan.com/',
+    _ = require('lodash'),
     statusMap = {
         0: 'Not Airing Yet',
         1: 'Currently Airing',
         2: 'Ended'
     };
 
-/*
- * Function used to query all torents using PT filters
- */
-helpers.queryTorrents = function(filters) {
-    // http://ptp.haruhichan.com/list.php?page=0&sort=rank&order=desc&limit=50&state=1
-    var deferred = Q.defer();
-
-    var params = {};
-    params.sort = 'popularity';
-    params.limit = '50';
-    params.type = 'All';
-    params.page = (filters.page ? filters.page - 1 : 0);
-
-    if (filters.keywords) {
-        params.search = filters.keywords.replace(/\s/g, '% ');
-    }
-
-    var genre = filters.genre;
-    if (genre && (genre !== 'All')) {
-        params.genre = genre;
-    }
-
-    switch (filters.order) {
-        case 1:
-            params.order = 'asc';
-            break;
-        case -1:
-            /* falls through */
-        default:
-            params.order = 'desc';
-            break;
-    }
-
-    if (filters.sorter && filters.sorter !== 'popularity') {
-        params.sort = filters.sorter;
-    }
-
-    if (filters.type && filters.type !== 'All') {
-        if (filters.type === 'Movies') {
-            params.type = 'movie';
-        } else {
-            params.type = filters.type.toLowerCase();
-        }
-    }
-
-    // XXX(xaiki): haruchichan currently doesn't support filters
-    var url = URL + 'list.php?' + querystring.stringify(params).replace(/%25%20/g, '%20');
-    console.log('Request to HARUHICHAN API');
-    console.log(url);
-    request({
-        url: url,
-        json: true
-    }, function(error, response, data) {
-        if (error || response.statusCode >= 400) {
-            deferred.reject(error);
-        } else if (!data || (data.error && data.error !== 'No movies found')) {
-            var err = data ? data.error : 'No data returned';
-            console.log('API error:', err);
-            deferred.reject(err);
-        } else {
-            deferred.resolve(data);
-        }
-    });
-
-    return deferred.promise;
-};
-
-
-// Single element query
 helpers.formatForPopcorn = function(items) {
-    console.log(_.pluck(items, 'type'));
     var results = _.map(items, function(item) {
         var img = item.malimg;
         var type = (item.type === 'Movie') ? 'movie' : 'show';
@@ -110,35 +36,51 @@ helpers.formatForPopcorn = function(items) {
     };
 };
 
-helpers.queryTorrent = function(torrent_id, prev_data) {
-    return Q.Promise(function(resolve, reject) {
-        var id = torrent_id.split('-')[1];
-        var url = URL + 'anime.php?id=' + id;
-
-        console.log('Request to HARUHICHAN API');
-        console.log(url);
-        request({
-            url: url,
-            json: true
-        }, function(error, response, data) {
-            if (error || response.statusCode >= 400) {
-                reject(error);
-            } else if (!data || (data.error && data.error !== 'No data returned')) {
-
-                var err = data ? data.error : 'No data returned';
-                console.log('API error:', err);
-                reject(err);
-
-            } else {
-
-                // we cache our new element
-                resolve(formatDetailForPopcorn(data, prev_data));
-            }
-        });
+helpers.formatDetailForPopcorn = function(item, prev) {
+    var img = item.malimg;
+    var type = prev.type;
+    var genres = item.genres.split(', ');
+    var ret = _.extend(prev, {
+        country: 'Japan',
+        genre: genres.join(' - '),
+        genres: genres,
+        num_seasons: 1,
+        runtime: parseTime(item.duration),
+        status: statusMap[item.status],
+        synopsis: item.synopsis,
+        network: item.producers, //FIXME
+        rating: { // FIXME
+            hated: 0,
+            loved: 0,
+            votes: 0,
+            percentage: item.score
+        },
+        images: {
+            poster: img,
+            fanart: img,
+            banner: img
+        },
+        year: item.aired.split(', ')[1].replace(/ to.*/, ''),
+        type: type
     });
+
+    if (type === 'movie') {
+        ret = _.extend(ret, {
+            rating: 0,
+            subtitle: undefined,
+            torrents: movieTorrents(item.id, item.episodes),
+        });
+    } else {
+        ret = _.extend(ret, {
+            episodes: showTorrents(item.id, item.episodes)
+        });
+    }
+
+    console.log('haruhiret', ret);
+    return ret;
 };
 
-helpers.movieTorrents = function(id, dl) {
+var movieTorrents = function(id, dl) {
     var torrents = {};
     _.each(dl, function(item) {
         var quality = item.quality.match(/[0-9]+p/)[0];
@@ -153,7 +95,7 @@ helpers.movieTorrents = function(id, dl) {
     return torrents;
 };
 
-helpers.showTorrents = function(id, dl) {
+var showTorrents = function(id, dl) {
     var torrents = {};
     _.each(dl, function(item) {
         var quality = item.quality.match(/[0-9]+p/)[0];
@@ -183,51 +125,6 @@ helpers.showTorrents = function(id, dl) {
             tvdb_id: id + '-1-' + s
         };
     });
-};
-
-var formatDetailForPopcorn = function(item, prev) {
-    var img = item.malimg;
-    var type = prev.type;
-    var genres = item.genres.split(', ');
-
-    var ret = _.extend(prev, {
-        country: 'Japan',
-        genre: genres.join(' - '),
-        genres: genres,
-        num_seasons: 1,
-        runtime: parseTime(item.duration),
-        status: statusMap[item.status],
-        synopsis: item.synopsis,
-        network: item.producers, //FIXME
-        rating: { // FIXME
-            hated: 0,
-            loved: 0,
-            votes: 0,
-            percentage: item.score
-        },
-        images: {
-            poster: img,
-            fanart: img,
-            banner: img
-        },
-        year: item.aired.split(', ')[1].replace(/ to.*/, ''),
-        type: type
-    });
-
-    if (type === 'movie') {
-        ret = _.extend(ret, {
-            rating: 0,
-            subtitle: undefined,
-            torrents: helpers.movieTorrents(item.id, item.episodes),
-        });
-    } else {
-        ret = _.extend(ret, {
-            episodes: helpers.showTorrents(item.id, item.episodes)
-        });
-    }
-
-    console.log('haruhiret', ret);
-    return ret;
 };
 
 var parseTime = function(duration) {

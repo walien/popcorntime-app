@@ -4,8 +4,8 @@
 * We import our depedencies
 */
 var App = require('pdk'),
-    _ = require('underscore'),
-    helpers = require('./helper-querytorrent');
+    _ = require('lodash'),
+    querystring = require('querystring');
 
 /*
 * We build and export our new package
@@ -34,15 +34,48 @@ module.exports = App.Providers.Source.extend({
     /*
     * Default Function used by PT
     */
-    fetch: function (filters) {         
-        return helpers.queryTorrents(filters);
+    fetch: function (filters) {
+        var params = {};
+        params.sort = 'seeds';
+        params.limit = '50';
+
+        if (filters.keywords) {
+            params.keywords = filters.keywords.replace(/\s/g, '% ');
+        }
+
+        if (filters.genre) {
+            params.genre = filters.genre;
+        }
+
+        if (filters.order) {
+            params.order = filters.order;
+        }
+
+        if (filters.sorter && filters.sorter !== 'popularity') {
+            params.sort = filters.sorter;
+        }
+
+        var url = 'http://eztvapi.re/shows/' + filters.page + '?' + querystring.stringify(params).replace(/%25%20/g, '%20');
+        return this.call(url)
+            .then(function(data) {
+
+                data.forEach(function(entry) {
+                    entry.type = 'show';
+                });   
+
+                return {results: data, hasMore: true};
+            });
     },
 
     /*
     * Default Function used by PT
     */
     detail: function (torrent_id, old_data) {
-        return helpers.queryTorrent(torrent_id, old_data);
+
+        return this.call('http://eztvapi.re/' + 'show/' + torrent_id)
+            .then(function(data) {
+                return data;
+            });
     },    
 
     /*
