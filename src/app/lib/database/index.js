@@ -84,8 +84,9 @@ DatabaseManager.prototype.update = function (database, key, data) {
 };
 
 // example db.remove('movies', {imdb_id: 'tt736635'})
-DatabaseManager.prototype.delete = function (database, data) {
-    return this.db[database].remove(data);
+DatabaseManager.prototype.delete = function (database, data , multi) {
+    multi = multi || false;
+    return this.db[database].remove(data, { multi: multi });
 };
 
 // TODO MAYBE ADD A WAY TO CLEAR INDEXDB?

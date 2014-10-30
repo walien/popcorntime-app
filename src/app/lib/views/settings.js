@@ -27,7 +27,6 @@
 			'contextmenu input': 'rightclick_field',
 			'click .flush-bookmarks': 'flushBookmarks',
 			'click .flush-databases': 'flushAllDatabase',
-			'click .flush-subtitles': 'flushAllSubtitles',
 			'click #faketmpLocation': 'showCacheDirectoryDialog',
 			'click .default-settings': 'resetSettings',
 			'click .open-tmp-folder': 'openTmpFolder',
@@ -335,7 +334,7 @@
 
 			_.defer(function () {
 				self.render();
-s			});
+			});
 		},
 
 		flushBookmarks: function (e) {
@@ -364,7 +363,7 @@ s			});
 
 			that.alertMessageWait(i18n.__('We are resetting the settings'));
 
-			Database.resetSettings()
+			App.Database.delete('settings', {} , true)
 				.then(function () {
 					that.alertMessageSuccess(true);
 					App.Settings.set('disclaimerAccepted', 1);
@@ -386,25 +385,6 @@ s			});
 						.then(function () {
 							that.alertMessageSuccess(true);
 					});					
-				});
-		},
-
-		flushAllSubtitles: function (e) {
-			var that = this;
-			var btn = $(e.currentTarget);
-
-			if (!that.areYouSure(btn, i18n.__('Flushing...'))) {
-				return;
-			}
-
-			that.alertMessageWait(i18n.__('We are flushing your subtitle cache'));
-
-			var cache = new App.Cache('subtitle');
-			cache.flushTable()
-				.then(function () {
-
-					that.alertMessageSuccess(false, btn, i18n.__('Flush subtitles cache'), i18n.__('Subtitle cache deleted'));
-
 				});
 		},
 
@@ -441,10 +421,10 @@ s			});
 			var that = this;
 			var zip = new AdmZip();
 			var btn = $(e.currentTarget);
-			var databaseFiles = fs.readdirSync(App.settings['databaseLocation']);
+			var databaseFiles = fs.readdirSync(App.Settings.get('databaseLocation'));
 
 			databaseFiles.forEach(function (entry) {
-				zip.addLocalFile(App.settings['databaseLocation'] + '/' + entry);
+				zip.addLocalFile(App.Settings.get('databaseLocation') + '/' + entry);
 			});
 
 			fdialogs.saveFile(zip.toBuffer(), function (err, path) {
@@ -465,7 +445,7 @@ s			});
 				try {
 					var zip = new AdmZip(content);
 
-					zip.extractAllTo(App.settings['databaseLocation'] + '/', /*overwrite*/ true);
+					zip.extractAllTo(App.Settings.get('databaseLocation') + '/', /*overwrite*/ true);
 					that.alertMessageSuccess(true);
 				} catch (err) {
 
