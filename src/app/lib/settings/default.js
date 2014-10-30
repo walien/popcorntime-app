@@ -53,8 +53,8 @@ config = {
     deleteTmpOnClose        : true,
 
     updateApiEndpoint       : 'http://popcorntime.re/',
-    yifyApiEndpoint         : 'http://yts.im/api/',
-    yifyApiEndpointMirror   : 'http://yts.re/api/',
+    yifyApiEndpoint         : 'https://yts.re/api/',
+    yifyApiEndpointMirror   : 'https://yts.im/api/',
 
     connectionCheckUrl      : 'http://google.com/',
 

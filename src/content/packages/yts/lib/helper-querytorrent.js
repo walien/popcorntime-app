@@ -75,7 +75,7 @@ helpers.queryTorrent = function(torrent_id, old_data, url) {
         var params = {
             imdb_id: torrent_id
         };
-        var url = url + 'listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
+        url = url + 'listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
         request({
             url: url,

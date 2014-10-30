@@ -30,7 +30,7 @@ Launcher.prototype.checkEndpoint = function() {
     var allApis = [{
         original: 'yifyApiEndpoint',
         mirror: 'yifyApiEndpointMirror',
-        fingerprint: 'F6:E8:18:11:0A:6F:57:7F:F2:9C:FC:C3:80:F9:A8:5B:07:04:08:2C'
+        fingerprint: 'D4:7B:8A:2A:7B:E1:AA:40:C5:7E:53:DB:1B:0F:4F:6A:0B:AA:2C:6C'
     }];
 
     var promises = allApis.map(function(apiCheck) {
