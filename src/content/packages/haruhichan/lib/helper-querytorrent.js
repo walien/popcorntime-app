@@ -76,7 +76,6 @@ helpers.formatDetailForPopcorn = function(item, prev) {
         });
     }
 
-    console.log('haruhiret', ret);
     return ret;
 };
 
