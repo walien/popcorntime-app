@@ -289,15 +289,16 @@ var health_checked = false;
 
 		toggleWatched: function (e) {
 			var edata = e.currentTarget.id.split('-');
+
 			var value = {
-				tvdb_id: _this.model.get('tvdb_id'),
-				imdb_id: _this.model.get('imdb_id'),
-				season: edata[1],
-				episode: edata[2],
+				tvdb_id: _this.model.get('tvdb_id').toString(),
+				imdb_id: _this.model.get('imdb_id').toString(),
+				season: edata[1].toString(),
+				episode: edata[2].toString(),
 				from_browser: true
 			};
 
-			Database.checkEpisodeWatched(value)
+			App.Database.get('watched',value)
 				.then(function (watched) {
 					if (watched) {
 						App.vent.trigger('show:unwatched', value, 'seen');
@@ -305,6 +306,7 @@ var health_checked = false;
 						App.vent.trigger('show:watched', value, 'seen');
 					}
 				});
+
 		},
 
 		onWatched: function (value, channel) {

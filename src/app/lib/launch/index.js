@@ -1,14 +1,17 @@
 var
     Launcher,
     Q = require('q'),
+    Events,
     gui;
 
 function Launcher(App) {
+    Events = require('../events')(App);
     this.app = App;
 }
 
 Launcher.prototype.init = function () {
     var that = this;
+
     return Q.Promise(function (resolve, reject) {
         that.app.PackagesManager.loadPackages(function (error, result) {
             if (error) {

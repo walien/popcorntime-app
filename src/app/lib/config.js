@@ -148,7 +148,7 @@
 			subtitle: 'ysubs',
 			metadata: 'trakttv',
 
-			tvshowsubtitle: 'OpenSubtitles',
+			tvshowsubtitle: 'opensubtitles',
 			torrentCache: 'TorrentCache'
 		},
 

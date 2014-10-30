@@ -1,10 +1,19 @@
 var
-    SettingsManager,
-    App,
-    Database = require('../lib/database'),
-    Settings = require('../lib/settings'),
-    _ = require('lodash');
+    Q = require('q'),
+    _ = require('lodash'),
+    Common;
 
-App.vent.on('show:watched', _.bind(Database.markEpisodeAsWatched, this));
-App.vent.on('show:unwatched', _.bind(Database.markEpisodeAsNotWatched, this));
-App.vent.on('movie:watched', _.bind(Database.markMovieAsWatched, this));
+function Events(App) {
+
+    Common = require('../common')(App);
+
+    App.vent.on('show:watched', _.bind(Common.markEpisodeAsWatched, this));
+    //App.vent.on('show:unwatched', _.bind(this.markEpisodeAsNotWatched, this));
+    //App.vent.on('movie:watched', _.bind(Common.markMovieAsWatched, this));
+
+}
+
+
+module.exports = function(App) {
+    return new Events(App);
+};
