@@ -2,14 +2,14 @@ var helpers = {},
     querystring = require('querystring'),
     request = require('request'),
     Q = require('q')
-    _ = require('underscore'),
-    APIURL = 'http://yts.re/api/';
+    _ = require('underscore');
 
 /*
 * Function used to query all torents using PT filters 
 */
-helpers.queryTorrents = function(filters) {
+helpers.queryTorrents = function(filters, url) {
     var deferred = Q.defer();
+
 
     var params = {};
     params.sort = 'seeds';
@@ -43,7 +43,7 @@ helpers.queryTorrents = function(filters) {
     //    params.quality = Settings.movies_quality;
     //}
 
-    var url = APIURL + 'list.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
+    url = url + 'list.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
     console.log('Request to YTS API');
     console.log(url);
@@ -69,13 +69,13 @@ helpers.queryTorrents = function(filters) {
 /*
 * Function used to query single torrent using the ID
 */
-helpers.queryTorrent = function(torrent_id, old_data) {
+helpers.queryTorrent = function(torrent_id, old_data, url) {
     var self = this;
     return Q.Promise(function(resolve, reject) {
         var params = {
             imdb_id: torrent_id
         };
-        var url = APIURL + 'listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
+        var url = url + 'listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
         request({
             url: url,

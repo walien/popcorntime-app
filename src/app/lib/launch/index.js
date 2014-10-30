@@ -30,7 +30,7 @@ Launcher.prototype.checkEndpoint = function() {
     var allApis = [{
         original: 'yifyApiEndpoint',
         mirror: 'yifyApiEndpointMirror',
-        fingerprint: 'D4:7B:8A:2A:7B:E1:AA:40:C5:7E:53:DB:1B:0F:4F:6A:0B:AA:2C:6C'
+        fingerprint: 'F6:E8:18:11:0A:6F:57:7F:F2:9C:FC:C3:80:F9:A8:5B:07:04:08:2C'
     }];
 
     var promises = allApis.map(function(apiCheck) {
@@ -44,18 +44,18 @@ Launcher.prototype.checkEndpoint = function() {
                 if (!this.authorized || this.authorizationError || this.getPeerCertificate().fingerprint !== apiCheck.fingerprint) {
                     // "These are not the certificates you're looking for..."
                     // Seems like they even got a certificate signed for us :O
-                    that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror));
+                    that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror), false);
                 }
                 this.end();
                 resolve();
             }).on('error', function() {
                 // No SSL support. That's convincing >.<
-                that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror));
+                that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror), false);
                 this.end();
                 resolve();
             }).on('timeout', function() {
                 // Connection timed out, we'll say its not available
-                that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror));
+                that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror), false);
                 this.end();
                 resolve();
             }).setTimeout(10000); // Set 10 second timeout

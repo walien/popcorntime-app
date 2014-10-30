@@ -40,7 +40,7 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     fetch: function (filters) {         
-        return helpers.queryTorrents(filters)
+        return helpers.queryTorrents(filters, this.app.api.settings.get('yifyApiEndpoint'))
             .then(helpers.formatForPopcorn);
     },
 
@@ -48,7 +48,7 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     detail: function (torrent_id, old_data) {
-        return helpers.queryTorrent(torrent_id, old_data);
+        return helpers.queryTorrent(torrent_id, old_data, this.app.api.settings.get('yifyApiEndpoint');
     },    
 
     /*
