@@ -46,6 +46,7 @@ helpers.queryTorrents = function(filters) {
     var url = APIURL + 'list.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
     console.log('Request to YTS API');
+    console.log(url);
 
     request({
         url: url,

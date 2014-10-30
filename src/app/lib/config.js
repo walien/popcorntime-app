@@ -136,7 +136,7 @@
 		},
 
 		cachev2: {
-			name: 'cache',
+			name: 'popcorntime',
 			version: 3,
 			tables: ['metadata', 'subtitle']
 		},

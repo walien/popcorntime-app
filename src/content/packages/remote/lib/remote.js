@@ -20,7 +20,7 @@ module.exports = App.Core.extend({
      * Default function called by package manager to activate
      */
     _activate: function() {
-        this.start();
+        this.start();        
 
         // bind our function to initHttpApi
         // i think this may be removed ?

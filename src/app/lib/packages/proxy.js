@@ -53,9 +53,14 @@ function generateProxyFunctions(name, permissions) {
                 _.pick(window.App.Providers, 'get', 'set')
             ),
 
-            localization: passThruAppContextToApi('providers',
+            localization: passThruAppContextToApi('localization',
                 _.pick(window.App.Localization, 'filterSubtitle')
             ),
+
+            mousetrap: passThruAppContextToApi('mousetrap',
+                _.pick(window.Mousetrap, 'trigger')
+            ),
+
 
             vent: window.App.vent
         },
