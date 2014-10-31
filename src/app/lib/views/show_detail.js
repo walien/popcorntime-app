@@ -287,8 +287,7 @@ var health_checked = false;
 
 		toggleWatched: function (e) {
 			var edata = e.currentTarget.id.split('-');
-
-			var value = {
+			var currentValue = {
 				tvdb_id: _this.model.get('tvdb_id').toString(),
 				imdb_id: _this.model.get('imdb_id').toString(),
 				season: edata[1].toString(),
@@ -296,12 +295,56 @@ var health_checked = false;
 				from_browser: true
 			};
 
-			App.Database.get('watched',value)
+			App.Database.get('watched', {
+					tvdb_id: currentValue.tvdb_id.toString(),
+					imdb_id: currentValue.imdb_id.toString(),
+					season: currentValue.season.toString(),
+					episode: currentValue.episode.toString()
+				})
 				.then(function (watched) {
 					if (watched) {
-						App.vent.trigger('show:unwatched', value, 'seen');
+						
+						App.Database.find('watched', {tvdb_id: currentValue.tvdb_id})
+							.then(function(response) {
+								if (response.length === 1) {
+									App.watchedShows.splice(App.watchedShows.indexOf(currentValue.imdb_id), 1);
+								}
+							})
+							.then(function() {
+								return App.Database.delete('watched', 
+								{
+									tvdb_id: currentValue.tvdb_id.toString(),
+									imdb_id: currentValue.imdb_id.toString(),
+									season: currentValue.season.toString(),
+									episode: currentValue.episode.toString()
+								});
+							})
+							.then(function () {
+								App.vent.trigger('show:unwatched:' + currentValue.tvdb_id, currentValue);
+							});	
+
 					} else {
-						App.vent.trigger('show:watched', value, 'seen');
+						
+						App.Database.find('watched', {tvdb_id: currentValue.tvdb_id})
+							.then(function(response) {
+								if (response.length === 0) {
+									App.watchedShows.push(currentValue.imdb_id.toString());
+								}
+							})
+							.then(function() {
+								return App.Database.add('watched', 
+								{
+									tvdb_id: currentValue.tvdb_id.toString(),
+									imdb_id: currentValue.imdb_id.toString(),
+									season: currentValue.season.toString(),
+									episode: currentValue.episode.toString(),
+									type: 'episode',
+									date: new Date()
+								})
+							})
+							.then(function () {
+								App.vent.trigger('show:watched:' + currentValue.tvdb_id, currentValue);
+							});								
 					}
 				});
 
