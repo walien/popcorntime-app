@@ -24,9 +24,10 @@ var
     'JgeCrPkH6GBa9azUsZ+3MA98b46yhWO2QuRwmFQwPiME+Brim3tHlSuXbL1e5qKf\n' +
     'GOm3OxA3zKXG4cjy6TyEKajYlT45Q+tgt1L1HuGAJjWFRSA0PP9ctC6nH+2N3HmW\n' +
     'RTcms0CPio56gg==\n' +
-    '-----END PUBLIC KEY-----\n';
+    '-----END PUBLIC KEY-----\n',
+    $;
 
-function Updater(settingsInstance, options) {
+function Updater(settingsInstance, jQuery, options) {
     var that = this;
     this.settings = settingsInstance;
 
@@ -41,9 +42,10 @@ function Updater(settingsInstance, options) {
     this.outputDir = this.settings.get('os') === 'linux' ? process.execPath : process.cwd();
     this.updateData = null;
 
+    $ = jQuery;
+
     // check for update
     this.update();
-
 }
 
 
@@ -260,6 +262,7 @@ Updater.prototype.install = function(downloadPath) {
 Updater.prototype.displayNotification = function() {
     var self = this;
     var $el = $('#notification');
+
     $el.html(
         '<h1>' + this.updateData.title + ' Installed</h1>' +
         '<p>&nbsp;- ' + this.updateData.description + '</p>' +
@@ -319,6 +322,6 @@ Updater.prototype.update = function() {
     }
 };
 
-module.exports = function(settingsInstance, options) {
-    return new Updater(settingsInstance, options);
+module.exports = function(settingsInstance, jQuery, options) {
+    return new Updater(settingsInstance, jQuery, options);
 };

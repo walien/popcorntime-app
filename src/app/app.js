@@ -35,7 +35,7 @@ var
 
 	Database = require('./lib/database')(gui.App.dataPath),
 	Settings = require('./lib/settings')(Database),
-	Updater = require('./lib/updater')(Settings),
+	Updater = require('./lib/updater')(Settings,$),
 	PackagesManager = require('./lib/packages'),
 	Localization = require('./lib/localization');
 

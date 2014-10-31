@@ -7,7 +7,7 @@ function Events(App) {
 
     Common = require('../common')(App);
 
-    App.vent.on('show:watched', _.bind(Common.markEpisodeAsWatched, this));
+    //App.vent.on('show:watched', _.bind(Common.markEpisodeAsWatched, this));
     //App.vent.on('show:unwatched', _.bind(this.markEpisodeAsNotWatched, this));
     //App.vent.on('movie:watched', _.bind(Common.markMovieAsWatched, this));
 
