@@ -36,20 +36,26 @@ module.exports = App.Providers.Metadata.extend({
      * Package Settings
      */
     settings: {
-
         apiKey: {
-            type: [], // not used right now
+            type: 'string',
             "default": '515a27ba95fbd83f20690e5c22bceaff0dfbde7c'
-        },
+        }
+    },
+
+    /*
+     * Package Authentification
+     */
+    authentification: {
 
         username: {
-            type: [], // not used right now
-            "default": ''
+            type: 'string',
+            default: '',
+            title: 'Username'
         },
-
         password: {
-            type: [], // not used right now
-            "default": ''
+            type: 'string',
+            default: '',
+            title: 'Password'
         }
     },
 

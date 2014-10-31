@@ -342,10 +342,12 @@
 		<div class="title"><%= i18n.__("Packages") %></div>
 		<div class="content">
 				<%
-					var packages = App.PackagesManager.loadedPackages,
-						name;						
+					var packages = App.PackagesManager.loadedPackages;						
 					for (package in packages) {
 						package = packages[package];
+						
+						console.log(package.settings);
+						console.log(package.authentification);
 					%>
 						<span><%= package.metadata.name %> <%= i18n.__("loaded in") %>  <%= package.loadTime %>s</span>
 					<%

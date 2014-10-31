@@ -1,7 +1,7 @@
 var CSON = require('season'),
     path = require('path'),
     fs = require('fs-plus'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     Q = require('q'),
     App = window.App,
     ProxyApp,
@@ -16,6 +16,7 @@ function Package(path, metadata) {
     var _ref1, _ref2;
     this.path = path;
     this.metadata = metadata;
+    this.bundledPackage = false;
 
     if (this.metadata == null) {
         this.metadata = Package.loadMetadata(this.path);
@@ -57,7 +58,6 @@ Package.loadMetadata = function(packagePath, ignoreErrors) {
             if (!ignoreErrors) {
                 throw error;
             }
-
         }
     }
 
@@ -116,12 +116,12 @@ Package.prototype.activate = function() {
     //if (this.grammarsPromise == null) {
     //    this.grammarsPromise = this.loadGrammars();
     //}
-    
+
     if (this.activationDeferred == null) {
         this.activationDeferred = Q.defer();
         this.measure('activateTime', (function(_this) {
             return function() {
-                _this.activateResources();
+                _this.activateResources();                
                 return _this.activateNow();
             };
         })(this));
@@ -145,11 +145,16 @@ Package.prototype.activateNow = function() {
                 _app = this.mainModule;
             }
 
+            this.bundledPackage = _app;
+
             // activate the package
             if (_.isFunction(_app._activate)) {
 
                 _app._activate();
                 this.mainActivated = true;
+
+                this.loadSettings();
+                this.loadAuthentification();
 
             } else {
                 console.log("Rejected");
@@ -172,6 +177,23 @@ Package.prototype.loadKeymaps = function() {
     return this.keymaps = this.getKeymapPaths().map(function(keymapPath) {
         return [keymapPath, CSON.readFileSync(keymapPath)];
     });
+};
+
+
+Package.prototype.loadSettings = function() {
+    if (this.mainActivated) {
+        return this.settings = this.bundledPackage.settings || {};
+    } else {
+        return {};
+    }
+};
+
+Package.prototype.loadAuthentification = function() {
+    if (this.mainActivated) {
+        return this.authentification = this.bundledPackage.authentification || {};
+    } else {
+        return {};
+    }
 };
 
 Package.prototype.getKeymapPaths = function() {
