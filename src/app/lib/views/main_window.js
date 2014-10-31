@@ -119,6 +119,9 @@
 			Launch.init()
 				.done(function () {
 
+					App.vent.trigger('main:ready');
+					App.vent.trigger('updatePostersSizeStylesheet');
+
 					$('head').append('<link rel="stylesheet" href="themes/' + App.Settings.get('theme') + '.css" type="text/css" />');
 					// Always on top
 					win.setAlwaysOnTop(App.Settings.get('alwaysOnTop'));
@@ -161,8 +164,8 @@
 				}
 			});
 
-			App.vent.trigger('updatePostersSizeStylesheet');
-			App.vent.trigger('main:ready');
+			
+			
 
 		},
 

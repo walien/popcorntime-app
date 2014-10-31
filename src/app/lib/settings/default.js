@@ -14,7 +14,7 @@ config = {
     postersMinFontSize      : 0.8,
     postersMaxFontSize      : 1.3,
     postersSizeRatio        : (196 / 134),
-    postersMaxWidth         : this.postersMinWidth,
+    postersWidth            : 134,
     postersJump             : [134, 154, 174, 194, 214, 234, 254, 274, 294],
     
     playNextEpisodeAuto     : true,
