@@ -24,6 +24,11 @@ Launcher.prototype.init = function() {
             return that.loadUserInfo();
         })
         .then(function() {
+
+            // set user language
+            // TODO: reworks on language.js as a module...
+            //detectLanguage(that.app.Settings.get('language'));
+
             // load packages (final phase)
             return that.loadPackages();
         });
