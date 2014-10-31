@@ -82,9 +82,9 @@ vjs.TextTrack.prototype.load = function(){
 		this.on('loaded', function(){
 			win.info('Subtitle loaded!');
 			$('#video_player .vjs-text-track').css('display','inline-block').drags();
-			$('#video_player .vjs-text-track-display').css('font-size', Settings.subtitle_size);
-            $('.vjs-subtitles').css('color', Settings.subtitle_color);
-            if (! Settings.subtitle_shadows) {
+			$('#video_player .vjs-text-track-display').css('font-size', window.App.Settings.get('subtitle_size'));
+            $('.vjs-subtitles').css('color', window.App.Settings.get('subtitle_color'));
+            if (! window.App.Settings.get('subtitle_shadows')) {
                 $('.vjs-text-track').css('text-shadow', 'none');
             }
 		});
