@@ -1,0 +1,14 @@
+{
+    "name": "popcorn-streamer",
+    "main": "./lib/popcorn-streamer",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Streamer for Popcorn Time",
+    "activationEvents": [],
+    "repository": "",
+    "license": "GPL v3",
+    "engines": {
+        "popcorntime": "*"
+    },
+    "dependencies": {}
+}
