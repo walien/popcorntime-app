@@ -6,7 +6,13 @@
 	Favorites.prototype.constructor = Favorites;
 
 	var queryTorrents = function (filters) {
-		return App.Database.find('bookmarks',filters)
+
+		var page = filters.page - 1;
+		var byPage = 30;
+		var offset = page * byPage;
+		var query = {};
+
+		return App.Database.find('bookmarks', {}, offset, byPage)
 			.then(function (data) {
 					return data;
 				},
@@ -25,7 +31,7 @@
 			// or tv show then we extract right data
 			if (movie.type === 'movie') {
 				// its a movie
-				Database.getMovie(movie.imdb_id)
+				App.Database.get('movies', {imdb_id: movie.imdb_id})
 					.then(function (data) {
 							data.type = 'bookmarkedmovie';
 							deferred.resolve(data);
@@ -35,14 +41,14 @@
 						});
 			} else {
 				// its a tv show
-				Database.getTVShowByImdb(movie.imdb_id)
+				App.Database.get('tvshows', {imdb_id: movie.imdb_id})
 					.then(function (data) {
 						data.type = 'bookmarkedshow';
 						data.image = data.images.poster;
 						data.imdb = data.imdb_id;
 						// Fallback for old bookmarks without provider in database
 						if (typeof (data.provider) === 'undefined') {
-							data.provider = 'Eztv';
+							data.provider = 'eztv';
 						}
 						deferred.resolve(data);
 					}, function (err) {

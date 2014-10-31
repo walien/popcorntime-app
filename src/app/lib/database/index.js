@@ -59,9 +59,17 @@ DatabaseManager.prototype.get = function (database, data) {
     return promisifyDb(this.db[database].findOne(data));
 };
 
-DatabaseManager.prototype.find = function (database, data) {
+DatabaseManager.prototype.find = function (database, data, offset, byPage) {
+    
     data = data || {};
-    return promisifyDb(this.db[database].find(data));
+    offset = offset || false;
+    byPage = byPage || false;
+
+    if (offset && byPage) {
+        return promisifyDb(this.db[database].find(data).skip(offset).limit(byPage));
+    } else {
+        return promisifyDb(this.db[database].find(data));
+    }
 };
 
 // example db.update('movies', {imdb_id: 'tt736635'}, {test: '1111'})

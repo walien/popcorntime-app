@@ -262,14 +262,14 @@
 			}
 			var that = this;
 			if (this.model.get('bookmarked') === true) {
-				Database.deleteBookmark(this.model.get('imdb_id'))
+				App.Database.delete('bookmarks', {imdb_id: this.model.get('imdb_id')})
 					.then(function () {
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 						that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
 					})
 					.then(function () {
-						return Database.deleteMovie(that.model.get('imdb_id'));
+						return App.Database.delete('movies', {imdb_id: that.model.get('imdb_id')});
 					})
 					.then(function () {
 						that.model.set('bookmarked', false);
@@ -299,9 +299,9 @@
 					provider: this.model.get('provider'),
 				};
 
-				Database.addMovie(movie)
+				App.Database.add('movies', movie)
 					.then(function () {
-						return Database.addBookmark(that.model.get('imdb_id'), 'movie');
+						return App.Database.add('bookmarks', {imdb_id: that.model.get('imdb_id'), type: 'movie'});
 					})
 					.then(function () {
 						win.info('Bookmark added (' + that.model.get('imdb_id') + ')');

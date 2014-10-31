@@ -5,6 +5,7 @@ var
     gui,
     tls = require('tls'),
     URI = require('URIjs'),
+    _ = require('lodash'),
     request = require('request');
 
 function Launcher(App) {
@@ -20,6 +21,10 @@ Launcher.prototype.init = function() {
             return that.compareVersion();
         })
         .then(function() {
+            return that.loadUserInfo();
+        })
+        .then(function() {
+            // load packages (final phase)
             return that.loadPackages();
         });
 };
@@ -88,6 +93,66 @@ Launcher.prototype.compareVersion = function() {
         that.app.Settings.set('releaseName', that.app.gui.App.manifest.releaseName);
 
         return resolve();
+    });
+};
+
+Launcher.prototype.loadUserInfo = function() {
+    var that = this;
+    return Q.Promise(function(resolve, reject) {
+
+        that.loadBookmarks()
+            .then(function (bookmarks) {
+                that.app.userBookmarks = bookmarks;
+                return that.loadWatchedMovies();
+            })
+            .then(function (watchedMovies) {
+                that.app.watchedMovies = watchedMovies;
+                return that.loadWatchedEpisodes();
+            })
+            .then(function (watchedShows) {
+                that.app.watchedShows = watchedShows;
+
+                // we have everything what we need
+                // we return it as a promise
+                return resolve();
+            });
+               
+    });
+};
+
+Launcher.prototype.loadBookmarks = function() {
+    var that = this;
+    return Q.Promise(function(resolve, reject) {
+        return that.app.Database.find('bookmarks', {})
+            .then(function (data) {
+                var bookmarks = [];
+                if (data) {
+                    bookmarks = _.pluck(data, 'imdb_id');
+                }
+
+                return resolve(bookmarks);
+            });  
+    });
+};
+
+
+Launcher.prototype.loadWatchedMovies = function() {
+    var that = this;
+    return Q.Promise(function(resolve, reject) {
+        return that.app.Database.find('watched', {type: 'movie'})
+            .then(function (data) {
+                return resolve(data);
+            });
+    });
+};
+
+Launcher.prototype.loadWatchedEpisodes = function() {
+    var that = this;
+    return Q.Promise(function(resolve, reject) {
+        return that.app.Database.find('watched', {type: 'episode'})
+            .then(function (data) {
+                return resolve(data);
+            });
     });
 };
 

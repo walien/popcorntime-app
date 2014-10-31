@@ -44,36 +44,34 @@ var health_checked = false;
 				bookmarked = true;
 
 				var provider = App.Providers.get(this.model.get('provider'));
-				var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
-					.then(function (data) {
-							data.provider = that.model.get('provider');
-							Database.addTVShow(data)
-								.then(function (idata) {
-									return Database.addBookmark(that.model.get('imdb_id'), 'tvshow');
-								})
-								.then(function () {
-									win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
-									that.model.set('bookmarked', true);
-									that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-									App.userBookmarks.push(that.model.get('imdb_id'));
-								});
-						},
-						function (err) {
-							alert('Somethings wrong... try later');
-						});
+				provider.detail(this.model.get('imdb_id'), this.model.attributes)
+					.then(function(data) {
+
+						App.Database.add('tvshows', data)
+							.then(function () {
+								App.userBookmarks.push(that.model.get('imdb_id'));
+								return App.Database.add('bookmarks', {imdb_id: that.model.get('imdb_id'), type: 'tvshow'});
+							})
+							.then(function () {
+								that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
+								win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
+								that.model.set('bookmarked', true);
+							});
+					});
 
 			} else {
 				that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
 				bookmarked = false;
 
-				Database.deleteBookmark(this.model.get('imdb_id'))
+				App.Database.delete('bookmarks', {imdb_id: this.model.get('imdb_id')})
 					.then(function () {
-						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-						that.model.set('bookmarked', false);
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
-
-						// we'll make sure we dont have a cached show
-						Database.deleteTVShow(that.model.get('imdb_id'));
+						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
+							// we'll make sure we dont have a cached movie
+						return App.Database.delete('tvshows', {imdb_id: that.model.get('imdb_id')});
+					})
+					.then(function () {
+						that.model.set('bookmarked', false);
 					});
 			}
 		},
