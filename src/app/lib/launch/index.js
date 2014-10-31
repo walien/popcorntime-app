@@ -5,6 +5,7 @@ var
     gui,
     tls = require('tls'),
     URI = require('URIjs'),
+    i18n = require('i18n'),
     _ = require('lodash'),
     request = require('request');
 
@@ -24,11 +25,10 @@ Launcher.prototype.init = function() {
             return that.loadUserInfo();
         })
         .then(function() {
-
-            // set user language
-            // TODO: reworks on language.js as a module...
-            //detectLanguage(that.app.Settings.get('language'));
-
+            // maybe we should set user language? :D
+            i18n.setLocale(that.app.Settings.get('language'));
+        })
+        .then(function() {
             // load packages (final phase)
             return that.loadPackages();
         });
