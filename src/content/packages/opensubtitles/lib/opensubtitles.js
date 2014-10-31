@@ -6,7 +6,7 @@
 var App = require('pdk'),
     _ = require('underscore'),
     Q = require('q'),
-    openSRT = require('opensrt_js');
+    Subtitles = require('popcorn-opensubtitles');
 
 /*
 * We build and export our new package
@@ -49,15 +49,7 @@ module.exports = App.Providers.Subtitle.extend({
     },
 
     querySubtitles: function (queryParams) {
-        var deferred = Q.defer();
-        openSRT.searchEpisode(queryParams, function (error, subs) {
-            if (error) {
-                deferred.reject(error);
-            } else {
-                deferred.resolve(subs || {});
-            }
-        });
-        return deferred.promise;
+        return Subtitles.searchEpisode(queryParams);
     }
 
 });
