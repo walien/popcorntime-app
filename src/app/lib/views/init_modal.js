@@ -18,8 +18,7 @@
 
 			this.ui.initbar.animate({
 				width: '25%'
-			}, 1000, 'swing');
-			this.ui.initstatus.text(i18n.__('Status: Checking Database...'));
+			}, 1000, 'swing');			
 		}
 
 	});
