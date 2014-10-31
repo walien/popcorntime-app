@@ -128,7 +128,7 @@
 		generateQRcode: function () {
 
 			var QRCodeInfo = {
-				ip: AdvSettings.get('ipAddress'),
+				ip: App.Settings.get('ipAddress'),
 				port: $('#httpApiPort').val(),
 				user: $('#httpApiUsername').val(),
 				pass: $('#httpApiPassword').val()
