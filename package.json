@@ -29,8 +29,8 @@
   "dependencies": {
     "URIjs": "^1.13.2",
     "adm-zip": "https://github.com/xeoncore/adm-zip/archive/78f820330c776bca72aad3f22d127b357f57a609.tar.gz",
-    "airplay-js": "git+https://git.popcorntime.io/stash/scm/mir/node-airplay2.git",
-    "airplay-xbmc": "^0.2.7",
+    "airplay-js": "^0.2.5",
+    "airplay-xbmc": "^0.2.8",
     "async": "0.9.0",
     "chromecast-js": "*",
     "fs-plus": "^2.3.1",
@@ -48,6 +48,7 @@
     "node-captions": "0.2.2",
     "node-webkit-fdialogs": "latest",
     "opensrt_js": "https://github.com/SlashmanX/OpenSRTJS/archive/c07d18983d7a6409dee4cacc056ed5cc01e2ed09.tar.gz",
+    "pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git",
     "peerflix": "^0.17.0",
     "q": "^2.0.2",
     "raven": "^0.6.3",
@@ -55,15 +56,11 @@
     "readdirp": "*",
     "request": "^2.36.0",
     "rimraf": "2.2.8",
-    "semver": "^2.3.1",
-    "sha1": "1.1.0",
-    "torrent-health": "*",
     "season": "^2.0.0",
     "semver": "^2.3.1",
     "sha1": "1.1.0",
     "torrent-health": "*",
-    "underscore": "^1.6.0",
-    "pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git"
+    "underscore": "^1.6.0"
   },
   "devDependencies": {
     "bower": "1.3.6",
