@@ -264,10 +264,6 @@
 		<div class="title"><%= i18n.__("Connection") %></div>
 		<div class="content">
 			<span>
-				<p><%= i18n.__("TV Show API Endpoint") + ":" %></p>
-				<input id="tvshowApiEndpoint" type="text" size="50" name="tvshowApiEndpoint" value="<%=App.Settings.get('tvshowApiEndpoint')%>">
-			</span>
-			<span>
 				<p><%= i18n.__("Connection Limit") + ":" %></p>
 				<input id="connectionLimit" type="text" size="20" name="connectionLimit" value="<%=App.Settings.get('connectionLimit')%>"/>
 			</span>
@@ -342,6 +338,21 @@
 			</span>
 		</div>
 	</section>
+    <section id="packages" class="advanced">
+		<div class="title"><%= i18n.__("Packages") %></div>
+		<div class="content">
+				<%
+					var packages = App.PackagesManager.loadedPackages,
+						name;						
+					for (package in packages) {
+						package = packages[package];
+					%>
+						<span><%= package.metadata.name %> <%= i18n.__("loaded in") %>  <%= package.loadTime %>s</span>
+					<%
+					}
+				%>
+		</div>
+	</section>	
 	<div class="btns advanced">
 		<div class="btn-settings flush-bookmarks"><%= i18n.__("Flush bookmarks database") %></div>
 		<div class="btn-settings flush-databases"><%= i18n.__("Flush all databases") %></div>
