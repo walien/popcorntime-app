@@ -129,7 +129,6 @@ Launcher.prototype.loadBookmarks = function() {
                 if (data) {
                     bookmarks = _.pluck(data, 'imdb_id');
                 }
-
                 return resolve(bookmarks);
             });  
     });
@@ -141,7 +140,11 @@ Launcher.prototype.loadWatchedMovies = function() {
     return Q.Promise(function(resolve, reject) {
         return that.app.Database.find('watched', {type: 'movie'})
             .then(function (data) {
-                return resolve(data);
+                var watchedMovies = [];
+                if (data) {
+                    watchedMovies = _.pluck(data, 'movie_id');
+                }
+                return resolve(watchedMovies);
             });
     });
 };
@@ -151,7 +154,11 @@ Launcher.prototype.loadWatchedEpisodes = function() {
     return Q.Promise(function(resolve, reject) {
         return that.app.Database.find('watched', {type: 'episode'})
             .then(function (data) {
-                return resolve(data);
+                var watchedEpisodes = [];
+                if (data) {
+                    watchedEpisodes = _.pluck(data, 'imdb_id');
+                }
+                return resolve(watchedEpisodes);
             });
     });
 };

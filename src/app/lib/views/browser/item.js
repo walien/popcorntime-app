@@ -200,15 +200,16 @@
 				if (Settings.watchedCovers === 'fade') {
 					this.$el.removeClass('watched');
 				}
-				Database.markMovieAsNotWatched({
+				App.Database.delete('watched', {
 					imdb_id: this.model.get('imdb_id')
-				}, true)
+				})
 					.then(function () {
+						App.watchedMovies.splice(this.model.get('imdb_id'));
 						that.model.set('watched', false);
 					});
 			} else {
 				this.ui.watchedIcon.addClass('selected');
-				switch (Settings.watchedCovers) {
+				switch (App.Settings.get('watchedCovers')) {
 				case 'fade':
 					this.$el.addClass('watched');
 					break;
@@ -216,11 +217,14 @@
 					this.$el.remove();
 					break;
 				}
-				Database.markMovieAsWatched({
-					imdb_id: this.model.get('imdb_id'),
+				App.Database.add('watched',{
+					movie_id: this.model.get('imdb_id').toString(),
+					type: 'movie',
+					date: new Date(),
 					from_browser: true
-				}, true)
+				})
 					.then(function () {
+						App.watchedMovies.push(this.model.get('imdb_id'));
 						that.model.set('watched', true);
 					});
 
