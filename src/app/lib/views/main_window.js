@@ -58,7 +58,6 @@
 			App.vent.on('anime:list', _.bind(this.showAnime, this));
 			App.vent.on('favorites:list', _.bind(this.showFavorites, this));
 			App.vent.on('watchlist:list', _.bind(this.showWatchlist, this));
-			App.vent.on('shows:update', _.bind(this.updateShows, this));
 
 			// Add event to show disclaimer
 			App.vent.on('show:disclaimer', _.bind(this.showDisclaimer, this));
@@ -119,8 +118,6 @@
 
 			Launch.init()
 				.done(function () {
-
-			console.log('loaded');
 
 					$('head').append('<link rel="stylesheet" href="themes/' + App.Settings.get('theme') + '.css" type="text/css" />');
 					// Always on top
@@ -189,22 +186,6 @@
 
 			this.Content.show(new App.View.AnimeBrowser());
 		},
-
-		updateShows: function (e) {
-			var that = this;
-			App.vent.trigger('show:closeDetail');
-			this.Content.show(new App.View.InitModal());
-			App.db.syncDB(function () {
-				that.InitModal.close();
-				that.showShows();
-				// Focus the window when the app opens
-				that.nativeWindow.focus();
-
-			});
-		},
-
-		// not used anymore
-		initShows: function (e) {},
 
 		showFavorites: function (e) {
 			this.Settings.close();
@@ -339,44 +320,42 @@
 		updatePostersSizeStylesheet: function () {
 
 			var that = this;
+			var postersWidth = App.Settings.get('postersWidth');
+			var postersHeight = Math.round(postersWidth * App.Settings.get('postersSizeRatio'));
+			var postersWidthPercentage = (postersWidth - App.Settings.get('postersMinWidth')) / (App.Settings.get('postersMaxWidth') - App.Settings.get('postersMinWidth')) * 100;
+			var fontSize = ((App.Settings.get('postersMaxFontSize') - App.Settings.get('postersMinFontSize')) * postersWidthPercentage / 100) + App.Settings.get('postersMinFontSize');
 
-	
-					var postersWidth = App.Settings.get('postersWidth');
-					var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
-					var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
-					var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;
+			var stylesheetContents = [
+				'.list .items .item {',
+				'width:', postersWidth, 'px;',
+				'}',
 
-					var stylesheetContents = [
-						'.list .items .item {',
-						'width:', postersWidth, 'px;',
-						'}',
+				'.list .items .item .cover,',
+				'.load-more {',
+				'background-size: cover;',
+				'width: ', postersWidth, 'px;',
+				'height: ', postersHeight, 'px;',
+				'}',
 
-						'.list .items .item .cover,',
-						'.load-more {',
-						'background-size: cover;',
-						'width: ', postersWidth, 'px;',
-						'height: ', postersHeight, 'px;',
-						'}',
+				'.item {',
+				'font-size: ' + fontSize + 'em;',
+				'}'
+			].join('');
 
-						'.item {',
-						'font-size: ' + fontSize + 'em;',
-						'}'
-					].join('');
+			$('#postersSizeStylesheet').remove();
 
-					$('#postersSizeStylesheet').remove();
+			$('<style>', {
+				'id': 'postersSizeStylesheet'
+			}).text(stylesheetContents).appendTo('head');
 
-					$('<style>', {
-						'id': 'postersSizeStylesheet'
-					}).text(stylesheetContents).appendTo('head');
+			// Copy the value to Settings so we can get it from templates
+			App.Settings.set('postersWidth',postersWidth);
 
-					// Copy the value to Settings so we can get it from templates
-					Settings.postersWidth = postersWidth;
-
-					// Display PostersWidth
-					var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
-					if (typeof App.currentview !== 'undefined') {
-						that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
-					}
+			// Display PostersWidth
+			var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
+			if (typeof App.currentview !== 'undefined') {
+				that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
+			}
 
 		},
 
