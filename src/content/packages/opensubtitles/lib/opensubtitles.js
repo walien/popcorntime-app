@@ -36,7 +36,7 @@ module.exports = App.Providers.Subtitle.extend({
     * Default Function used by PT
     */
     fetch: function (queryParams) {
-        return this.querySubtitles(queryParams)
+        return this.querySubtitles(queryParams, 'OSTestUserAgent')
             .then(this.formatForPopcorn);
     },
 
