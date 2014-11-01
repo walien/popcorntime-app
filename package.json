@@ -49,7 +49,7 @@
     "node-webkit-fdialogs": "latest",
     "pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git",
     "peerflix": "^0.17.0",
-    "popcorn-opensubtitles": "git+https://git.popcorntime.io/stash/scm/pt/popcorn-opensubtitles.git",
+    "popcorn-opensubtitles": "git+https://git.popcorntime.io/stash/scm/thrd/popcorn-opensubtitles.git",
     "q": "^2.0.2",
     "raven": "^0.6.3",
     "read-torrent": "1.0.0",
