@@ -4,19 +4,21 @@
  * We import our depedencies
  */
 var App = require('pdk'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 /*
  * We build and export our new package
  */
-module.exports = App.Providers.Source.extend({
+module.exports = App.Core.extend({
 
     start: function() {
 
     },
+
     stop: function() {
 
     },
+
     updateInfo: function() {}
 
 

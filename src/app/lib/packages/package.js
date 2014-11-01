@@ -5,8 +5,10 @@ var CSON = require('season'),
     Q = require('q'),
     App = window.App,
     ProxyApp,
+    SandboxApp,
     __slice = [].slice,
     Package,
+    Sandbox = require('./sandbox'),
     Proxy = require('./proxy');
 
 /*
@@ -25,12 +27,14 @@ function Package(path, metadata) {
     this.name = (_ref1 = (_ref2 = this.metadata) != null ? _ref2.name : void 0) != null ? _ref1 : path.basename(this.path);
 
     // setup proxy app
-    ProxyApp = appProxy = new Proxy({
+    ProxyApp = new Proxy({
         name: this.name,
         permissions: {
             providers: ['set', 'get']
         }
     });
+
+    SandboxApp = new Sandbox();
 
     console.log('Loading package: ' + this.name);
 }
@@ -224,7 +228,7 @@ Package.prototype.activateResources = function() {
 
 /*
  * Function to load the module within the app using
- * the require() function
+ * the sandbox
  */
 Package.prototype.requireMainModule = function() {
 
@@ -236,8 +240,8 @@ Package.prototype.requireMainModule = function() {
         return;
     }
     mainModulePath = this.getMainModulePath();
-    if (fs.isFileSync(mainModulePath)) {
-        return this.mainModule = require(mainModulePath);
+    if (fs.isFileSync(mainModulePath)) {        
+        return this.mainModule = SandboxApp.loadApp(this.mainModulePath);
     }
 };
 
