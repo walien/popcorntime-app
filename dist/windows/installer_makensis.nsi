@@ -1,4 +1,4 @@
-﻿; Popcorn Time
+; Popcorn Time
 ; Installer Source for NSIS 3.0 or higher
 
 ;Include Modern UI
