@@ -40,10 +40,9 @@
 		var Trakt = App.Providers.get('trakttv');
 		var deferred = Q.defer();
 		var doc = App.Settings.get('watchlist');
-
 		if (doc && !update) {
 			win.info('Watchlist - Returning cached watchlist');
-			deferred.resolve(doc.value || []);
+			deferred.resolve(doc || []);
 		} else {
 			win.info('Watchlist - Fetching new watchlist');
 			Trakt.show.getProgress()
@@ -62,7 +61,6 @@
 
 	var filterShows = function(items) {
 		var filtered = [];
-
 		items.forEach(function(show) {
 			var deferred = Q.defer();
 			//If has no next episode or next episode is not aired, go to next one
@@ -73,14 +71,14 @@
 			//Check if not seen on local DB
 			var episode = {
 				tvdb_id: show.show.tvdb_id.toString(),
-				imdb_id: show.show.imdb_id.toString(),
+				show_imdb_id: show.show.imdb_id.toString(),
 				season: show.next_episode.season.toString(),
 				episode: show.next_episode.number.toString()
 			};
 
 			App.Database.find('watched',episode)
 				.then(function(watched) {
-					if (watched) {
+					if (watched.length !== 0) {
 						deferred.resolve(null);
 					} else {
 						deferred.resolve(show);
@@ -96,7 +94,6 @@
 	var formatForPopcorn = function(items) {
 		var showList = [];
 		var Eztv = App.Providers.get('eztv');
-		
 		items.forEach(function(show) {
 			show = show.value;
 			if (show === null) {
@@ -133,6 +130,10 @@
 								} else {
 									deferred.resolve(false);
 								}
+							})
+							.catch(function(error) {
+								win.error('Error getting Eztv info for show', show.show.imdb_id);
+								deferred.resolve(false);
 							});
 					}
 				});
