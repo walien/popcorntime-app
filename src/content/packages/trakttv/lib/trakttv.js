@@ -21,19 +21,15 @@ var API_ENDPOINT = URI('https://api.trakt.tv/'),
 module.exports = App.Providers.Metadata.extend({
 
     /*
-     * Package Settings
+     * Package Settings (no auth required)
      */
     settings: {
         apiKey: {
             type: 'text',
             default: '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
             title: 'API Key'
-        },
-        syncOnStart: {
-            type: 'checkbox',
-            default: 'false',
-            title: 'Sync with Trakt on start'
         }
+
     },
 
     /*
@@ -42,7 +38,8 @@ module.exports = App.Providers.Metadata.extend({
     authentification: {
         signinHandler: 'signin',
         signoutHandler: 'signout',
-        settings: {
+
+        loginForm: {
           username: {
               type: 'text',
               default: '',
@@ -52,6 +49,21 @@ module.exports = App.Providers.Metadata.extend({
               type: 'password',
               default: '',
               title: 'Password'
+          },
+        },
+
+        // the settings define hered require authentification
+        settings: {
+          syncTrakt: {
+              handler: 'syncTrakt',
+              type: 'button',
+              default: '',
+              title: 'Sync my Watchlist'
+          },
+          syncOnStart: {
+              type: 'checkbox',
+              default: 'false',
+              title: 'Sync Watchlist with Trakt on start'
           }
         }
     },
@@ -67,6 +79,10 @@ module.exports = App.Providers.Metadata.extend({
     activate: function() {
 
         var self = this;
+
+        // actually the 'authenticated' is globally used
+        // to check if this package is authed
+        // maybe we can find a better solution
 
         this.authenticated = false;
         this._credentials = {

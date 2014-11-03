@@ -35,6 +35,7 @@
 			'click .export-database': 'exportDatabase',
 			'click .import-database': 'inportDatabase',
 			'click .package-signout': 'signout',
+			'click .btn-package': 'clickButton',
 			'change #tmpLocation': 'updateCacheDirectory',
 			'click #syncTrakt': 'syncTrakt',
 			'click .qr-code': 'generateQRcode',
@@ -100,12 +101,21 @@
 						thisAuth.package = thisPackage.metadata.name;
 
 						thisAuth.inputElements = [];
+						thisAuth.settingsElements = [];
+
+						_.each(thisPackage.authentification.loginForm, function(auth, key) {
+
+								auth._css = auth._ref.replace(".", "_");
+								auth._key = key;
+								thisAuth.inputElements.push(auth);
+
+						});
 
 						_.each(thisPackage.authentification.settings, function(auth, key) {
 
 								auth._css = auth._ref.replace(".", "_");
 								auth._key = key;
-								thisAuth.inputElements.push(auth);
+								thisAuth.settingsElements.push(auth);
 
 						});
 
@@ -211,6 +221,23 @@
 			App.vent.trigger('keyboard:toggle');
 		},
 
+		clickButton: function (e) {
+			var self = this;
+			var authPackages = this.model.get('authPackages');
+
+			e.preventDefault();
+
+			// get active button
+			var field = $(e.currentTarget);
+
+
+			// TODO: GET HANDLER AND BIND (cached) THE FUNCTION
+			// THEN RUN IT!
+
+
+			console.log(field);
+		},
+
 		saveSetting: function (e) {
 			var value = false;
 			var data = {};
@@ -284,7 +311,17 @@
 				}
 				break;
 			default:
-				value = field.val();
+				if (field.is(':checkbox')) {
+					if (field.is(':checked')) {
+						value = true;
+					} else {
+						value = false;
+					}
+				} else {
+					value = field.val();
+				}
+
+			break;
 			}
 			win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
 

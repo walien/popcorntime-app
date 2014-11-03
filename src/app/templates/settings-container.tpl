@@ -329,23 +329,41 @@
 									<%= i18n.__("You are currently authenticated to "+ package.metadata.name) %>.
 									<a data-package='<%= package.metadata.name %>' class="package-signout unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>
 								</span>
-									<!--
-									todo: populate from settings object
-									sample of what we need:
-									<span>
-										<div class="btn-settings syncTrakt" id="syncTrakt">
-											<i class="fa fa-refresh">&nbsp;&nbsp;</i>
-											<%= i18n.__("Sync With Trakt") %>
-										</div>
-																<div class="sync-on-start">
-																		<input class="settings-checkbox" name="syncOnStart" id="syncOnStart" type="checkbox" <%=(App.Settings.get('syncOnStart')? "checked='checked'":"")%>>
-																		<label class="settings-label" for="syncOnStart"><%= i18n.__("Automatically Sync on Start") %></label>
-																</div>
-									</span>
-									-->
-							<%
+								<%
+								_.each(package.authentification.settingsElements, function (auth) {
+									%>
+										<span class='private-settings'>
+											<%
+												switch(auth.type) {
+													case 'text':
+													%>
+														<p><%= auth.title %>: </p>
+														<input data-package="<%= package.metadata.name %>" type="<%= auth.type %>" id="<%= auth._css %>"  name="<%= auth._ref %>" value="<%= App.Settings.get(auth._ref) || auth.default %>" size="50"  />
+													<%
+													break;
+
+													case 'checkbox':
+													%>
+														<input data-package="<%= package.metadata.name %>" class="settings-checkbox" name="<%= auth._ref %>" id="<%= auth._css %>" type="checkbox" <%=(App.Settings.get(auth._ref)? "checked='checked'":"")%>>
+														<label class="settings-label" for="<%= auth._css %>"><%= auth.title %></label>
+													<%
+													break;
+
+													case 'button':
+													%>
+														<button data-package="<%= package.metadata.name %>" id="<%= auth._css %>"  name="<%= auth._ref %>" class="btn-settings btn-package"><%= auth.title %><button>
+													<%
+													break;
+												}
+											%>
+										</span>
+									<%
+								});
+
 							} else {
 								_.each(package.authentification.inputElements, function (auth) {
+
+									// TODO : ADD FUNCTION TO GENERATE PROPER FIELD !
 									%>
 										<span class='authentification'>
 
