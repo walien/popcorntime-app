@@ -4,6 +4,7 @@
 
 	var AdmZip = require('adm-zip');
 	var fdialogs = require('node-webkit-fdialogs');
+	var _ = require('lodash');
 	var fs = require('fs');
 	var Trakt;
 
@@ -33,9 +34,7 @@
 			'click .open-database-folder': 'openDatabaseFolder',
 			'click .export-database': 'exportDatabase',
 			'click .import-database': 'inportDatabase',
-			'keyup #traktUsername': 'checkTraktLogin',
-			'keyup #traktPassword': 'checkTraktLogin',
-			'click #unauthTrakt': 'disconnectTrakt',
+			'click .package-signout': 'signout',
 			'change #tmpLocation': 'updateCacheDirectory',
 			'click #syncTrakt': 'syncTrakt',
 			'click .qr-code': 'generateQRcode',
@@ -63,14 +62,73 @@
 			});
 			that = this;
 
-            App.Settings.set('ipAddress', this.getIPAddress());
-            
+      App.Settings.set('ipAddress', this.getIPAddress());
+
+
+		},
+
+		onBeforeRender: function() {
+			// package settings render
+			this.renderPackageSettings();
+		},
+
+		renderPackageSettings: function() {
+			// Package settings initialization
+			var self = this;
+			var settingPackages = [];
+			var loadedPackages = App.PackagesManager.loadedPackages;
+			_.each(loadedPackages, function(thisPackage) {
+				var thisPackageBundled = {};
+				// ok make sure we have settings or auth
+				if ((thisPackage.settings && Object.keys(thisPackage.settings).length > 0) || (thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0)) {
+
+					// settings
+					if(thisPackage.settings && Object.keys(thisPackage.settings).length > 0) {
+						thisPackageBundled.settings = thisPackage.settings;
+					}
+
+					// authentification
+					// this require an event on keyup
+					if(thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0) {
+
+						var thisAuth = {};
+						thisAuth.signinHandler = _.bind(thisPackage.bundledPackage[thisPackage.authentification.signinHandler], thisPackage.bundledPackage);
+						thisAuth.signoutHandler = _.bind(thisPackage.bundledPackage[thisPackage.authentification.signoutHandler], thisPackage.bundledPackage);
+
+						thisAuth.authenticated = thisPackage.bundledPackage.authenticated;
+
+						thisAuth.package = thisPackage.metadata.name;
+
+						thisAuth.inputElements = [];
+
+						_.each(thisPackage.authentification.settings, function(auth, key) {
+
+								auth._css = auth._ref.replace(".", "_");
+								auth._key = key;
+								thisAuth.inputElements.push(auth);
+
+						});
+
+						thisPackageBundled.authentification = thisAuth;
+
+					}
+
+					thisPackageBundled.metadata = thisPackage.metadata;
+					settingPackages.push(thisPackageBundled);
+				}
+
+			});
+
+			this.model.set('loadedPackages', loadedPackages);
+			this.model.set('settingPackages', settingPackages);
+			this.model.set('authPackages', _.pluck(settingPackages, 'authentification'));
 		},
 
 		onRender: function () {
 			if (App.Settings.get('showAdvancedSettings')) {
 				$('.advanced').css('display', 'flex');
 			}
+
 		},
 
 		rightclick_field: function (e) {
@@ -156,6 +214,7 @@
 		saveSetting: function (e) {
 			var value = false;
 			var data = {};
+			var self = this;
 
 			// get active field
 			var field = $(e.currentTarget);
@@ -245,8 +304,78 @@
 					that.ui.success_alert.show().delay(3000).fadeOut(400);
 				});
 
+			// authentification handling
+			var authPackages = this.model.get('authPackages');
+
+			var myAuthRequired = _.find(authPackages, function(element) {
+					return _.find(element.inputElements, function(item) {
+						return item._ref === field.attr('name');
+					});
+			});
+			if (myAuthRequired) {
+
+				// we confirm we have all value...
+				var haveAllValues = true;
+				var dataMapping = {};
+				_.each(myAuthRequired.inputElements, function(element) {
+
+					var val = $('#'+element._css).val();
+					if (val.length === 0) {
+						haveAllValues = false;
+					} else {
+						dataMapping[element._key] = val;
+					}
+
+				});
+				if (haveAllValues) {
+					var thisPackage = field.attr('data-package');
+
+					$('.package_'+thisPackage+' .authentification .invalid-cross').hide();
+					$('.package_'+thisPackage+' .authentification .valid-tick').hide();
+					$('.package_'+thisPackage+' .authentification .loading-spinner').show();
+
+					myAuthRequired.signinHandler(dataMapping)
+						.then(function(valid) {
+							$('.package_'+thisPackage+' .authentification .loading-spinner').hide();
+							// Stop multiple requests interfering with each other
+							$('.package_'+thisPackage+' .authentification .invalid-cross').hide();
+							$('.package_'+thisPackage+' .authentification .valid-tick').hide();
+							if (valid) {
+								$('.package_'+thisPackage+' .authentification .valid-tick').show().delay(2000).queue(function () {
+									self.render().dequeue;
+								});
+							} else {
+								$('.package_'+thisPackage+' .authentification .invalid-cross').show();
+							}
+						}).catch(function (err) {
+							$('.package_'+thisPackage+' .authentification .loading-spinner').hide();
+							$('.package_'+thisPackage+' .authentification .invalid-cross').show();
+						});
+
+				}
+
+			}
+
 			that.syncSetting(field.attr('name'), value);
 		},
+
+
+		signout: function (e) {
+			var self = this;
+			var btn = $(e.currentTarget);
+
+			if (!that.areYouSure(btn, i18n.__('Signin out'))) {
+				return;
+			}
+
+			var myPackage = _.find(this.model.get('authPackages'), function(pack) {
+					return pack.package === btn.attr('data-package');
+			});
+			myPackage.signoutHandler();
+			self.ui.success_alert.show().delay(3000).fadeOut(400);
+			self.render();
+		},
+
 		syncSetting: function (setting, value) {
 
 			switch (setting) {
@@ -291,51 +420,8 @@
 			}
 
 		},
-		checkTraktLogin: _.debounce(function (e) {
-			var self = this;
-			var username = document.querySelector('#traktUsername').value;
-			var password = document.querySelector('#traktPassword').value;
 
-			if (username === '' || password === '') {
-				return;
-			}
 
-			$('.invalid-cross').hide();
-			$('.valid-tick').hide();
-			$('.loading-spinner').show();
-			// trakt.authenticate automatically saves the username and pass on success!
-			Trakt.authenticate(username, password).then(function (valid) {
-				$('.loading-spinner').hide();
-				// Stop multiple requests interfering with each other
-				$('.invalid-cross').hide();
-				$('.valid-tick').hide();
-				if (valid) {
-					$('.valid-tick').show().delay(2000).queue(function () {
-						self.render().dequeue;
-					});
-				} else {
-					$('.invalid-cross').show();
-				}
-			}).catch(function (err) {
-				$('.loading-spinner').hide();
-				$('.invalid-cross').show();
-			});
-		}, 750),
-
-		disconnectTrakt: function (e) {
-			var self = this;
-
-			Trakt.authenticated = false;
-
-			App.Settings.set('traktUsername','');
-			App.Settings.set('traktPassword','');
-
-			self.ui.success_alert.show().delay(3000).fadeOut(400);
-
-			_.defer(function () {
-				self.render();
-			});
-		},
 
 		flushBookmarks: function (e) {
 			var that = this;
@@ -384,7 +470,7 @@
 					App.Database.deleteDatabase()
 						.then(function () {
 							that.alertMessageSuccess(true);
-					});					
+					});
 				});
 		},
 
@@ -548,7 +634,7 @@
 					});
 				});
 		},
-        
+
         getIPAddress: function () {
             var ifaces=require('os').networkInterfaces();
             for (var dev in ifaces) {
@@ -564,7 +650,7 @@
                 }
               });
             }
-            return ip; 
+            return ip;
         }
 	});
 

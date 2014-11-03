@@ -164,8 +164,8 @@
 				}
 			});
 
-			
-			
+
+
 
 		},
 
@@ -270,9 +270,9 @@
 			}));
 		},
 
-		showSettings: function (settingsModel) {
+		showSettings: function () {
 			this.Settings.show(new App.View.Settings({
-				model: settingsModel
+				model: new Backbone.Model()
 			}));
 		},
 

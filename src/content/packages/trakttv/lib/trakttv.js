@@ -28,6 +28,11 @@ module.exports = App.Providers.Metadata.extend({
             type: 'text',
             default: '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
             title: 'API Key'
+        },
+        syncOnStart: {
+            type: 'checkbox',
+            default: 'false',
+            title: 'Sync with Trakt on start'
         }
     },
 
@@ -35,16 +40,19 @@ module.exports = App.Providers.Metadata.extend({
      * Package Authentification
      */
     authentification: {
-        handler: 'authentification',
-        username: {
-            type: 'text',
-            default: '',
-            title: 'Username'
-        },
-        password: {
-            type: 'password',
-            default: '',
-            title: 'Password'
+        signinHandler: 'signin',
+        signoutHandler: 'signout',
+        settings: {
+          username: {
+              type: 'text',
+              default: '',
+              title: 'Username'
+          },
+          password: {
+              type: 'password',
+              default: '',
+              title: 'Password'
+          }
         }
     },
 
@@ -67,10 +75,10 @@ module.exports = App.Providers.Metadata.extend({
         };
 
         this.watchlist = this.app.api.providers.get('Watchlist');
-
         // Login with stored credentials
-        if (this.app.api.settings.get('traktUsername') !== '' && this.app.api.settings.get('traktPassword') !== '') {
-            this._authenticationPromise = this.authenticate(this.app.api.settings.get('traktUsername'), this.app.api.settings.get('traktPassword'), true);
+        if (this.app.api.settings.get('trakttv.username') !== '' && this.app.api.settings.get('trakttv.password') !== '') {
+            this._authenticationPromise = this.signin({username: this.app.api.settings.get('trakttv.username'), password: this.app.api.settings.get('trakttv.password'), preHashed: true});
+            console.log(this._authenticationPromise);
         }
 
         var self = this;
@@ -134,28 +142,40 @@ module.exports = App.Providers.Metadata.extend({
 
     },
 
-    authenticate: function(username, password, preHashed) {
-        preHashed = preHashed || false;
-
+    signin: function(data) {
+        data.preHashed = data.preHashed || false;
         var self = this;
         return this._authenticationPromise = this.post('account/test/{KEY}', {
-            username: username,
-            password: preHashed ? password : sha1(password)
-        }).then(function(data) {
-            if (data.status === 'success') {
+            username: data.username,
+            password: data.preHashed ? data.password : sha1(data.password)
+        }).then(function(result) {
+            if (result.status === 'success') {
+
                 self._credentials = {
-                    username: username,
-                    password: preHashed ? password : sha1(password)
+                    username: data.username,
+                    password: data.preHashed ? data.password : sha1(data.password)
                 };
+
                 self.authenticated = true;
                 // Store the credentials (hashed ofc)
-                self.app.api.settings.set('traktUsername', self._credentials.username);
-                self.app.api.settings.set('traktPassword', self._credentials.password);
+                self.app.api.settings.set('trakttv.username', self._credentials.username);
+                self.app.api.settings.set('trakttv.password', self._credentials.password);
+
                 return true;
             } else {
                 return false;
             }
         });
+    },
+
+    signout: function() {
+        this.authenticated = false;
+        this._credentials = {
+            username: '',
+            password: ''
+        };
+        this.app.api.settings.set('trakttv.username', '');
+        this.app.api.settings.set('trakttv.password', '');
     },
 
     post: function(endpoint, postVariables) {

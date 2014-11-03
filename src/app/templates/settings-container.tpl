@@ -1,7 +1,7 @@
 <div class="settings-container">
 	<div class="fa fa-times close-icon"></div>
 	<div class="success_alert" style="display:none"><%= i18n.__("Saved") %>&nbsp;<span id="checkmark-notify"><div id="stem-notify"></div><div id="kick-notify"></div></span></div>
-	
+
 	<section id="title">
 		<div class="title"><%= i18n.__("Settings") %></div>
 		<div class="content">
@@ -13,7 +13,7 @@
 			</span>
 		</div>
 	</section>
-	
+
 	<section id="user-interface">
 		<div class="title"><%= i18n.__("User Interface") %></div>
 		<div class="content">
@@ -34,7 +34,7 @@
 					<div class="dropdown-arrow"></div>
 				</div>
 			</span>
-						
+
 			<span>
 				<div class="dropdown pct-theme">
 					<p><%= i18n.__("Theme") %>:</p>
@@ -50,9 +50,9 @@
 					%>
 					<select name="theme"><%=themes%></select>
 					<div class="dropdown-arrow"></div>
-				</div>		
+				</div>
 			</span>
-						
+
 			<span class="advanced">
 				<div class="dropdown start-screen">
 					<p><%= i18n.__("Start Screen") %>:</p>
@@ -73,7 +73,7 @@
 				<input class="settings-checkbox" name="coversShowRating" id="cb3" type="checkbox" <%=(App.Settings.get('coversShowRating')? "checked='checked'":"")%>>
 				<label class="settings-label" for="cb3"><%= i18n.__("Show rating over covers") %></label>
 			</span>
-				
+
 			<span class="advanced">
 				<input class="settings-checkbox" name="alwaysOnTop" id="cb4" type="checkbox" <%=(App.Settings.get('alwaysOnTop')? "checked='checked'":"")%>>
 				<label class="settings-label" for="cb4"><%= i18n.__("Always On Top") %></label>
@@ -151,7 +151,7 @@
 			</span>
 		</div>
 	</section>
-	
+
 	<section id="quality" class="advanced">
 		<div class="title"><%= i18n.__("Quality") %></div>
 		<div class="content">
@@ -182,54 +182,12 @@
 		</div>
 	</section>
 
-	<section id="trakt-tv">
-		<div class="title"><%= i18n.__("Trakt.tv") %></div>
-		<div class="content">
-			<div class="trakt-options<%= App.Providers.get('trakttv').authenticated ? " authenticated" : "" %>">
-				<% if(App.Providers.get('trakttv').authenticated) { %>
-					<span>
-						<%= i18n.__("You are currently authenticated to Trakt.tv as") %> <%= App.Settings.get('traktUsername') %>.
-						<a id="unauthTrakt" class="unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>
-					</span>
-					<span>
-						<div class="btn-settings syncTrakt" id="syncTrakt">
-							<i class="fa fa-refresh">&nbsp;&nbsp;</i>
-							<%= i18n.__("Sync With Trakt") %>
-						</div>
-                        <div class="sync-on-start">
-                            <input class="settings-checkbox" name="syncOnStart" id="syncOnStart" type="checkbox" <%=(App.Settings.get('syncOnStart')? "checked='checked'":"")%>>
-                            <label class="settings-label" for="syncOnStart"><%= i18n.__("Automatically Sync on Start") %></label>
-                        </div>
-					</span>
-				<% } else { %>
-					<span>
-						<%= i18n.__("Enter your Trakt.tv details here to automatically 'scrobble' episodes you watch in Popcorn Time") %>
-					</span>
-					<span>
-						<p><%= i18n.__("Username") + ":" %></p>
-						<input type="text" size="50" id="traktUsername" name="traktUsername">
-							<div class="loading-spinner" style="display: none"></div>
-							<div class="valid-tick" style="display: none"></div>
-							<div class="invalid-cross" style="display: none"></div>
-					</span>
-					<span>
-						<p><%= i18n.__("Password") + ":" %></p>
-						<input type="password" size="50" id="traktPassword" name="traktPassword">
-					</span>
-					<span>
-						<em><%= i18n.__("Popcorn Time stores an encrypted hash of your password in your local database") %></em>
-					</span>
-				<% } %>
-			</div>
-		</div>
-	</section>
-
 	<section id="remote-control" class="advanced">
 		<div class="title"><%= i18n.__("Remote Control") %></div>
 		<div class="content">
             <span>
                 <p><%= i18n.__("Local IP Address") + ":" %></p>
-                <input type="text" value="<%= App.Settings.get('ipAddress') %>" readonly="readonly" size="20" /> 
+                <input type="text" value="<%= App.Settings.get('ipAddress') %>" readonly="readonly" size="20" />
             </span>
 			<span>
 				<p><%= i18n.__("HTTP API Port") + ":" %></p>
@@ -283,7 +241,7 @@
 		<div class="content">
 			<span>
 				<p><%= i18n.__("Cache Directory") %>: </p>
-				<input type="text" placeholder="<%= i18n.__("Cache Directory") %>" id="faketmpLocation" value="<%= App.Settings.get('tmpLocation') %>" readonly="readonly" size="65" /> 
+				<input type="text" placeholder="<%= i18n.__("Cache Directory") %>" id="faketmpLocation" value="<%= App.Settings.get('tmpLocation') %>" readonly="readonly" size="65" />
 				<i class="open-tmp-folder fa fa-folder-open-o tooltipped" data-toggle="tooltip" data-placement="auto" title="<%= i18n.__("Open Cache Directory") %>"></i>
 				<input type="file" name="tmpLocation" id="tmpLocation" nwdirectory style="display: none;" nwworkingdir="<%= App.Settings.get('tmpLocation') %>" />
 			</span>
@@ -299,7 +257,7 @@
 		<div class="content">
 			<span>
 				<p><%= i18n.__("Database Directory") %>: </p>
-				<input type="text" placeholder="<%= i18n.__("Database Directory") %>" id="fakedatabaseLocation" value="<%= App.Settings.get('databaseLocation') %>" readonly="readonly" size="65" /> 
+				<input type="text" placeholder="<%= i18n.__("Database Directory") %>" id="fakedatabaseLocation" value="<%= App.Settings.get('databaseLocation') %>" readonly="readonly" size="65" />
 				<i class="open-database-folder fa fa-folder-open-o tooltipped" data-toggle="tooltip" data-placement="auto" title="<%= i18n.__("Open Database Directory") %>"></i>
 				<input type="file" name="fakedatabaseLocation" id="fakedatabaseLocation" nwdirectory style="display: none;" nwworkingdir="<%= App.Settings.get('databaseLocation') %>" />
 			</span>
@@ -341,68 +299,78 @@
     <section id="packages" class="advanced">
 		<div class="title"><%= i18n.__("Packages") %></div>
 		<div class="content">
-				<%
-					var packages = App.PackagesManager.loadedPackages;						
-					for (package in packages) {
-						package = packages[package];
-					%>
+				<% _.each(loadedPackages, function(package) { %>
 						<span><%= package.metadata.name %> <%= i18n.__("loaded in") %>  <%= package.loadTime %>s</span>
-					<%
-					}
-				%>
+				<% }); %>
 		</div>
-	</section>	
-	<%
-		var packages = App.PackagesManager.loadedPackages;	
-		for (package in packages) {
-			package = packages[package];
-			if ((package.settings && Object.keys(package.settings).length > 0) || (package.authentification && Object.keys(package.authentification).length > 0)) {
-				%>
-			    <section id="packages" class="advanced">
-					<div class="title"><%= package.metadata.name %></div>
-					<div class="content">
-
+	</section>
+	<% _.each(settingPackages, function(package) { %>
+		<section id="packages" class="advanced">
+			<div class="title"><%= package.metadata.name %></div>
+				<div class="content package_<%= package.metadata.name %>">
 						<%
-							if(package.settings && Object.keys(package.settings).length > 0) {
-								for (settings in package.settings) {
-									settings = package.settings[settings];
+							if(package.settings) {
+								_.each(package.settings, function (settings) {
 								%>
 									<span>
 										<p><%= settings.title %>: </p>
-										<input type="text" id="<%= settings._ref %>"  name="<%= settings._ref %>" value="<%= App.Settings.get(settings._ref) || settings.default %>" size="50"  /> 
+										<input type="text" id="<%= settings._ref %>"  name="<%= settings._ref %>" value="<%= App.Settings.get(settings._ref) || settings.default %>" size="50"  />
 									</span>
 								<%
-								}
+								});
 							}
 						%>
 
 						<%
-							if(package.authentification && Object.keys(package.authentification).length > 0) {
-								delete package.authentification.handler;
-								for (auth in package.authentification) {
-									auth = package.authentification[auth];
-									console.log(auth);
-								%>
+						if(package.authentification) {
+							if (package.authentification.authenticated === true) {
+						%>
+								<span>
+									<%= i18n.__("You are currently authenticated to "+ package.metadata.name) %>.
+									<a data-package='<%= package.metadata.name %>' class="package-signout unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>
+								</span>
+									<!--
+									todo: populate from settings object
+									sample of what we need:
 									<span>
-										<p><%= auth.title %>: </p>
-										<input type="<%= auth.type %>" id="<%= auth._ref %>"  name="<%= auth._ref %>" value="<%= App.Settings.get(auth._ref) || auth.default %>" size="50"  /> 
+										<div class="btn-settings syncTrakt" id="syncTrakt">
+											<i class="fa fa-refresh">&nbsp;&nbsp;</i>
+											<%= i18n.__("Sync With Trakt") %>
+										</div>
+																<div class="sync-on-start">
+																		<input class="settings-checkbox" name="syncOnStart" id="syncOnStart" type="checkbox" <%=(App.Settings.get('syncOnStart')? "checked='checked'":"")%>>
+																		<label class="settings-label" for="syncOnStart"><%= i18n.__("Automatically Sync on Start") %></label>
+																</div>
 									</span>
-								<%
-								}
+									-->
+							<%
+							} else {
+								_.each(package.authentification.inputElements, function (auth) {
+									%>
+										<span class='authentification'>
+
+											<p><%= auth.title %>: </p>
+											<input data-package="<%= package.metadata.name %>" type="<%= auth.type %>" id="<%= auth._css %>"  name="<%= auth._ref %>" value="<%= App.Settings.get(auth._ref) || auth.default %>" size="50"  />
+											<div class="loading-spinner" style="display: none"></div>
+											<div class="valid-tick" style="display: none"></div>
+											<div class="invalid-cross" style="display: none"></div>
+										</span>
+									<%
+								});
 							}
-						%>						
+						}
+						%>
 
 					</div>
-				</section>	
+				</section>
 				<%
 
-			}
-		}
+		});
 	%>
 	<div class="btns advanced">
 		<div class="btn-settings flush-bookmarks"><%= i18n.__("Flush bookmarks database") %></div>
 		<div class="btn-settings flush-databases"><%= i18n.__("Flush all databases") %></div>
 		<div class="btn-settings default-settings"><%= i18n.__("Reset to Default Settings") %></div>
 	</div>
-		
+
 </div>
