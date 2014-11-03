@@ -21,24 +21,13 @@ var API_ENDPOINT = URI('https://api.trakt.tv/'),
 module.exports = App.Providers.Metadata.extend({
 
     /*
-     * Package config
-     * as we extend from Providers, we need
-     * to set detail for the source.
-     */
-    config: {
-        auth: {
-            enabled: true,
-            handler: 'auth'
-        }
-    },
-
-    /*
      * Package Settings
      */
     settings: {
         apiKey: {
-            type: 'string',
-            "default": '515a27ba95fbd83f20690e5c22bceaff0dfbde7c'
+            type: 'text',
+            default: '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
+            title: 'API Key'
         }
     },
 
@@ -46,14 +35,14 @@ module.exports = App.Providers.Metadata.extend({
      * Package Authentification
      */
     authentification: {
-
+        handler: 'authentification',
         username: {
-            type: 'string',
+            type: 'text',
             default: '',
             title: 'Username'
         },
         password: {
-            type: 'string',
+            type: 'password',
             default: '',
             title: 'Password'
         }

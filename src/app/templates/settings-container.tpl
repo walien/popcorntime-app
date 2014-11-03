@@ -345,9 +345,6 @@
 					var packages = App.PackagesManager.loadedPackages;						
 					for (package in packages) {
 						package = packages[package];
-						
-						console.log(package.settings);
-						console.log(package.authentification);
 					%>
 						<span><%= package.metadata.name %> <%= i18n.__("loaded in") %>  <%= package.loadTime %>s</span>
 					<%
@@ -355,6 +352,53 @@
 				%>
 		</div>
 	</section>	
+	<%
+		var packages = App.PackagesManager.loadedPackages;	
+		for (package in packages) {
+			package = packages[package];
+			if ((package.settings && Object.keys(package.settings).length > 0) || (package.authentification && Object.keys(package.authentification).length > 0)) {
+				%>
+			    <section id="packages" class="advanced">
+					<div class="title"><%= package.metadata.name %></div>
+					<div class="content">
+
+						<%
+							if(package.settings && Object.keys(package.settings).length > 0) {
+								for (settings in package.settings) {
+									settings = package.settings[settings];
+								%>
+									<span>
+										<p><%= settings.title %>: </p>
+										<input type="text" id="<%= settings._ref %>"  name="<%= settings._ref %>" value="<%= App.Settings.get(settings._ref) || settings.default %>" size="50"  /> 
+									</span>
+								<%
+								}
+							}
+						%>
+
+						<%
+							if(package.authentification && Object.keys(package.authentification).length > 0) {
+								delete package.authentification.handler;
+								for (auth in package.authentification) {
+									auth = package.authentification[auth];
+									console.log(auth);
+								%>
+									<span>
+										<p><%= auth.title %>: </p>
+										<input type="<%= auth.type %>" id="<%= auth._ref %>"  name="<%= auth._ref %>" value="<%= App.Settings.get(auth._ref) || auth.default %>" size="50"  /> 
+									</span>
+								<%
+								}
+							}
+						%>						
+
+					</div>
+				</section>	
+				<%
+
+			}
+		}
+	%>
 	<div class="btns advanced">
 		<div class="btn-settings flush-bookmarks"><%= i18n.__("Flush bookmarks database") %></div>
 		<div class="btn-settings flush-databases"><%= i18n.__("Flush all databases") %></div>

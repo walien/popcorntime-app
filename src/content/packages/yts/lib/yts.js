@@ -22,19 +22,8 @@ module.exports = App.Providers.Source.extend({
         type: 'movie'
     },
 
-    /*
-    * Package Settings
-    */
-    settings: {
-        url: {
-          type: [], // not used right now
-          "default": 'http://google.com'
-        }
-    },
 
-    /*
-    * Not used
-    */
+    settings: { },
     hooks: {},
 
     /*

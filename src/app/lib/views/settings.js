@@ -225,7 +225,7 @@
 				}
 				break;
 			default:
-				win.warn('Setting not defined: ' + field.attr('name'));
+				value = field.val();
 			}
 			win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
 
