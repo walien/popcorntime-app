@@ -106,6 +106,7 @@
 										trailer: info.trailer,
 										year: info.year,
 										image: info.images.poster,
+										imageLowRes: info.images.lowres || info.images.poster,
 										backdrop: info.images.fanart
 									});
 
