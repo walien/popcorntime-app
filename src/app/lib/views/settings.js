@@ -6,7 +6,6 @@
 	var fdialogs = require('node-webkit-fdialogs');
 	var _ = require('lodash');
 	var fs = require('fs');
-	var Trakt;
 
 	var that;
 
@@ -33,19 +32,16 @@
 			'click .open-tmp-folder': 'openTmpFolder',
 			'click .open-database-folder': 'openDatabaseFolder',
 			'click .export-database': 'exportDatabase',
-			'click .import-database': 'inportDatabase',
+			'click .import-database': 'importDatabase',
 			'click .package-signout': 'signout',
-			'click .btn-package': 'clickButton',
+			'click .btn-package': 'clickButtonPackage',
 			'change #tmpLocation': 'updateCacheDirectory',
-			'click #syncTrakt': 'syncTrakt',
 			'click .qr-code': 'generateQRcode',
 			'click #qrcode-overlay': 'closeModal',
 			'click #qrcode-close': 'closeModal'
 		},
 
 		onShow: function () {
-
-			Trakt = App.Providers.get('trakttv');
 
 			this.render();
 
@@ -221,7 +217,7 @@
 			App.vent.trigger('keyboard:toggle');
 		},
 
-		clickButton: function (e) {
+		clickButtonPackage: function (e) {
 			var self = this;
 			var authPackages = this.model.get('authPackages');
 
@@ -229,13 +225,38 @@
 
 			// get active button
 			var field = $(e.currentTarget);
+			var oldHTML = field.html();
+
+			var thisPackage = App.PackagesManager.getLoadedPackage(field.attr('data-package'));
+			var thisHandler = field.attr('data-handler');
+
+			if (_.isFunction(thisPackage.bundledPackage[thisHandler])) {
+
+				field.html(i18n.__('Plese wait...')).addClass('disabled').prop('disabled', true);
+
+				// we run our function
+				// should be a promise
+				thisPackage.bundledPackage[thisHandler]()
+					.then(function () {
+
+						field.text(i18n.__('Done')).removeClass('disabled').addClass('green').delay(3000).queue(function () {
+							field.dequeue();
+							self.render();
+						});
+
+					})
+					.catch(function () {
+
+						field.text(i18n.__('Error')).removeClass('disabled').addClass('red').delay(3000).queue(function () {
+							field.dequeue();
+							self.render();
+						});
+
+					})
+
+			}
 
 
-			// TODO: GET HANDLER AND BIND (cached) THE FUNCTION
-			// THEN RUN IT!
-
-
-			console.log(field);
 		},
 
 		saveSetting: function (e) {
@@ -295,9 +316,6 @@
 			case 'streamPort':
 				value = field.val();
 				break;
-			case 'traktUsername':
-			case 'traktPassword':
-				return;
 			case 'tmpLocation':
 				value = path.join(field.val(), 'Popcorn-Time');
 				break;
@@ -558,7 +576,7 @@
 
 		},
 
-		inportDatabase: function () {
+		importDatabase: function () {
 			var that = this;
 
 			fdialogs.readFile(function (err, content, path) {
@@ -647,29 +665,6 @@
 
 			}, 5000);
 
-		},
-
-		syncTrakt: function () {
-
-            var oldHTML = document.getElementById('syncTrakt').innerHTML;
-            $('#syncTrakt').text(i18n.__('Syncing...')).addClass('disabled').prop('disabled', true);
-
-			Trakt.sync()
-				.then(function () {
-					$('#syncTrakt').text(i18n.__('Done')).removeClass('disabled').addClass('green').delay(3000).queue(function () {
-						$('#syncTrakt').removeClass('green').prop('disabled', false);
-                        document.getElementById('syncTrakt').innerHTML = oldHTML;
-						$('#syncTrakt').dequeue();
-					});
-				})
-				.catch(function (err) {
-					win.error(err);
-					$('#syncTrakt').text(i18n.__('Error')).removeClass('disabled').addClass('red').delay(3000).queue(function () {
-						$('#syncTrakt').removeClass('red').prop('disabled', false);
-                        document.getElementById('syncTrakt').innerHTML = oldHTML;
-						$('#syncTrakt').dequeue();
-					});
-				});
 		},
 
         getIPAddress: function () {

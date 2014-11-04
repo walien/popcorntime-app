@@ -351,7 +351,7 @@
 
 													case 'button':
 													%>
-														<button data-package="<%= package.metadata.name %>" id="<%= auth._css %>"  name="<%= auth._ref %>" class="btn-settings btn-package"><%= auth.title %><button>
+														<button data-package="<%= package.metadata.name %>" data-handler="<%= auth.handler %>" id="<%= auth._css %>"  name="<%= auth._ref %>" class="btn-settings btn-package"><%= auth.title %><button>
 													<%
 													break;
 												}

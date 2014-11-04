@@ -61,6 +61,8 @@ function generateProxyFunctions(name, permissions) {
                 _.pick(window.App.Providers, 'get', 'set')
             ),
 
+            database: window.App.Database,
+
             localization: passThruAppContextToApi('localization',
                 _.pick(window.App.Localization, 'filterSubtitle')
             ),

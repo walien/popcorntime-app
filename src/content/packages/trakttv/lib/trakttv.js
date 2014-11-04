@@ -43,9 +43,8 @@ module.exports = App.Providers.Metadata.extend({
         // the settings define hered require authentification
         settings: {
           syncTrakt: {
-              handler: 'syncTrakt',
+              handler: 'sync', // function to call so it'll be this.sync
               type: 'button',
-              default: '',
               title: 'Sync my Watchlist'
           },
           syncOnStart: {
@@ -186,7 +185,6 @@ module.exports = App.Providers.Metadata.extend({
         var defer = Q.defer();
 
         postVariables = postVariables || {};
-
         if (Array.isArray(endpoint)) {
             endpoint = endpoint.map(function(val) {
                 if (val === '{KEY}') {
@@ -211,7 +209,6 @@ module.exports = App.Providers.Metadata.extend({
                 postVariables.password = this._credentials.password;
             }
         }
-
         request(requestUri.toString(), {
             method: 'post',
             body: postVariables,
@@ -515,12 +512,12 @@ module.exports = App.Providers.Metadata.extend({
                     return watched;
                 })
                 .then(function(traktWatched) {
-                    return Database.markMoviesWatched(traktWatched);
+                    return this.app.api.database.insert('watched', traktWatched);
                 });
         },
 
         syncTo: function() {
-            return Database.getMoviesWatched()
+            return this.app.api.database.find('watched', {type: 'movie'})
                 .then(function(results) {
                     return results.map(function(item) {
                         return item.movie_id;
@@ -793,14 +790,14 @@ module.exports = App.Providers.Metadata.extend({
                 })
                 .then(function(traktWatched) {
                     // Insert them locally
-                    return Database.markEpisodesWatched(traktWatched);
+                    return this.app.api.database.add('watched', traktWatched);
                 });
         },
 
         syncTo: function() {
             var self = this;
 
-            return Database.getAllEpisodesWatched()
+            return this.app.api.database.find('watched', {type: 'episode'})
                 .then(function(results) {
                     return results.reduce(function(prev, current) {
                         if (current.tvdb_id) {

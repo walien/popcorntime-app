@@ -16,7 +16,7 @@ var activeDatabase = [
 ];
 
 function DatabaseManager(data_path) {
-    
+
     var that = this;
     this.db = [];
     this.data_path = data_path;
@@ -60,7 +60,6 @@ DatabaseManager.prototype.get = function (database, data) {
 };
 
 DatabaseManager.prototype.find = function (database, data, offset, byPage) {
-    
     data = data || {};
     offset = offset || false;
     byPage = byPage || false;
@@ -75,8 +74,8 @@ DatabaseManager.prototype.find = function (database, data, offset, byPage) {
 // example db.update('movies', {imdb_id: 'tt736635'}, {test: '1111'})
 // or
 // example db.update('settings', {key: 'myKey'}, {value: 'ssss'})
-// 
-// the key represent the unique ID 
+//
+// the key represent the unique ID
 DatabaseManager.prototype.update = function (database, key, data) {
     var that = this;
     return this.get('settings', key)
@@ -101,7 +100,7 @@ DatabaseManager.prototype.delete = function (database, data , multi) {
 DatabaseManager.prototype.deleteDatabase = function () {
 
     var that = this;
-    
+
     return Q.Promise(function (resolve, reject) {
 
         _.each(activeDatabase, function(database) {
