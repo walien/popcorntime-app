@@ -311,12 +311,33 @@
 						<%
 							if(package.settings) {
 								_.each(package.settings, function (settings) {
-								%>
+									%>
 									<span>
-										<p><%= settings.title %>: </p>
-										<input type="text" id="<%= settings._ref %>"  name="<%= settings._ref %>" value="<%= App.Settings.get(settings._ref) || settings.default %>" size="50"  />
+									<%
+										switch(settings.type) {
+											case 'text':
+											%>
+												<p><%= settings.title %>: </p>
+												<input data-package="<%= package.metadata.name %>" type="<%= settings.type %>" id="<%= settings._css %>"  name="<%= settings._ref %>" value="<%= App.Settings.get(settings._ref) || settings.default %>" size="50"  />
+											<%
+											break;
+
+											case 'checkbox':
+											%>
+												<input data-package="<%= package.metadata.name %>" class="settings-checkbox" name="<%= settings._ref %>" id="<%= settings._css %>" type="checkbox" <%=(App.Settings.get(settings._ref)? "checked='checked'":"")%>>
+												<label class="settings-label" for="<%= settings._css %>"><%= settings.title %></label>
+											<%
+											break;
+
+											case 'button':
+											%>
+												<button data-package="<%= package.metadata.name %>" data-handler="<%= settings.handler %>" id="<%= settings._css %>"  name="<%= settings._ref %>" class="btn-settings btn-package"><%= settings.title %><button>
+											<%
+											break;
+										}
+									%>
 									</span>
-								<%
+									<%
 								});
 							}
 						%>

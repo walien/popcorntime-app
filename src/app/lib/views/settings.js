@@ -81,6 +81,10 @@
 
 					// settings
 					if(thisPackage.settings && Object.keys(thisPackage.settings).length > 0) {
+						_.each(thisPackage.settings, function(auth, key) {
+								auth._css = auth._ref.replace(".", "_");
+								auth._key = key;
+						});
 						thisPackageBundled.settings = thisPackage.settings;
 					}
 
@@ -127,7 +131,7 @@
 
 			this.model.set('loadedPackages', loadedPackages);
 			this.model.set('settingPackages', settingPackages);
-			this.model.set('authPackages', _.pluck(settingPackages, 'authentification'));
+			this.model.set('authPackages', _.compact(_.pluck(settingPackages, 'authentification')));
 		},
 
 		onRender: function () {
