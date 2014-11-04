@@ -3,11 +3,8 @@ var
     Q = require('q'),
     Events,
     gui,
-    tls = require('tls'),
-    URI = require('URIjs'),
     i18n = require('i18n'),
-    _ = require('lodash'),
-    request = require('request');
+    _ = require('lodash');
 
 function Launcher(App) {
     Events = require('../events')(App);
@@ -17,10 +14,7 @@ function Launcher(App) {
 Launcher.prototype.init = function() {
     var that = this;
     this.app.vent.trigger('initHttpApi');
-    return this.checkEndpoint()
-        .then(function() {
-            return that.compareVersion();
-        })
+    return this.compareVersion()
         .then(function() {
             return that.loadUserInfo();
         })
@@ -32,48 +26,6 @@ Launcher.prototype.init = function() {
             // load packages (final phase)
             return that.loadPackages();
         });
-};
-
-Launcher.prototype.checkEndpoint = function() {
-
-    var that = this;
-
-    var allApis = [{
-        original: 'yifyApiEndpoint',
-        mirror: 'yifyApiEndpointMirror',
-        fingerprint: 'D4:7B:8A:2A:7B:E1:AA:40:C5:7E:53:DB:1B:0F:4F:6A:0B:AA:2C:6C'
-    }];
-
-    var promises = allApis.map(function(apiCheck) {
-        return Q.Promise(function(resolve, reject) {
-            var hostname = URI(that.app.Settings.get(apiCheck.original)).hostname();
-
-            tls.connect(443, hostname, {
-                servername: hostname,
-                rejectUnauthorized: false
-            }, function() {
-                if (!this.authorized || this.authorizationError || this.getPeerCertificate().fingerprint !== apiCheck.fingerprint) {
-                    // "These are not the certificates you're looking for..."
-                    // Seems like they even got a certificate signed for us :O
-                    that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror), false);
-                }
-                this.end();
-                resolve();
-            }).on('error', function() {
-                // No SSL support. That's convincing >.<
-                that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror), false);
-                this.end();
-                resolve();
-            }).on('timeout', function() {
-                // Connection timed out, we'll say its not available
-                that.app.Settings.set(apiCheck.original, that.app.Settings.get(apiCheck.mirror), false);
-                this.end();
-                resolve();
-            }).setTimeout(10000); // Set 10 second timeout
-        });
-    });
-
-    return Q.all(promises);
 };
 
 Launcher.prototype.compareVersion = function() {
@@ -121,7 +73,7 @@ Launcher.prototype.loadUserInfo = function() {
                 // we return it as a promise
                 return resolve();
             });
-               
+
     });
 };
 
@@ -135,7 +87,7 @@ Launcher.prototype.loadBookmarks = function() {
                     bookmarks = _.pluck(data, 'imdb_id');
                 }
                 return resolve(bookmarks);
-            });  
+            });
     });
 };
 

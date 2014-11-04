@@ -3,7 +3,7 @@ var path = require('path'),
     config;
 
 config = {
-    
+
     language: 'en',
 
     coversShowRating        : false,
@@ -16,7 +16,7 @@ config = {
     postersSizeRatio        : (196 / 134),
     postersWidth            : 134,
     postersJump             : [134, 154, 174, 194, 214, 234, 254, 274, 294],
-    
+
     playNextEpisodeAuto     : true,
 
     alwaysOnTop             : false,
@@ -40,7 +40,7 @@ config = {
 
     traktUsername           : '',
     traktPassword           : '',
-    traktTvVersion          : '0.0.2',    
+    traktTvVersion          : '0.0.2',
     syncOnStart             : false,
 
 
@@ -53,8 +53,6 @@ config = {
     deleteTmpOnClose        : true,
 
     updateApiEndpoint       : 'http://popcorntime.re/',
-    yifyApiEndpoint         : 'https://yts.re/api/',
-    yifyApiEndpointMirror   : 'https://yts.im/api/',
 
     connectionCheckUrl      : 'http://google.com/',
 

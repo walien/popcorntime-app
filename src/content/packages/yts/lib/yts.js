@@ -6,7 +6,10 @@
 var App = require('pdk'),
     _ = require('underscore'),
     helpers = require('./helper-querytorrent'),
-    querystring = require('querystring');
+    querystring = require('querystring'),
+    apiUrl = 'http://yts.wf/api/',
+    fingerprint = 'ED:10:DE:CD:19:37:65:7B:FE:71:FC:CB:E3:68:5C:AB:EE:66:01:D0',
+    mirror = 'http://yts.sh/api/';
 
 /*
 * We build and export our new package
@@ -25,6 +28,19 @@ module.exports = App.Providers.Source.extend({
 
     settings: { },
     hooks: {},
+
+    onActivate: function() {
+
+        // we'll check which domain we can use...
+        this.checkSSL(url, fingerprint)
+          .then (function () {
+            console.log('SSL OK - using ' + apiUrl);
+          })
+          .catch(function (error) {
+            apiUrl = mirror;
+            console.log('SSL NOT OK - using ' + apiUrl);
+          })
+    },
 
     /*
     * Default Function used by PT
@@ -59,11 +75,11 @@ module.exports = App.Providers.Source.extend({
             params.set = filters.page;
         }
 
-        var url = this.app.api.settings.get('yifyApiEndpoint') + 'list.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
+        var url = apiUrl + 'list.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
         // Builtin function allowing to query any URL
         // and get results with a promise
-        // 
+        //
         return this.call(url)
             .then(function(data) {
                 return helpers.formatForPopcorn(data.MovieList || {});
@@ -78,7 +94,7 @@ module.exports = App.Providers.Source.extend({
             imdb_id: torrent_id
         };
 
-        var url = this.app.api.settings.get('yifyApiEndpoint') + 'listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
+        var url = apiUrl + 'listimdb.json?' + querystring.stringify(params).replace(/%E2%80%99/g, '%27');
 
         return this.call(url)
             .then(function(data) {
@@ -88,7 +104,7 @@ module.exports = App.Providers.Source.extend({
 
                 return old_data;
             });
-    },    
+    },
 
     /*
     * Default Function used by PT
