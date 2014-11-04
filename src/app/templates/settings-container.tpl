@@ -300,7 +300,7 @@
 		<div class="title"><%= i18n.__("Packages") %></div>
 		<div class="content">
 				<% _.each(loadedPackages, function(package) { %>
-						<span><%= package.metadata.name %> <%= i18n.__("loaded in") %>  <%= package.loadTime %>s</span>
+						<span><%= package.metadata.name %> <%= package.metadata.version %> <%= i18n.__("loaded in") %>  <%= package.loadTime %>s</span>
 				<% }); %>
 		</div>
 	</section>

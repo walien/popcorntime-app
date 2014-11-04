@@ -19,8 +19,8 @@ module.exports = App.Core.extend({
     /*
      * Default function called by package manager to activate
      */
-    _activate: function() {
-        //this.start();        
+    onActivate: function() {
+        //this.start();
 
         // bind our function to initHttpApi
         // i think this may be removed ?
@@ -58,7 +58,7 @@ module.exports = App.Core.extend({
 
         server.expose('volume', function (args, opt, callback) {
             var volume = 1;
-            
+
             var view = this.app.views.player;
 
             if (view !== undefined && view.player !== undefined) {

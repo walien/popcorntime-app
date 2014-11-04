@@ -152,9 +152,9 @@ Package.prototype.activateNow = function() {
             this.bundledPackage = _app;
 
             // activate the package
-            if (_.isFunction(_app._activate)) {
+            if (_.isFunction(_app.__activate)) {
 
-                _app._activate();
+                _app.__activate();
                 this.mainActivated = true;
 
                 this.loadSettings();

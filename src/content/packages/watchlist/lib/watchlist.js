@@ -8,13 +8,14 @@ var App = require('pdk');
 /*
 * We build and export our new package
 */
-module.exports = App.Devices.extend({
+module.exports = App.Providers.extend({
 
     /*
      * Default function called by package manager to activate
      */
     onActivate: function() {
-        console.log("chromecast init")
+        console.log("wo0t");
     }
+
 
 });

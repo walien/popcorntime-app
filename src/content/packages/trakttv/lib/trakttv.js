@@ -76,7 +76,7 @@ module.exports = App.Providers.Metadata.extend({
     /*
      * Default Function used by PT
      */
-    activate: function() {
+    onActivate: function() {
 
         var self = this;
 
