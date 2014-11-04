@@ -6,7 +6,7 @@
 var App = require('pdk'),
     _ = require('lodash'),
     querystring = require('querystring'),
-    apiUrl = 'http://eztvapi.re/shows/';
+    apiUrl = 'http://eztvapi.re/';
 
 /*
 * We build and export our new package
@@ -56,7 +56,7 @@ module.exports = App.Providers.Source.extend({
             params.sort = filters.sorter;
         }
 
-        var url = apiUrl + filters.page + '?' + querystring.stringify(params).replace(/%25%20/g, '%20');
+        var url = apiUrl + 'shows/' + filters.page + '?' + querystring.stringify(params).replace(/%25%20/g, '%20');
         return this.call(url)
             .then(function(data) {
 
@@ -72,7 +72,6 @@ module.exports = App.Providers.Source.extend({
     * Default Function used by PT
     */
     detail: function (torrent_id, old_data) {
-
         return this.call(apiUrl + 'show/' + torrent_id)
             .then(function(data) {
                 return data;
