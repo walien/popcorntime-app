@@ -9,7 +9,7 @@ var App = require('pdk'),
     querystring = require('querystring'),
     apiUrl = 'http://yts.wf/api/',
     fingerprint = 'ED:10:DE:CD:19:37:65:7B:FE:71:FC:CB:E3:68:5C:AB:EE:66:01:D0',
-    mirror = 'http://yts.sh/api/';
+    mirror = 'https://yts.sh/api/';
 
 /*
 * We build and export our new package
