@@ -79,7 +79,9 @@ PackageManager.prototype.getAvailablePackagePaths = function() {
  * Load all packages
  */
 PackageManager.prototype.loadPackages = function(callback) {
-    var _len, packagePath;
+    var _len,
+      packagePath,
+      self = this;
 
     packagePaths = this.getAvailablePackagePaths();
 
@@ -93,11 +95,15 @@ PackageManager.prototype.loadPackages = function(callback) {
         return path.basename(packagePath);
     });
 
-    for (var _i in packagePaths) {
-        packagePath = packagePaths[_i];
-        this.loadPackage(packagePath);
-    }
+    _.each(packagePaths, function (packagePath) {
+      self.loadPackage(packagePath);
+    });
 
+    _.each(this.loadedPackages, function (myPackage) {
+      if (_.isFunction(myPackage.bundledPackage.afterActivate)) {
+        myPackage.bundledPackage.afterActivate();
+      }
+    });
     return callback(false, true);
 };
 
