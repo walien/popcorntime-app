@@ -21,18 +21,6 @@ var API_ENDPOINT = URI('https://api.trakt.tv/'),
 module.exports = App.Providers.Metadata.extend({
 
     /*
-     * Package Settings (no auth required)
-     */
-    settings: {
-        apiKey: {
-            type: 'text',
-            default: '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
-            title: 'API Key'
-        }
-
-    },
-
-    /*
      * Package Authentification
      */
     authentification: {
@@ -92,9 +80,9 @@ module.exports = App.Providers.Metadata.extend({
 
         this.watchlist = this.app.api.providers.get('Watchlist');
         // Login with stored credentials
-        if (this.app.api.settings.get('trakttv.username') !== '' && this.app.api.settings.get('trakttv.password') !== '') {
-            this._authenticationPromise = this.signin({username: this.app.api.settings.get('trakttv.username'), password: this.app.api.settings.get('trakttv.password'), preHashed: true});
-            console.log(this._authenticationPromise);
+
+        if (this.app.api.settings.get('username') !== '' && this.app.api.settings.get('password') !== '') {
+            this._authenticationPromise = this.signin({username: this.app.api.settings.get('username'), password: this.app.api.settings.get('password'), preHashed: true});
         }
 
         var self = this;
@@ -174,8 +162,8 @@ module.exports = App.Providers.Metadata.extend({
 
                 self.authenticated = true;
                 // Store the credentials (hashed ofc)
-                self.app.api.settings.set('trakttv.username', self._credentials.username);
-                self.app.api.settings.set('trakttv.password', self._credentials.password);
+                self.app.api.settings.set('username', self._credentials.username);
+                self.app.api.settings.set('password', self._credentials.password);
 
                 return true;
             } else {
@@ -190,8 +178,8 @@ module.exports = App.Providers.Metadata.extend({
             username: '',
             password: ''
         };
-        this.app.api.settings.set('trakttv.username', '');
-        this.app.api.settings.set('trakttv.password', '');
+        this.app.api.settings.set('username', '');
+        this.app.api.settings.set('password', '');
     },
 
     post: function(endpoint, postVariables) {

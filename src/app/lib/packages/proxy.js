@@ -44,10 +44,18 @@ function generateProxyFunctions(name, permissions) {
      * this.app.api.settings.set will be mapped to App.AdvSettings
      */
 
+
     return {
         api: {
 
-            settings: window.App.Settings,
+            settings: {
+              get: function(key) {
+                return window.App.Settings.get(name + '.' + key);
+              },
+              set: function(key, value) {
+                return window.App.Settings.set(name + '.' + key, value);
+              }
+            },
 
             providers: passThruAppContextToApi('providers',
                 _.pick(window.App.Providers, 'get', 'set')

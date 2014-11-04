@@ -5,7 +5,8 @@
 */
 var App = require('pdk'),
     _ = require('lodash'),
-    querystring = require('querystring');
+    querystring = require('querystring'),
+    apiUrl = 'http://eztvapi.re/shows/';
 
 /*
 * We build and export our new package
@@ -55,13 +56,13 @@ module.exports = App.Providers.Source.extend({
             params.sort = filters.sorter;
         }
 
-        var url = 'http://eztvapi.re/shows/' + filters.page + '?' + querystring.stringify(params).replace(/%25%20/g, '%20');
+        var url = apiUrl + filters.page + '?' + querystring.stringify(params).replace(/%25%20/g, '%20');
         return this.call(url)
             .then(function(data) {
 
                 data.forEach(function(entry) {
                     entry.type = 'show';
-                });   
+                });
 
                 return {results: data, hasMore: true};
             });
@@ -72,11 +73,11 @@ module.exports = App.Providers.Source.extend({
     */
     detail: function (torrent_id, old_data) {
 
-        return this.call('http://eztvapi.re/' + 'show/' + torrent_id)
+        return this.call(apiUrl + 'show/' + torrent_id)
             .then(function(data) {
                 return data;
             });
-    },    
+    },
 
     /*
     * Default Function used by PT
