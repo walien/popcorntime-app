@@ -8,7 +8,8 @@ var App = require('pdk'),
     request = require('request'),
     URI = require('URIjs'),
     Q = require('q'),
-    sha1 = require('sha1');
+    sha1 = require('sha1'),
+    formatForPopcorn = require('./helper-format');
 
 var API_ENDPOINT = URI('https://api.trakt.tv/'),
     API_KEY = '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
@@ -302,7 +303,10 @@ module.exports = App.Providers.Metadata.extend({
                 if (_.isEmpty(ids)) {
                     return Q([]);
                 }
-                return self.call(['movie/summaries.json', '{KEY}', ids.join(','), 'full']);
+                return self.call(['movie/summaries.json', '{KEY}', ids.join(','), 'full'])
+                  .then(function(data) {
+                    return formatForPopcorn(data);
+                  });
             });
         },
         scrobble: function(imdb, progress, duration) {
@@ -546,6 +550,9 @@ module.exports = App.Providers.Metadata.extend({
                 return self.call(['show/summaries.json', '{KEY}', ids.join(','), 'full']);
             });
         },
+
+        // TODO why it's called from streamer???
+        // to be changed
         episodeSummary: function(id, season, episode) {
             return this.call(['show/episode/summary.json', '{KEY}', id, season, episode])
                 .then(function(data) {

@@ -52,7 +52,7 @@ module.exports = App.Providers.Subtitle.extend({
 
         var allSubs = {};
         // Iterate each movie
-        _.each(data.subs, function(langs, imdbId) {            
+        _.each(data.subs, function(langs, imdbId) {
             var movieSubs = {};
             // Iterate each language
             _.each(langs, function(subs, lang) {

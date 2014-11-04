@@ -41,14 +41,13 @@
 			 * provider declare a unique id, and then lookthem up in
 			 * a hash.
 			 */
-						
+
 			var torrentPromises = _.map(torrents, function (torrentProvider, pid) { //XXX(xaiki): provider hack
 				var deferred = Q.defer();
 
 				var promises = [torrentProvider.fetch(self.filter)];
 
 				var idsPromise = promises[0].then(_.bind(torrentProvider.extractIds, torrentProvider));
-
 				if (subtitle) {
 					promises.push(idsPromise.then(_.bind(subtitle.fetch, subtitle)));
 				}
@@ -73,20 +72,17 @@
 								var ts = model.get('torrents');
 								_.extend(ts, movie.torrents);
 								model.set('torrents', ts);
-
 								return;
 							}
+							movie.subtitle = {};
 							movie.provider = torrentProvider.name;
-
 							if (subtitles) {
 
 								_.each(subtitles, function(val) {
 									if (val._id === id) {
-
 										delete val._id;
 										delete val._lastModified;
 										delete val._ttl;
-
 										movie.subtitle = val;
 									}
 								});
@@ -112,6 +108,8 @@
 										image: info.images.poster,
 										backdrop: info.images.fanart
 									});
+
+
 								} else {
 									win.warn('Unable to find %s on Trakt.tv', id);
 								}
