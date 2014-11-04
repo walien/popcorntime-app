@@ -101,10 +101,14 @@ var health_checked = false;
 				_.bind(this.onUnWatched, this));
 
 			var images = this.model.get('images');
-			images.fanart = App.Providers.trakttv.resizeImage(images.fanart, '940');
+
+			// TODO: Till we'll add metadata for Tvshow
+			// We need to fix the fanart resize in the api
+
+			//images.fanart = App.Providers.trakttv.resizeImage(images.fanart, '940');
 			//if ((ScreenResolution.SD || ScreenResolution.HD) && !ScreenResolution.Retina) {
 			// Screen Resolution of 720p or less is fine to have 300x450px image
-			images.poster = App.Providers.trakttv.resizeImage(images.poster, '300');
+			//images.poster = App.Providers.trakttv.resizeImage(images.poster, '300');
 			//}
 
 			App.vent.on('shortcuts:show', function () {
@@ -303,7 +307,7 @@ var health_checked = false;
 				})
 				.then(function (watched) {
 					if (watched) {
-						
+
 						App.Database.find('watched', {tvdb_id: currentValue.tvdb_id})
 							.then(function(response) {
 								if (response.length === 1) {
@@ -311,7 +315,7 @@ var health_checked = false;
 								}
 							})
 							.then(function() {
-								return App.Database.delete('watched', 
+								return App.Database.delete('watched',
 								{
 									tvdb_id: currentValue.tvdb_id.toString(),
 									imdb_id: currentValue.imdb_id.toString(),
@@ -321,10 +325,10 @@ var health_checked = false;
 							})
 							.then(function () {
 								App.vent.trigger('show:unwatched:' + currentValue.tvdb_id, currentValue);
-							});	
+							});
 
 					} else {
-						
+
 						App.Database.find('watched', {tvdb_id: currentValue.tvdb_id})
 							.then(function(response) {
 								if (response.length === 0) {
@@ -332,7 +336,7 @@ var health_checked = false;
 								}
 							})
 							.then(function() {
-								return App.Database.add('watched', 
+								return App.Database.add('watched',
 								{
 									tvdb_id: currentValue.tvdb_id.toString(),
 									imdb_id: currentValue.imdb_id.toString(),
@@ -344,7 +348,7 @@ var health_checked = false;
 							})
 							.then(function () {
 								App.vent.trigger('show:watched:' + currentValue.tvdb_id, currentValue);
-							});								
+							});
 					}
 				});
 
