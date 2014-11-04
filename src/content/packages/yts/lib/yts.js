@@ -32,7 +32,7 @@ module.exports = App.Providers.Source.extend({
     onActivate: function() {
 
         // we'll check which domain we can use...
-        this.checkSSL(url, fingerprint)
+        this.checkSSL(apiUrl, fingerprint)
           .then (function () {
             console.log('SSL OK - using ' + apiUrl);
           })
