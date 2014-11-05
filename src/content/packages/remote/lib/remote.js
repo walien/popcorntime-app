@@ -52,11 +52,14 @@ module.exports = App.Core.extend({
             var playerListenersInited = false;
 
             var initPlayerListeners = function() {
+
                 if (self.app.api.player.isAvailable() && !playerListenersInited) {
                     try {
-                        self.app.player.on('seeked', emitPlayerSeeked);
-                        self.app.player.on('volumechange', emitPlayerVolumeChanged);
+                        self.app.api.player.videojs.on('seeked', emitPlayerSeeked);
+                        self.app.api.player.videojs.on('volumechange', emitPlayerVolumeChanged);
                     } catch (e) {
+                        console.log(e);
+                        process.exit();
                         // Catch errors if player is null when the on() is executed inside the object. The player will emit another play event and the listeners will be added. So there's nothing to worry about.
                     }
                     playerListenersInited = true;
@@ -84,6 +87,23 @@ module.exports = App.Core.extend({
                     currentTab: self.app.api.currentTab(),
                 });
             }
+
+            var emitPlayerVolumeChanged = function() {
+                var detail = self.app.api.player.info();
+            	var volume = detail.volume;
+            	if (detail.muted) {
+            		volume = 0;
+            	}
+            	socket.emit('player_volumechanged', volume);
+            };
+
+            var emitPlayerSeeked = function() {
+                var detail = self.app.api.player.info();
+            	socket.emit('player_seeked', {
+            		currentTime: detail.currentTime,
+            		duration: detail.duration
+            	});
+            };
 
             socket.on('player_info', function(data) {
               emitPlayerInfo();

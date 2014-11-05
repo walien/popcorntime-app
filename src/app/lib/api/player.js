@@ -16,6 +16,7 @@ Player.info = function() {
         uploadSpeed: window.App.PlayerView.model.get('uploadSpeed'),
         activePeers: window.App.PlayerView.model.get('activePeers'),
         volume: window.App.PlayerView.player.volume(),
+        muted: window.App.PlayerView.player.muted(),
         currentTime: window.App.PlayerView.player.currentTime(),
         duration: window.App.PlayerView.player.duration(),
         streamUrl: 'not_supported_yet',
@@ -48,6 +49,14 @@ Player.isAvailable = function() {
         return false;
     }
     return true;
+}
+
+Player.videojs = {};
+Player.videojs.on = function() {
+    if (Player.isAvailable()) {
+        return window.App.PlayerView.player.on;
+    }
+    return false;
 }
 
 module.exports = Player;
