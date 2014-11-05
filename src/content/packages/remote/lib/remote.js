@@ -6,10 +6,9 @@
 var App = require('pdk'),
     _ = require('underscore'),
     Q = require('q'),
-    rpc = require('json-rpc2'),
-    server,
-    httpServer,
-    sockets = [];
+    server = require('socket.io'),
+    btoa = require('btoa'),
+    io;
 
 /*
 * We build and export our new package
@@ -20,100 +19,63 @@ module.exports = App.Core.extend({
      * Default function called by package manager to activate
      */
     onActivate: function() {
-        //this.start();
-
-        // bind our function to initHttpApi
-        // i think this may be removed ?
-        //this.app.api.vent.on('initHttpApi', this.start);
-        return;
+        this.start();
     },
 
     start: function () {
-        var self = this;
-        console.log('Reiniting server');
 
-        Q.fcall(self.initServer)
-            .then(function () {
-                //server.enableAuth(self.app.api.settings.get('httpApiUsername'), self.app.api.settings.get('httpApiPassword'));
-                if (httpServer) {
-                    self.closeServer(startListening);
-                } else {
-                    self.startListening();
-                }
-            });
-    },
+      var self = this;
 
-    initServer: function() {
-        var self = this;
+      io = server.listen(8009);
+      var no_auth = [];
 
-        server = rpc.Server({
-            'headers': { // allow custom headers is empty by default
-                'Access-Control-Allow-Origin': '*'
-            }
-        });
-
-        server.expose('ping', function (args, opt, callback) {
-            self.callback(callback);
-        });
-
-        server.expose('volume', function (args, opt, callback) {
-            var volume = 1;
-
-            var view = this.app.views.player;
-
-            if (view !== undefined && view.player !== undefined) {
-                if (args.length > 0) {
-                    volume = parseFloat(args[0]);
-                    if (volume > 0) {
-                        if (view.player.muted()) {
-                            view.player.muted(false);
-                        }
-                        view.player.volume(volume);
-                    } else {
-                        view.player.muted(true);
-                    }
-                } else {
-                    volume = view.player.volume();
-                }
-            }
-            self.callback(callback, 'Cant change volume, player not open');
-        });
-
-    },
-
-    startListening: function() {
-
-        httpServer = server.listen(this.app.api.settings.get('httpApiPort'));
-
-        httpServer.on('connection', function (socket) {
-            sockets.push(socket);
-            socket.setTimeout(4000);
-            socket.on('close', function () {
-                console.log('socket closed');
-                sockets.splice(sockets.indexOf(socket), 1);
-            });
-        });
-    },
-
-    closeServer: function() {
-        httpServer.close(function () {
-            cb();
-        });
-        for (var i = 0; i < sockets.length; i++) {
-            console.log('socket #' + i + ' destroyed');
-            sockets[i].destroy();
+      io.use(function(socket, next) {
+        if (socket.handshake.query.auth !== btoa('popcorn:popcorn')) {
+          no_auth.push(socket.id);
         }
-    },
+        next();
+      });
 
-    callback: function (callback, err, result) {
-        if (result === undefined) {
-            result = {};
+      io.on('connection', function(socket) {
+
+        if (no_auth.indexOf(socket.id) > -1) {
+          no_auth.splice(no_auth.indexOf(socket.id), 1);
+          socket.emit('auth_invalid', 'Username or password invalid');
+          socket.disconnect();
         }
-        result['popcornVersion'] = this.app.api.settings.get('version');
-        console.log(result['popcornVersion']);
-        process.exit();
-        callback(err, result);
+
+        socket.emit('version', {
+          version: self.app.api.currentVersion,
+          git: self.app.api.git
+        });
+
+        var playerListenersInited = false;
+
+        var initPlayerListeners = function() {
+          try {
+            //self.app.player.on('seeked', emitPlayerSeeked);
+            //self.app.player.on('volumechange', emitPlayerVolumeChanged);
+          } catch (e) {
+            // Catch errors if player is null when the on() is executed inside the object. The player will emit another play event and the listeners will be added. So there's nothing to worry about.
+          }
+
+          playerListenersInited = true;
+        };
+
+        var emitPlayerInfo = function() {
+          socket.emit('player_info', self.app.api.player.info());
+        };
+
+        socket.on('player_info', function(data) {
+          emitPlayerInfo();
+        });
+
+        self.app.api.vent.on('player:start', emitPlayerInfo);
+
+        });
+
     }
+
 
 
 });

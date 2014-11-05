@@ -7,7 +7,6 @@ var
     _ = require('lodash');
 
 function Launcher(App) {
-    Events = require('../events')(App);
     this.app = App;
 }
 

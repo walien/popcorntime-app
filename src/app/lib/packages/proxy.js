@@ -1,5 +1,6 @@
 var AppProxy,
-    _ = require('underscore');
+  _ = require('underscore');
+  API = require('../api');
 
 function AppProxy(options) {
     if (!options.name) {
@@ -41,9 +42,8 @@ function generateProxyFunctions(name, permissions) {
      * The are accessible after an extend from one of the main class
      *
      * Example
-     * this.app.api.settings.set will be mapped to App.AdvSettings
+     * this.app.api.settings.set will be mapped to App.Settings.set
      */
-
 
     return {
         api: {
@@ -71,7 +71,8 @@ function generateProxyFunctions(name, permissions) {
                 _.pick(window.Mousetrap, 'trigger')
             ),
 
-
+            player: API.player,
+            viewStack: API.currentStack,
             vent: window.App.vent
         },
 
@@ -79,9 +80,6 @@ function generateProxyFunctions(name, permissions) {
             providers: window.App.Providers.CacheProviderV2,
         },
 
-        views: {
-            player: window.App.PlayerView,
-        }
     };
 
 };
