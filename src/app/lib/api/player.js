@@ -41,6 +41,13 @@ Player.info = function() {
   return false;
 }
 
-
+Player.isAvailable = function() {
+    if (window.App.PlayerView === undefined ||
+        window.App.PlayerView.player === undefined ||
+        window.App.PlayerView.player === null) {
+        return false;
+    }
+    return true;
+}
 
 module.exports = Player;

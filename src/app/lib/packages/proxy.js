@@ -72,7 +72,12 @@ function generateProxyFunctions(name, permissions) {
             ),
 
             player: API.player,
-            viewStack: API.currentStack,
+            currentStack: API.currentStack,
+            currentTab: API.currentTab,
+            viewStack: API.viewStack,
+
+            currentVersion: window.App.Settings.get('version'), // TODO: better way to get version
+            currentGit: window.App.git,
             vent: window.App.vent
         },
 
