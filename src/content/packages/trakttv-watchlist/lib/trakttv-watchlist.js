@@ -8,8 +8,7 @@ var App = require('pdk'),
     request = require('request'),
     URI = require('URIjs'),
     Q = require('q'),
-    sha1 = require('sha1'),
-    formatForPopcorn = require('./helper-format');
+    sha1 = require('sha1');
 
 var API_ENDPOINT = URI('https://api.trakt.tv/'),
     API_KEY = '515a27ba95fbd83f20690e5c22bceaff0dfbde7c',
@@ -19,7 +18,7 @@ var API_ENDPOINT = URI('https://api.trakt.tv/'),
 /*
  * We build and export our new package
  */
-module.exports = App.Providers.Metadata.extend({
+module.exports = App.Providers.extend({
 
     /*
      * Package Authentification
@@ -227,17 +226,6 @@ module.exports = App.Providers.Metadata.extend({
 
     isAuthenticating: function() {
         return this._authenticationPromise && this._authenticationPromise.isPending();
-    },
-
-    cache: function(key, ids, func) {
-        var self = this;
-        return this.fetch(ids).then(function(items) {
-            var nonCachedIds = _.difference(ids, _.pluck(items, key));
-            return MergePromises([
-                Q(items),
-                func(nonCachedIds).then(self.store.bind(self, key))
-            ]);
-        });
     },
 
     call: function(endpoint, getVariables) {
@@ -834,36 +822,6 @@ module.exports = App.Providers.Metadata.extend({
                     return Q.all(promises);
                 });
         }
-    },
-
-    resizeImage: function(imageUrl, width) {
-        var uri = URI(imageUrl),
-            ext = uri.suffix(),
-            file = uri.filename().split('.' + ext)[0];
-
-        // Don't resize images that don't come from trakt
-        //  eg. YTS Movie Covers
-        if (uri.domain() !== 'trakt.us') {
-            return imageUrl;
-        }
-
-        var existingIndex = 0;
-        if ((existingIndex = file.search('-\\d\\d\\d$')) !== -1) {
-            file = file.slice(0, existingIndex);
-        }
-
-        if (file === 'poster-dark') {
-            return 'images/posterholder.png'.toString();
-        } else {
-            return uri.filename(file + '-' + width + '.' + ext).toString();
-        }
-    },
-
+    }
 
 });
-
-function MergePromises(promises) {
-    return Q.all(promises).then(function(results) {
-        return _.unique(_.flatten(results));
-    });
-}
