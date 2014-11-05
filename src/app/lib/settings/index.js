@@ -40,6 +40,12 @@ SettingsManager.prototype.get = function (variable) {
         return false;
 };
 
+SettingsManager.prototype.propagate = function (key, value) {
+    if (!this.get(key)) {
+        this.set(key, value, true);
+    }
+};
+
 module.exports = function(dbInstance) {
     return new SettingsManager(dbInstance, defaultSettings);
 };

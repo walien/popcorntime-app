@@ -49,12 +49,15 @@ function generateProxyFunctions(name, permissions) {
         api: {
 
             settings: {
-              get: function(key) {
-                return window.App.Settings.get(name + '.' + key);
-              },
-              set: function(key, value) {
-                return window.App.Settings.set(name + '.' + key, value);
-              }
+                get: function(key) {
+                    return window.App.Settings.get(name + '.' + key);
+                },
+                set: function(key, value) {
+                    return window.App.Settings.set(name + '.' + key, value);
+                },
+                propagate: function(key, value) {
+                    return window.App.Settings.propagate(key, value);
+                }
             },
 
             providers: passThruAppContextToApi('providers',

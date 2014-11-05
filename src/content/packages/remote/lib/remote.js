@@ -43,16 +43,11 @@ module.exports = App.Core.extend({
     start: function () {
 
         var self = this;
-
-        var username = self.app.api.settings.get('username')  || self.settings.username.default;
-        var password = self.app.api.settings.get('password')  || self.settings.password.default;
-        var port = self.app.api.settings.get('port') || self.settings.port.default;
-
-        io = server.listen(port);
+        io = server.listen(self.app.api.settings.get('port'));
         var no_auth = [];
 
         io.use(function(socket, next) {
-            if (socket.handshake.query.auth !== btoa(username + ':' + password)) {
+            if (socket.handshake.query.auth !== btoa(self.app.api.settings.get('username') + ':' + self.app.api.settings.get('password'))) {
                 no_auth.push(socket.id);
             }
             next();
