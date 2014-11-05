@@ -15,6 +15,24 @@ var App = require('pdk'),
 */
 module.exports = App.Core.extend({
 
+    settings: {
+        username: {
+            type: 'text',
+            title: 'Username',
+            default: 'popcorn'
+        },
+        password: {
+            type: 'text',
+            title: 'Password',
+            default: 'popcorn'
+        },
+        port: {
+            type: 'text',
+            title: 'Port',
+            default: '8009'
+        }
+    },
+
     /*
      * Default function called by package manager to activate
      */
@@ -26,11 +44,15 @@ module.exports = App.Core.extend({
 
         var self = this;
 
-        io = server.listen(8009);
+        var username = self.app.api.settings.get('username')  || self.settings.username.default;
+        var password = self.app.api.settings.get('password')  || self.settings.password.default;
+        var port = self.app.api.settings.get('port') || self.settings.port.default;
+
+        io = server.listen(port);
         var no_auth = [];
 
         io.use(function(socket, next) {
-            if (socket.handshake.query.auth !== btoa('popcorn:popcorn')) {
+            if (socket.handshake.query.auth !== btoa(username + ':' + password)) {
                 no_auth.push(socket.id);
             }
             next();
