@@ -16,6 +16,15 @@
 			App.vent.on('streamer:stop', _.bind(this.stop, this));
 
 		},
+
+		reset: function() {
+			this.stream = false;
+			this.streamInfo = false;
+			this.src = false;
+			this.state = false;
+			this.data = false;
+		},
+
 		start: function (data) {
 			var self = this;
 			var torrenturl = data.torrent;
@@ -29,9 +38,11 @@
 			data.videotype = data.videotype || 'video/mp4';
 			data.subtitle = data.subtitle || {};
 
+			this.reset();
+
 			this.stream = new PTStreamer(torrenturl, {
 				progressInterval: 200,
-				buffer: BUFFERING_SIZE,
+				buffer: (BUFFERING_SIZE / 100),
 				port: 2014,
 				writeDir: App.Settings.get('tmpLocation'),
 				index: data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4',
@@ -58,7 +69,6 @@
 				console.log(e);
 				//self.stop();
 			});
-
 
 			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), 'filename.mp4'));
 
@@ -89,8 +99,6 @@
 			}
 
 			App.vent.trigger('stream:started', stateModel);
-
-			App.vent.trigger('serve:start', path.join(App.Settings.get('tmpLocation'), 'filename.mp4'));
 		},
 
 		setStreamUrl: function (url) {
@@ -106,8 +114,7 @@
 				this.stream.close();
 			}
 
-			delete App.Streamer;
-			App.Streamer = new Streamer();
+			this.reset();
 		},
 
 		updateInfo: function () {
