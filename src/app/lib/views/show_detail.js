@@ -399,6 +399,7 @@ var health_checked = false;
 					title += ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name;
 					var epInfo = {
 						type: 'tvshow',
+						videotype: 'video/mp4',
 						imdbid: that.model.get('imdb_id'),
 						tvdbid: that.model.get('tvdb_id'),
 						season: season,

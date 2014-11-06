@@ -26,6 +26,9 @@
 			torrentVersion += version.patch;
 			torrentVersion += version.prerelease.length ? version.prerelease[0] : 0;
 
+			data.videotype = data.videotype || 'video/mp4';
+			data.subtitle = data.subtitle || {};
+
 			this.stream = new PTStreamer(torrenturl, {
 				progressInterval: 200,
 				buffer: BUFFERING_SIZE,
@@ -66,6 +69,24 @@
 				show_controls: false,
 				data: data
 			});
+
+			// manage our subtitle
+			// maybe this will be removed soon
+			var extractSubtitle = data.extract_subtitle;
+			if (typeof extractSubtitle === 'object') {
+
+				extractSubtitle.filename = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
+				var subskw = [];
+
+				for (var key in App.Localization.langcodes) {
+					if (App.Localization.langcodes[key].keywords !== undefined) {
+						subskw[key] = App.Localization.langcodes[key].keywords;
+					}
+				}
+
+				extractSubtitle.keywords = subskw;
+				this.getSubtitles(extractSubtitle);
+			}
 
 			App.vent.trigger('stream:started', stateModel);
 
@@ -143,7 +164,30 @@
 			};
 
 			this.streamInfo = streamInfo;
+		},
+
+		getSubtitles: function (data) {
+			win.debug('Subtitle data request:', data);
+			var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+			subtitleProvider.fetch(data).then(function (subs) {
+				if (_.size(subs) > 0) {
+					App.vent.trigger('subtitles:ready', {
+						subtitle: subs,
+						defaultSubtitle: App.Settings.get('subtitle_language')
+					});
+					win.info(_.size(subs) + ' subtitles found');
+				} else {
+					subtitles = null;
+					win.warn('No subtitles returned');
+				}
+				hasSubtitles = true;
+			}).catch(function (err) {
+				subtitles = null;
+				hasSubtitles = true;
+				win.warn(err);
+			});
 		}
+
 	});
 
 	App.Streamer = new Streamer();

@@ -182,6 +182,9 @@
 				this.refreshStreamStats();
 			}
 
+			App.PlayerView = this;
+			App.vent.trigger('player:ready', {});
+
 		},
 
 
