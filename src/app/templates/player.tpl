@@ -53,9 +53,9 @@
 %>
 <video id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="auto" autoplay >
 <%
-	if (type === 'trailer') { var src = trailerSrc; } 
-	else { var src = App.StreamServer.src;	}
-%>		
+	if (type === 'trailer') { var src = trailerSrc; }
+	else { var src = App.Streamer.getStreamUrl();	}
+%>
 	<source src="<%= src %>" type="<%= videotype %>" />
 	<%=subtracks%>
 </video>

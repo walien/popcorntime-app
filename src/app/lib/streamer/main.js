@@ -2,15 +2,14 @@
 	'use strict';
 
 	var semver = require('semver');
-	var streamer = require('popcorn-streamer');
-	var portfinder = require('portfinder');
+	var PTStreamer = require('popcorn-streamer-server');
 
 	var BUFFERING_SIZE = 10 * 1024 * 1024;
 
-	var Streamerv2 = Backbone.Model.extend({
+	var Streamer = Backbone.Model.extend({
 
 		initialize: function () {
-
+			this.stream = false;
 			//Start a new torrent stream, ops: torrent file, magnet
 			App.vent.on('streamer:start', _.bind(this.start, this));
 			//stop a torrent streaming
@@ -27,15 +26,30 @@
 			torrentVersion += version.patch;
 			torrentVersion += version.prerelease.length ? version.prerelease[0] : 0;
 
-			streamer(torrenturl, {
-				progressInterval: 100,
-				torrent: {
-					id: '-PC' + torrentVersion + '-'
-				}
-			}).on('progress', function (data) {
+			// make sure we are the
+			// only one instance running atm
+			this.stop();
+
+			this.stream = new PTStreamer(torrenturl, {
+                progressInterval: 200,
+                buffer: BUFFERING_SIZE,
+                port: 2014,
+                writeDir: App.settings.tmpLocation,
+                index: 'filename.mp4',
+                torrent: {
+                    id: '-PC' + torrentVersion + '-'
+                }
+			});
+
+			this.stream.on('progress', function (data) {
 				self.data = data;
 				self.updateInfo();
-			}).pipe(fs.createWriteStream(path.join(App.settings.tmpLocation, 'filename.mp4')));
+			});
+
+			this.stream.on('ready', function (data) {
+				self.src = data.streamUrl;
+                self.state = 'ready';
+            });
 
 			win.debug('Streaming to %s', path.join(App.settings.tmpLocation, 'filename.mp4'));
 
@@ -52,16 +66,24 @@
 			App.vent.trigger('serve:start', path.join(App.settings.tmpLocation, 'filename.mp4'));
 		},
 
+		setStreamUrl: function(url) {
+			this.src = url;
+		},
+
+		getStreamUrl: function() {
+			return this.src || false;
+		},
+
 		stop: function () {
-			streamer.close();
+			if (this.stream) {
+				this.stream.close();
+			}
 		},
 
 		updateInfo: function () {
 			var state = 'connecting';
 
-			if (this.data.downloaded > BUFFERING_SIZE) {
-				state = 'ready';
-			} else if (this.data.downloaded) {
+			if (this.data.downloaded) {
 				state = 'downloading';
 			} else if (this.data.seeds) {
 				state = 'startingDownload';
@@ -122,5 +144,5 @@
 		}
 	});
 
-	App.Streamer = new Streamerv2();
+	App.Streamer = new Streamer();
 })(window.App);
