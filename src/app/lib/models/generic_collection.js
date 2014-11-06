@@ -85,6 +85,16 @@
 				return provider
 					.then(function (items) {
 						_.each(items.results, function (item) {
+
+							item.subtitle = {};
+
+							// TODO: TEMP FIX TILL THE NEW API WILL BE PROPAGATED
+							if (item.type === 'show') {
+								_.extend(item.images, {
+									imageLowRes: item.images.lowres || item.images.poster
+								});
+							}
+
 							var id = item[self.popid];
 							// If the item is there already simply
 							// extend it with the new torrents.
@@ -159,16 +169,25 @@
 						function (items, subtitles) {
 							_.each(items.results, function (item) {
 								var id = item[self.popid];
+
+								var thisSub = _.findWhere(subtitles, {_id: id});
+
+								// delete _id it cause crash on model... ;/
+								delete thisSub._id;
+								delete thisSub._lastModified;
+								delete thisSub._ttl;
+
 								if (self.get(id) != null) {
 									// If we call late, the model will
 									// already be in the collection,
 									// we need to update it there.
 									var model = self.get(id);
-									model.set('subtitle', subtitles[id]);
+									model.set('subtitle', thisSub);
 								} else {
 									// If its not in the collection
 									// yet, just update the object.
-									item.subtitle = subtitles[id];
+									item.subtitle = thisSub;
+
 								}
 							});
 							return items;
