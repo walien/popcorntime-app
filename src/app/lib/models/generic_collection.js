@@ -114,6 +114,12 @@
 								} else {
 									win.warn('Unable to find %s on Trakt.tv', id);
 								}
+							} else {
+								if (movie.images) {
+									_.extend(movie.images, {
+										imageLowRes: movie.images.lowres || movie.images.poster
+									});
+								}
 							}
 						});
 

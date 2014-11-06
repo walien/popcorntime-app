@@ -44,16 +44,16 @@
 			switch (itemtype) {
 			case 'bookmarkedshow':
 				watched = App.watchedShows.indexOf(imdb) !== -1;
-				this.model.set('image', App.Providers.trakttv.resizeImage(img, '300'));
+				this.model.set('image', this.model.get('imageLowRes'));
 				break;
 			case 'show':
 				watched = App.watchedShows.indexOf(imdb) !== -1;
-				images.poster = App.Providers.trakttv.resizeImage(img, '300');
+				images.poster = this.model.get('images')['imageLowRes'];
 				break;
 			case 'bookmarkedmovie':
 			case 'movie':
 				watched = App.watchedMovies.indexOf(imdb) !== -1;
-				this.model.set('image', App.Providers.trakttv.resizeImage(img, '300'));
+				this.model.set('image', this.model.get('imageLowRes'));
 				break;
 			}
 			this.model.set('watched', watched);
