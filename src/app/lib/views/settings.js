@@ -59,38 +59,38 @@
 			});
 			that = this;
 
-      App.Settings.set('ipAddress', this.getIPAddress());
+			App.Settings.set('ipAddress', this.getIPAddress());
 
 
 		},
 
-		onBeforeRender: function() {
+		onBeforeRender: function () {
 			// package settings render
 			this.renderPackageSettings();
 		},
 
-		renderPackageSettings: function() {
+		renderPackageSettings: function () {
 			// Package settings initialization
 			var self = this;
 			var settingPackages = [];
 			var loadedPackages = App.PackagesManager.loadedPackages;
-			_.each(loadedPackages, function(thisPackage) {
+			_.each(loadedPackages, function (thisPackage) {
 				var thisPackageBundled = {};
 				// ok make sure we have settings or auth
 				if ((thisPackage.settings && Object.keys(thisPackage.settings).length > 0) || (thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0)) {
 
 					// settings
-					if(thisPackage.settings && Object.keys(thisPackage.settings).length > 0) {
-						_.each(thisPackage.settings, function(auth, key) {
-								auth._css = auth._ref.replace(".", "_");
-								auth._key = key;
+					if (thisPackage.settings && Object.keys(thisPackage.settings).length > 0) {
+						_.each(thisPackage.settings, function (auth, key) {
+							auth._css = auth._ref.replace(".", "_");
+							auth._key = key;
 						});
 						thisPackageBundled.settings = thisPackage.settings;
 					}
 
 					// authentification
 					// this require an event on keyup
-					if(thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0) {
+					if (thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0) {
 
 						var thisAuth = {};
 						thisAuth.signinHandler = _.bind(thisPackage.bundledPackage[thisPackage.authentification.signinHandler], thisPackage.bundledPackage);
@@ -103,19 +103,19 @@
 						thisAuth.inputElements = [];
 						thisAuth.settingsElements = [];
 
-						_.each(thisPackage.authentification.loginForm, function(auth, key) {
+						_.each(thisPackage.authentification.loginForm, function (auth, key) {
 
-								auth._css = auth._ref.replace(".", "_");
-								auth._key = key;
-								thisAuth.inputElements.push(auth);
+							auth._css = auth._ref.replace(".", "_");
+							auth._key = key;
+							thisAuth.inputElements.push(auth);
 
 						});
 
-						_.each(thisPackage.authentification.settings, function(auth, key) {
+						_.each(thisPackage.authentification.settings, function (auth, key) {
 
-								auth._css = auth._ref.replace(".", "_");
-								auth._key = key;
-								thisAuth.settingsElements.push(auth);
+							auth._css = auth._ref.replace(".", "_");
+							auth._key = key;
+							thisAuth.settingsElements.push(auth);
 
 						});
 
@@ -305,7 +305,7 @@
 			case 'coversShowRating':
 			case 'showAdvancedSettings':
 			case 'alwaysOnTop':
-            case 'syncOnStart':
+			case 'syncOnStart':
 			case 'subtitle_shadows':
 			case 'playNextEpisodeAuto':
 				value = field.is(':checked');
@@ -343,7 +343,7 @@
 					value = field.val();
 				}
 
-			break;
+				break;
 			}
 			win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
 
@@ -356,9 +356,11 @@
 			}
 
 			//save to db
-			App.Database.update('settings',
-					{key: field.attr('name')},
-					{value: value})
+			App.Database.update('settings', {
+					key: field.attr('name')
+				}, {
+					value: value
+				})
 				.then(function () {
 					that.ui.success_alert.show().delay(3000).fadeOut(400);
 				});
@@ -366,19 +368,19 @@
 			// authentification handling
 			var authPackages = this.model.get('authPackages');
 
-			var myAuthRequired = _.find(authPackages, function(element) {
-					return _.find(element.inputElements, function(item) {
-						return item._ref === field.attr('name');
-					});
+			var myAuthRequired = _.find(authPackages, function (element) {
+				return _.find(element.inputElements, function (item) {
+					return item._ref === field.attr('name');
+				});
 			});
 			if (myAuthRequired) {
 
 				// we confirm we have all value...
 				var haveAllValues = true;
 				var dataMapping = {};
-				_.each(myAuthRequired.inputElements, function(element) {
+				_.each(myAuthRequired.inputElements, function (element) {
 
-					var val = $('#'+element._css).val();
+					var val = $('#' + element._css).val();
 					if (val.length === 0) {
 						haveAllValues = false;
 					} else {
@@ -389,26 +391,26 @@
 				if (haveAllValues) {
 					var thisPackage = field.attr('data-package');
 
-					$('.package_'+thisPackage+' .authentification .invalid-cross').hide();
-					$('.package_'+thisPackage+' .authentification .valid-tick').hide();
-					$('.package_'+thisPackage+' .authentification .loading-spinner').show();
+					$('.package_' + thisPackage + ' .authentification .invalid-cross').hide();
+					$('.package_' + thisPackage + ' .authentification .valid-tick').hide();
+					$('.package_' + thisPackage + ' .authentification .loading-spinner').show();
 
 					myAuthRequired.signinHandler(dataMapping)
-						.then(function(valid) {
-							$('.package_'+thisPackage+' .authentification .loading-spinner').hide();
+						.then(function (valid) {
+							$('.package_' + thisPackage + ' .authentification .loading-spinner').hide();
 							// Stop multiple requests interfering with each other
-							$('.package_'+thisPackage+' .authentification .invalid-cross').hide();
-							$('.package_'+thisPackage+' .authentification .valid-tick').hide();
+							$('.package_' + thisPackage + ' .authentification .invalid-cross').hide();
+							$('.package_' + thisPackage + ' .authentification .valid-tick').hide();
 							if (valid) {
-								$('.package_'+thisPackage+' .authentification .valid-tick').show().delay(2000).queue(function () {
+								$('.package_' + thisPackage + ' .authentification .valid-tick').show().delay(2000).queue(function () {
 									self.render().dequeue;
 								});
 							} else {
-								$('.package_'+thisPackage+' .authentification .invalid-cross').show();
+								$('.package_' + thisPackage + ' .authentification .invalid-cross').show();
 							}
 						}).catch(function (err) {
-							$('.package_'+thisPackage+' .authentification .loading-spinner').hide();
-							$('.package_'+thisPackage+' .authentification .invalid-cross').show();
+							$('.package_' + thisPackage + ' .authentification .loading-spinner').hide();
+							$('.package_' + thisPackage + ' .authentification .invalid-cross').show();
 						});
 
 				}
@@ -427,8 +429,8 @@
 				return;
 			}
 
-			var myPackage = _.find(this.model.get('authPackages'), function(pack) {
-					return pack.package === btn.attr('data-package');
+			var myPackage = _.find(this.model.get('authPackages'), function (pack) {
+				return pack.package === btn.attr('data-package');
 			});
 			myPackage.signoutHandler();
 			self.ui.success_alert.show().delay(3000).fadeOut(400);
@@ -481,7 +483,6 @@
 		},
 
 
-
 		flushBookmarks: function (e) {
 			var that = this;
 			var btn = $(e.currentTarget);
@@ -508,7 +509,7 @@
 
 			that.alertMessageWait(i18n.__('We are resetting the settings'));
 
-			App.Database.delete('settings', {} , true)
+			App.Database.delete('settings', {}, true)
 				.then(function () {
 					that.alertMessageSuccess(true);
 					App.Settings.set('disclaimerAccepted', 1);
@@ -529,7 +530,7 @@
 					App.Database.deleteDatabase()
 						.then(function () {
 							that.alertMessageSuccess(true);
-					});
+						});
 				});
 		},
 
@@ -671,23 +672,23 @@
 
 		},
 
-        getIPAddress: function () {
-            var ifaces=require('os').networkInterfaces();
-            for (var dev in ifaces) {
-              var ip, alias=0;
-              ifaces[dev].forEach(function(details){
-                if (details.family=='IPv4') {
-                    if(!/(loopback|vmware|internal|hamachi)/gi.test(dev+(alias?':'+alias:''))){
-                        if ( (details.address.substring(0, 8) == "192.168.") || (details.address.substring(0, 7) == "172.16.") || (details.address.substring(0, 5) == "10.0.")) {
-                            ip = details.address;
-                            ++alias;
-                        }
-                    }
-                }
-              });
-            }
-            return ip;
-        }
+		getIPAddress: function () {
+			var ifaces = require('os').networkInterfaces();
+			for (var dev in ifaces) {
+				var ip, alias = 0;
+				ifaces[dev].forEach(function (details) {
+					if (details.family == 'IPv4') {
+						if (!/(loopback|vmware|internal|hamachi)/gi.test(dev + (alias ? ':' + alias : ''))) {
+							if ((details.address.substring(0, 8) == "192.168.") || (details.address.substring(0, 7) == "172.16.") || (details.address.substring(0, 5) == "10.0.")) {
+								ip = details.address;
+								++alias;
+							}
+						}
+					}
+				});
+			}
+			return ip;
+		}
 	});
 
 	App.View.Settings = Settings;

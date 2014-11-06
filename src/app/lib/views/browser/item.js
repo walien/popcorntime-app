@@ -200,9 +200,10 @@
 				if (Settings.watchedCovers === 'fade') {
 					this.$el.removeClass('watched');
 				}
+
 				App.Database.delete('watched', {
-					imdb_id: this.model.get('imdb_id')
-				})
+						imdb_id: this.model.get('imdb_id')
+					})
 					.then(function () {
 						App.watchedMovies.splice(this.model.get('imdb_id'));
 						that.model.set('watched', false);
@@ -217,12 +218,13 @@
 					this.$el.remove();
 					break;
 				}
-				App.Database.add('watched',{
-					movie_id: this.model.get('imdb_id').toString(),
-					type: 'movie',
-					date: new Date(),
-					from_browser: true
-				})
+
+				App.Database.add('watched', {
+						movie_id: this.model.get('imdb_id').toString(),
+						type: 'movie',
+						date: new Date(),
+						from_browser: true
+					})
 					.then(function () {
 						App.watchedMovies.push(this.model.get('imdb_id'));
 						that.model.set('watched', true);
@@ -243,13 +245,17 @@
 			switch (this.model.get('type')) {
 			case 'bookmarkedshow':
 			case 'bookmarkedmovie':
-				App.Database.delete('bookmarks', {imdb_id: this.model.get('imdb_id')})
+				App.Database.delete('bookmarks', {
+						imdb_id: this.model.get('imdb_id')
+					})
 					.then(function () {
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 						if (that.model.get('type') === 'movie') {
 							// we'll make sure we dont have a cached movie
-							App.Database.delete('movies', {imdb_id: that.model.get('imdb_id')});
+							App.Database.delete('movies', {
+								imdb_id: that.model.get('imdb_id')
+							});
 						}
 
 						// we'll delete this element from our list view
@@ -271,12 +277,16 @@
 			case 'movie':
 				if (this.model.get('bookmarked')) {
 					this.ui.bookmarkIcon.removeClass('selected');
-					App.Database.delete('bookmarks', {imdb_id: this.model.get('imdb_id')})
+					App.Database.delete('bookmarks', {
+							imdb_id: this.model.get('imdb_id')
+						})
 						.then(function () {
 							App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 							win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 							// we'll make sure we dont have a cached movie
-							return App.Database.delete('movies', {imdb_id: that.model.get('imdb_id')});
+							return App.Database.delete('movies', {
+								imdb_id: that.model.get('imdb_id')
+							});
 						})
 						.then(function () {
 							that.model.set('bookmarked', false);
@@ -302,7 +312,10 @@
 					App.Database.add('movies', movie)
 						.then(function () {
 							App.userBookmarks.push(that.model.get('imdb_id'));
-							return App.Database.add('bookmarks', {imdb_id: that.model.get('imdb_id'), type: 'movie'});
+							return App.Database.add('bookmarks', {
+								imdb_id: that.model.get('imdb_id'),
+								type: 'movie'
+							});
 						})
 						.then(function () {
 							win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
@@ -313,12 +326,16 @@
 			case 'show':
 				if (this.model.get('bookmarked') === true) {
 					this.ui.bookmarkIcon.removeClass('selected');
-					App.Database.delete('bookmarks', {imdb_id: this.model.get('imdb_id')})
+					App.Database.delete('bookmarks', {
+							imdb_id: this.model.get('imdb_id')
+						})
 						.then(function () {
 							App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 							win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 							// we'll make sure we dont have a cached movie
-							return App.Database.delete('tvshows', {imdb_id: that.model.get('imdb_id')});
+							return App.Database.delete('tvshows', {
+								imdb_id: that.model.get('imdb_id')
+							});
 						})
 						.then(function () {
 							that.model.set('bookmarked', false);
@@ -329,12 +346,15 @@
 					this.ui.bookmarkIcon.addClass('selected');
 					var provider = App.Providers.get(this.model.get('provider'));
 					provider.detail(this.model.get('imdb_id'), this.model.attributes)
-						.then(function(data) {
+						.then(function (data) {
 
 							App.Database.add('tvshows', data)
 								.then(function () {
 									App.userBookmarks.push(that.model.get('imdb_id'));
-									return App.Database.add('bookmarks', {imdb_id: that.model.get('imdb_id'), type: 'tvshow'});
+									return App.Database.add('bookmarks', {
+										imdb_id: that.model.get('imdb_id'),
+										type: 'tvshow'
+									});
 								})
 								.then(function () {
 									win.info('Bookmark added (' + that.model.get('imdb_id') + ')');

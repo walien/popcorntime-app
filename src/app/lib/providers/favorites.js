@@ -31,7 +31,9 @@
 			// or tv show then we extract right data
 			if (movie.type === 'movie') {
 				// its a movie
-				App.Database.get('movies', {imdb_id: movie.imdb_id})
+				App.Database.get('movies', {
+						imdb_id: movie.imdb_id
+					})
 					.then(function (data) {
 							data.type = 'bookmarkedmovie';
 							deferred.resolve(data);
@@ -41,7 +43,9 @@
 						});
 			} else {
 				// its a tv show
-				App.Database.get('tvshows', {imdb_id: movie.imdb_id})
+				App.Database.get('tvshows', {
+						imdb_id: movie.imdb_id
+					})
 					.then(function (data) {
 						data.type = 'bookmarkedshow';
 						data.image = data.images.poster;

@@ -35,7 +35,7 @@ var
 
 	Database = require('./lib/database')(gui.App.dataPath),
 	Settings = require('./lib/settings')(Database),
-	Updater = require('./lib/updater')(Settings,$),
+	Updater = require('./lib/updater')(Settings, $),
 	PackagesManager = require('./lib/packages'),
 	Localization = require('./lib/localization');
 
@@ -134,15 +134,19 @@ i18n.configure({
 	directory: './src/app/language'
 });
 
-Database.find('bookmarks').then(function(data) {
+Database.find('bookmarks').then(function (data) {
 	App.userBookmarks = data;
 });
 
-Database.find('watched',{type: 'movie'}).then(function(data) {
+Database.find('watched', {
+	type: 'movie'
+}).then(function (data) {
 	App.watchedMovies = _.pluck(data, 'movie_id');
 });
 
-Database.find('watched',{type: 'episode'}).then(function(data) {
+Database.find('watched', {
+	type: 'episode'
+}).then(function (data) {
 	App.watchedShows = _.pluck(data, 'imdb_id');
 });
 
@@ -320,7 +324,7 @@ win.on('close', function () {
 	if (App.Settings.get('deleteTmpOnClose')) {
 		deleteFolder(App.Settings.get('tmpLocation'));
 	}
-
+	deleteFolder(path.join(os.tmpDir(), 'webtorrent'));
 	win.close(true);
 });
 

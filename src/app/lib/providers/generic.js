@@ -56,7 +56,7 @@
 		} else {
 			cache[name] = App.Providers[name];
 		}
-		
+
 		//HACK(xaiki): set the provider name in the returned object.
 		cache[name].name = name;
 		return cache[name];

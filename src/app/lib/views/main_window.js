@@ -165,8 +165,6 @@
 			});
 
 
-
-
 		},
 
 		showMovies: function (e) {
@@ -352,7 +350,7 @@
 			}).text(stylesheetContents).appendTo('head');
 
 			// Copy the value to Settings so we can get it from templates
-			App.Settings.set('postersWidth',postersWidth);
+			App.Settings.set('postersWidth', postersWidth);
 
 			// Display PostersWidth
 			var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';

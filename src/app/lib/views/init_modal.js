@@ -18,7 +18,7 @@
 
 			this.ui.initbar.animate({
 				width: '25%'
-			}, 1000, 'swing');			
+			}, 1000, 'swing');
 		}
 
 	});

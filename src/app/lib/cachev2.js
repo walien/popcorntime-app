@@ -38,15 +38,14 @@
 		db.onsuccess = function () {
 			self.db = this.result;
 		};
-		db.onversionchange = function(event) {
+		db.onversionchange = function (event) {
 			console.log(event);
-			if ( !event.version ){
+			if (!event.version) {
 				db.close();
 			}
 		};
-		db.onerror = function(event) {			
-		};
-		
+		db.onerror = function (event) {};
+
 		db.onupgradeneeded = function () {
 			var self = this;
 			App.Config.cachev2.tables.forEach(function (tableName) {
@@ -144,12 +143,12 @@
 	App.CacheV2 = Cache;
 	App.CacheV2.deleteDatabase = function () {
 		var that = this;
-		
+
 		return Q.Promise(function (resolve, reject) {
-			indexedDB.deleteDatabase(App.Config.cachev2.name);		
+			indexedDB.deleteDatabase(App.Config.cachev2.name);
 			resolve();
 		});
-	};	
+	};
 
-	
+
 })(window.App);
