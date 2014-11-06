@@ -85,13 +85,14 @@
 			var BUFFERING_SIZE = 10 * 1024 * 1024;
 			var percent;
 			var streamInfo = App.Streamer.streamInfo;
+console.log(streamInfo);
 			if (streamInfo) {
 				that.ui.seedStatus.css('visibility', 'visible');
 				var downloaded = streamInfo.downloaded / (1024 * 1024);
 
 				that.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
-				that.ui.progressTextPeers.text(streamInfo.active_peers);
-				that.ui.progressTextSeeds.text(streamInfo.peers);
+				that.ui.progressTextPeers.text(streamInfo.peers);
+				that.ui.progressTextSeeds.text(streamInfo.seeds);
 
 				percent = streamInfo.downloaded / (BUFFERING_SIZE / 100);
 				percent = percent.toFixed();
