@@ -85,7 +85,6 @@
 			var BUFFERING_SIZE = 10 * 1024 * 1024;
 			var percent;
 			var streamInfo = App.Streamer.streamInfo;
-console.log(streamInfo);
 			if (streamInfo) {
 				that.ui.seedStatus.css('visibility', 'visible');
 				var downloaded = streamInfo.downloaded / (1024 * 1024);

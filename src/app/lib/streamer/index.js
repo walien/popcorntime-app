@@ -26,16 +26,12 @@
 			torrentVersion += version.patch;
 			torrentVersion += version.prerelease.length ? version.prerelease[0] : 0;
 
-			// make sure we have the
-			// only one instance running atm
-			this.stop();
-
 			this.stream = new PTStreamer(torrenturl, {
                 progressInterval: 200,
                 buffer: BUFFERING_SIZE,
                 port: 2014,
                 writeDir: App.settings.tmpLocation,
-                index: 'filename.mp4',
+                index: data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4',
                 torrent: {
                     id: '-PC' + torrentVersion + '-'
                 }
@@ -57,6 +53,7 @@
 
 			this.stream.on('error', function (e) {
 				console.log(e);
+				self.stop();
 			});
 
 
@@ -87,6 +84,9 @@
 			if (this.stream) {
 				this.stream.close();
 			}
+
+			delete App.Streamer;
+			App.Streamer = new Streamer();
 		},
 
 		updateInfo: function () {
