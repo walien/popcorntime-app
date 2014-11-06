@@ -106,10 +106,10 @@ var health_checked = false;
 			// We need to fix the fanart resize in the api
 
 			//images.fanart = App.Providers.trakttv.resizeImage(images.fanart, '940');
-			//if ((ScreenResolution.SD || ScreenResolution.HD) && !ScreenResolution.Retina) {
+			if ((ScreenResolution.SD || ScreenResolution.HD) && !ScreenResolution.Retina) {
 			// Screen Resolution of 720p or less is fine to have 300x450px image
-			//images.poster = App.Providers.trakttv.resizeImage(images.poster, '300');
-			//}
+				images.poster = this.model.get('imageLowRes');
+			}
 
 			App.vent.on('shortcuts:show', function () {
 				_this.initKeyboardShortcuts();
