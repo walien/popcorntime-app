@@ -53,7 +53,7 @@
 
 			this.stream.on('error', function (e) {
 				console.log(e);
-				self.stop();
+				//self.stop();
 			});
 
 
@@ -139,7 +139,7 @@
 				downloadSpeed: this.data.downloadSpeed,
 				eta: this.data.eta,
 				progress: this.data.progress,
-				size: 1000 //debuging size -- use real once when xeon adds it in popcorn - streamer callback
+				size: 95681456 //debuging size -- use real once when xeon adds it in popcorn - streamer callback
 			};
 
 			this.streamInfo = streamInfo;
