@@ -64,7 +64,12 @@
 				if (this.video.currentTime() / this.video.duration() >= 0.8) {
 					App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 				} else {
-					Trakt[type].cancelWatching();
+					if (type === 'episode') {
+						Trakt.show.cancelWatching();
+					} else {
+						Trakt[type].cancelWatching();
+					}
+
 				}
 
 			}
@@ -106,7 +111,7 @@
 			this.setUI();
 			this.setPlayerEvents();
 			this.bindKeyboardShortcuts();
-			console.log(this.model);
+			console.log(this.model.get('type'));
 
 		},
 
@@ -208,12 +213,14 @@
 
 
 			this.player.one('play', function () {
-				_this.player.one('durationchange', _this.sendToTrakt);
-				_this._WatchingTimer = setInterval(_this.sendToTrakt, 10 * 60 * 1000); // 10 minutes
+				_this.player.one('durationchange', function() {
+					_this.sendToTrakt(_this);
+				});
+				_this._WatchingTimer = setInterval(_this.sendToTrakt(_this), 10 * 60 * 1000); // 10 minutes
 
 
 				if (_this.model.get('auto_play')) {
-					_this._AutoPlayCheckTimer = setInterval(_this.checkAutoPlay, 10 * 100 * 1); // every 1 sec
+					_this._AutoPlayCheckTimer = setInterval(_this.checkAutoPlay(_this), 10 * 100 * 1); // every 1 sec
 				}
 
 			});
@@ -221,10 +228,9 @@
 
 		},
 
-		sendToTrakt: function () {
-			var _this = this;
-
-			if (this.model.get('type') === 'movie') {
+		sendToTrakt: function (_this) {
+			_this = _this || this;
+			if (_this.model.get('type') === 'movie') {
 				win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
 				Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 			} else {
@@ -233,10 +239,9 @@
 			}
 		},
 
-		checkAutoPlay: function () {
-			var _this = this;
-
-			if (this.model.get('type') !== 'movie' && next_episode_model) {
+		checkAutoPlay: function (_this) {
+			_this = _this || this;
+			if (_this.model.get('type') !== 'movie' && next_episode_model) {
 				if ((_this.video.duration() - _this.video.currentTime()) < 60 && _this.video.currentTime() > 30) {
 
 					if (!autoplayisshown) {
