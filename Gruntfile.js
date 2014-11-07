@@ -46,7 +46,11 @@ module.exports = function (grunt) {
 		'nodewebkit',
 		'shell:setexecutable'
 	]);
-	grunt.registerTask('submodule', ['shell:submodule']);
+
+	grunt.registerTask('submodule', [
+		'clean:submodule',
+		'shell:submodule',
+	]);
 
 	grunt.registerTask('dist', [
 		'clean:releases',
@@ -250,7 +254,8 @@ module.exports = function (grunt) {
 
 		clean: {
 			releases: ['build/releases/Popcorn-Time/**'],
-			dist: ['dist/windows/Popcorn-*-Setup.exe']
+			dist: ['dist/windows/Popcorn-*-Setup.exe'],
+			submodule: ['src/content/packages/**','src/content/languages/**', 'src/content/themes/**']
 		}
 
 	});
