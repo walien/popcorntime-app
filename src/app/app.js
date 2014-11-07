@@ -122,6 +122,9 @@ App.Settings = Settings;
 // Set Packages
 App.PackagesManager = PackagesManager;
 
+// Set ThemesManager
+App.ThemesManager = ThemesManager;
+
 // Gui
 App.gui = gui;
 
@@ -242,8 +245,14 @@ var initTemplates = function () {
 	// Load in external templates
 	var ts = [];
 
-	// load skeleton
-	var skeleton = $('#skeleton');
+	// Set the CSS
+	var css = ThemesManager.config.css
+
+	// hack for now, we'll use
+	// the first element in theme package.json
+
+	css = css[Object.keys(css)[0]];
+	$('head').append('<link rel="stylesheet" href="' + path.join(ThemesManager.themePath, css) + '" type="text/css" />');
 
 	ThemesManager.getTemplates(function (templates) {
 		_.each(templates, function (el) {
@@ -524,5 +533,5 @@ if (gui.App.fullArgv.indexOf('-f') !== -1) {
  * Show 404 page on uncaughtException
  */
 process.on('uncaughtException', function (err) {
-	window.console.error(err, err.stack);
+	window.console.error(err, err.stack || false);
 });

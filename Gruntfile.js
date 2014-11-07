@@ -255,7 +255,7 @@ module.exports = function (grunt) {
 		clean: {
 			releases: ['build/releases/Popcorn-Time/**'],
 			dist: ['dist/windows/Popcorn-*-Setup.exe'],
-			submodule: ['src/content/packages/**','src/content/languages/**', 'src/content/themes/**']
+			submodule: ['src/content/packages/**', 'src/content/languages/**', 'src/content/themes/**']
 		}
 
 	});

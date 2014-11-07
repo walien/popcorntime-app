@@ -22,6 +22,7 @@ function ThemeManager(settingsInstance) {
 	this.config = this.themeDirPaths + '/package.json';
 
 	if (fs.existsSync(this.themeDirPaths) && fs.existsSync(this.config)) {
+		this.config = require(this.config);
 		this.settings.set('theme_path', path.join(this.themePath), false);
 	} else {
 		console.log('unable to initialize the theme ' + this.name);
@@ -31,9 +32,8 @@ function ThemeManager(settingsInstance) {
 }
 
 ThemeManager.prototype.getTemplates = function (callback) {
-
 	// we read the package.json
-	this.config = require(this.config);
+
 	var templates = [];
 	var self = this;
 
