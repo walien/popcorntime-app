@@ -39,7 +39,7 @@ ThemeManager.prototype.getTemplates = function (callback) {
 
     _.each(this.config.templates, function (file, key) {
         templates.push({
-            key: key,
+            key: key + '-tpl',
             path: path.join(self.themePath, file)
         });
     });
