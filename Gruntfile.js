@@ -29,32 +29,22 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	grunt.registerTask('default', [
-		'css',
+		'submodule',
 		'jshint',
 		'bower_clean',
 		'injectgit'
 	]);
 
 	// Called from the npm hook
-	grunt.registerTask('setup', [
-		'githooks'
-	]);
-
-	grunt.registerTask('css', [
-		'officalcss'
-	]);
-
-	grunt.registerTask('themes', [
-		'shell:themes',
-		'unofficalcss'
-	]);
+	//grunt.registerTask('setup', [
+	//	'githooks'
+	//]);
 
 	grunt.registerTask('js', [
 		'jsbeautifier:default'
 	]);
 
 	grunt.registerTask('build', [
-		'css',
 		'injectgit',
 		'bower_clean',
 		'submodule',
@@ -88,14 +78,6 @@ module.exports = function (grunt) {
 			grunt.log.writeln('OS not supported.');
 		}
 	});
-
-	grunt.registerTask('officalcss', [
-		'stylus:offical'
-	]);
-	grunt.registerTask('unofficalcss', [
-		'clean:css',
-		'stylus:third_party'
-	]);
 
 	grunt.registerTask('injectgit', function () {
 		if (grunt.file.exists('.git/')) {
@@ -141,35 +123,6 @@ module.exports = function (grunt) {
 				options: {
 					mode: 'VERIFY_ONLY'
 				}
-			}
-		},
-
-		stylus: {
-			third_party: {
-				options: {
-					'resolve url': true,
-					use: ['nib'],
-					compress: false,
-					paths: ['src/app/styl']
-				},
-				expand: true,
-				cwd: 'src/app/styl/third_party',
-				src: '*.styl',
-				dest: 'src/app/themes/',
-				ext: '.css'
-			},
-			offical: {
-				options: {
-					'resolve url': true,
-					use: ['nib'],
-					compress: false,
-					paths: ['src/app/styl']
-				},
-				expand: true,
-				cwd: 'src/app/styl',
-				src: '*.styl',
-				dest: 'src/app/themes/',
-				ext: '.css'
 			}
 		},
 
@@ -300,21 +253,7 @@ module.exports = function (grunt) {
 
 		clean: {
 			releases: ['build/releases/Popcorn-Time/**'],
-			css: ['src/app/themes/**'],
 			dist: ['dist/windows/Popcorn-*-Setup.exe']
-		},
-
-		watch: {
-			options: {
-				dateFormat: function (time) {
-					grunt.log.writeln('Completed in ' + time + 'ms at ' + (new Date()).toLocaleTimeString());
-					grunt.log.writeln('Waiting for more changes...');
-				}
-			},
-			scripts: {
-				files: ['./src/app/styl/*.styl', './src/app/styl/**/*.styl'],
-				tasks: ['css']
-			}
 		}
 
 	});
