@@ -35,11 +35,6 @@ module.exports = function (grunt) {
 		'injectgit'
 	]);
 
-	// Called from the npm hook
-	//grunt.registerTask('setup', [
-	//	'githooks'
-	//]);
-
 	grunt.registerTask('js', [
 		'jsbeautifier:default'
 	]);
@@ -80,24 +75,27 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('injectgit', function () {
+
+		var gitRef, gitBranch, path, currCommit, items;
+		var fs = require('fs');
+
 		if (grunt.file.exists('.git/')) {
-			var path = require('path');
-			var gitRef = grunt.file.read('.git/HEAD');
+			path = require('path');
+			gitRef = grunt.file.read('.git/HEAD');
 			try {
-				var gitRef = gitRef.split(':')[1].trim();
-				var gitBranch = path.basename(gitRef);
-				var currCommit = grunt.file.read('.git/' + gitRef).trim();
+				gitRef = gitRef.split(':')[1].trim();
+				gitBranch = path.basename(gitRef);
+				currCommit = grunt.file.read('.git/' + gitRef).trim();
 			}
 			catch (e) {
-				var fs = require('fs');
-				var currCommit = gitRef.trim();
-				var items = fs.readdirSync('.git/refs/heads');
-				var gitBranch = items[0];
+				currCommit = gitRef.trim();
+				items = fs.readdirSync('.git/refs/heads');
+				gitBranch = items[0];
 			}
 			var git = {
 				branch: gitBranch,
 				commit: currCommit
-			}
+			};
 			grunt.file.write('.git.json', JSON.stringify(git, null, '  '));
 		}
 	});
