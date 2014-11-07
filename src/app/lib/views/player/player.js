@@ -148,8 +148,7 @@
 						biggerSubtitle: {},
 						smallerSubtitle: {},
 						customSubtitles: {},
-						progressTips: {},
-						dropSubtitles: {}
+						progressTips: {}
 					}
 				});
 			}

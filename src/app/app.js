@@ -334,8 +334,8 @@ Mousetrap.bind(['shift+f12', 'f12', 'command+0'], function (e) {
 	win.showDevTools();
 });
 Mousetrap.bind(['shift+f10', 'f10', 'command+9'], function (e) {
-	console.log('Opening: ' + App.settings['tmpLocation']);
-	gui.Shell.openItem(App.settings['tmpLocation']);
+	console.log('Opening: ' + App.Settings.get('tmpLocation'));
+	gui.Shell.openItem(App.Settings.get('tmpLocation'));
 });
 Mousetrap.bind('mod+,', function (e) {
 	App.vent.trigger('about:close');
@@ -427,7 +427,7 @@ window.ondrop = function (e) {
 
 	var file = e.dataTransfer.files[0];
 
-	if (file != null && file.name.indexOf('.torrent') !== -1) {
+	if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1 )) {
 		var reader = new FileReader();
 
 		reader.onload = function (event) {
@@ -435,16 +435,24 @@ window.ondrop = function (e) {
 
 			fs.writeFile(path.join(App.Settings.get('tmpLocation'), file.name), content, function (err) {
 				if (err) {
-					window.alert('Error Loading Torrent: ' + err);
+					window.alert('Error Loading File: ' + err);
 				} else {
-					// startTorrentStream(path.join(App.Settings.get('tmpLocation'), file.name));
-					handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
+
+                    if (file.name.indexOf('.torrent') !== -1) {
+                        // startTorrentStream(path.join(App.settings.tmpLocation, file.name));
+                        handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
+                    } else if (file.name.indexOf('.srt') !== -1) {
+                        App.Settings.set('droppedSub', file.name);
+                        App.vent.trigger('videojs:drop_sub');
+                    }
+
 				}
 			});
 
 		};
 
 		reader.readAsBinaryString(file);
+
 	} else {
 		var data = e.dataTransfer.getData('text/plain');
 		handleTorrent(data);

@@ -275,8 +275,8 @@
 		},
 
 		syncTraktOnStart: function () {
-			if (Settings.syncOnStart) {
-				App.Providers.Trakttv.sync();
+			if (App.Settings.get('syncOnStart')) {
+				App.Providers.trakttv.sync();
 			}
 		},
 

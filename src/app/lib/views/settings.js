@@ -686,9 +686,11 @@
 						}
 					}
 				});
+
 			}
 			return ip;
 		}
+		
 	});
 
 	App.View.Settings = Settings;

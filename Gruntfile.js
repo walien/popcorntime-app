@@ -58,7 +58,8 @@ module.exports = function (grunt) {
 		'injectgit',
 		'bower_clean',
 		'submodule',
-		'nodewebkit'
+		'nodewebkit',
+		'shell:setexecutable'
 	]);
 	grunt.registerTask('submodule', ['shell:submodule']);
 
@@ -68,10 +69,10 @@ module.exports = function (grunt) {
 		'exec:codesign', // mac
 		'exec:createDmg', // mac
 		'exec:createWinInstall',
+		'exec:createWinUpdate',
 		'exec:createLinuxInstall',
-		'compress' // win & linux
+		'compress' // all platforms
 	]);
-
 
 	grunt.registerTask('start', function () {
 		var start = parseBuildPlatforms();
@@ -99,16 +100,23 @@ module.exports = function (grunt) {
 	grunt.registerTask('injectgit', function () {
 		if (grunt.file.exists('.git/')) {
 			var path = require('path');
-			var gitRef = grunt.file.read('.git/HEAD').split(':')[1].trim();
-			var gitBranch = path.basename(gitRef);
-			if (grunt.file.exists('.git/' + gitRef)) {
+			var gitRef = grunt.file.read('.git/HEAD');
+			try {
+				var gitRef = gitRef.split(':')[1].trim();
+				var gitBranch = path.basename(gitRef);
 				var currCommit = grunt.file.read('.git/' + gitRef).trim();
-				var git = {
-					branch: gitBranch,
-					commit: currCommit
-				};
-				grunt.file.write('.git.json', JSON.stringify(git, null, '  '));
 			}
+			catch (e) {
+				var fs = require('fs');
+				var currCommit = gitRef.trim();
+				var items = fs.readdirSync('.git/refs/heads');
+				var gitBranch = items[0];
+			}
+			var git = {
+				branch: gitBranch,
+				commit: currCommit
+			}
+			grunt.file.write('.git.json', JSON.stringify(git, null, '  '));
 		}
 	});
 
@@ -210,7 +218,10 @@ module.exports = function (grunt) {
 				maxBuffer: Infinity
 			},
 			createLinuxInstall: {
-				cmd: 'bash dist/linux/exec_installer.sh'
+				cmd: 'sh dist/linux/exec_installer.sh'
+			},
+			createWinUpdate: {
+				cmd: 'sh dist/windows/updater_package.sh'
 			}
 		},
 
@@ -233,6 +244,13 @@ module.exports = function (grunt) {
 			submodule: {
 				command: [
 					'git submodule update --init'
+				].join('&&')
+			},
+			setexecutable: {
+				command: [
+				'pct_rel="build/releases/Popcorn-Time"',
+				'chmod -R +x ${pct_rel}/mac/Popcorn-Time.app || : ',
+				'chmod +x ${pct_rel}/linux*/Popcorn-Time/Popcorn-Time || : '
 				].join('&&')
 			}
 		},
@@ -258,21 +276,32 @@ module.exports = function (grunt) {
 				src: '**',
 				dest: 'Popcorn-Time'
 			},
+			mac: {
+				options: {
+					mode: 'tgz',
+					archive: 'build/releases/Popcorn-Time/mac/Popcorn-Time-' + currentVersion + '-Mac.tar.gz'
+				},
+				expand: true,
+				cwd: 'build/releases/Popcorn-Time/mac/',
+				src: '**',
+				dest: ''
+			},
 			windows: {
 				options: {
 					mode: 'zip',
 					archive: 'build/releases/Popcorn-Time/win/Popcorn-Time-' + currentVersion + '-Win.zip'
 				},
 				expand: true,
-				cwd: 'dist/windows',
-				src: 'Popcorn Time-' + currentVersion + '-Setup.exe',
-				dest: ''
+				cwd: 'build/releases/Popcorn-Time/win/Popcorn-Time',
+				src: '**',
+				dest: 'Popcorn-Time'
 			}
 		},
 
 		clean: {
 			releases: ['build/releases/Popcorn-Time/**'],
-			css: ['src/app/themes/**']
+			css: ['src/app/themes/**'],
+			dist: ['dist/windows/Popcorn-*-Setup.exe']
 		},
 
 		watch: {
