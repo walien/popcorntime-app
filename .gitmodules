@@ -4,3 +4,6 @@
 [submodule "src/app/language"]
 	path = src/app/language
 	url = https://git.popcorntime.io/stash/scm/pt/popcorn-i18n.git
+[submodule "src/content/packages"]
+	path = src/content/packages
+	url = https://git.popcorntime.io/stash/scm/pt/popcorn-packages.git
