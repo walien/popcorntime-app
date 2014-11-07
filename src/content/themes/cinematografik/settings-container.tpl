@@ -34,11 +34,13 @@
 					<div class="dropdown-arrow"></div>
 				</div>
 			</span>
-
+			<!--
 			<span>
 				<div class="dropdown pct-theme">
 					<p><%= i18n.__("Theme") %>:</p>
 					<%
+
+					/*
 						var themes = "";
 						var theme_files = fs.readdirSync('./src/app/themes/');
 						for (var i in theme_files) {
@@ -47,11 +49,14 @@
 								theme_files[i].slice(0, -10).split('_').join(' '); + "</option>";
 							}
 						}
+
+						*/
 					%>
-					<select name="theme"><%=themes%></select>
+					<select name="theme"><% //=themes%></select>
 					<div class="dropdown-arrow"></div>
 				</div>
 			</span>
+			-->
 
 			<span class="advanced">
 				<div class="dropdown start-screen">

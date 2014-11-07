@@ -470,7 +470,7 @@
 				win.setAlwaysOnTop(value);
 				break;
 			case 'theme':
-				$('head').append('<link rel="stylesheet" href="themes/' + value + '.css" type="text/css" />');
+				//$('head').append('<link rel="stylesheet" href="themes/' + value + '.css" type="text/css" />');
 				App.vent.trigger('updatePostersSizeStylesheet');
 				break;
 			case 'start_screen':
@@ -690,7 +690,7 @@
 			}
 			return ip;
 		}
-		
+
 	});
 
 	App.View.Settings = Settings;
