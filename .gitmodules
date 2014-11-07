@@ -7,3 +7,6 @@
 [submodule "src/content/packages"]
 	path = src/content/packages
 	url = https://git.popcorntime.io/stash/scm/pt/popcorn-packages.git
+[submodule "src/content/themes/cinematografik"]
+	path = src/content/themes/cinematografik
+	url = https://git.popcorntime.io/stash/scm/pt/cinematografik.git
