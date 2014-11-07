@@ -132,7 +132,7 @@ App.Localization = Localization;
 i18n.configure({
 	defaultLocale: 'en',
 	locales: App.Localization.allTranslations,
-	directory: './src/app/language'
+	directory: './src/content/languages'
 });
 
 Database.find('bookmarks').then(function (data) {
