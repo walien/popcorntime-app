@@ -37,6 +37,7 @@ var
 	Settings = require('./lib/settings')(Database),
 	Updater = require('./lib/updater')(Settings, $),
 	PackagesManager = require('./lib/packages'),
+	ThemesManager = require('./lib/themes')(Settings),
 	Localization = require('./lib/localization');
 
 
@@ -237,20 +238,35 @@ App.addInitializer(function (options) {
 });
 
 var initTemplates = function () {
+
 	// Load in external templates
 	var ts = [];
 
-	_.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
-		var d = Q.defer();
-		$.get(el.src, function (res) {
-			el.innerHTML = res;
-			d.resolve(true);
+	// load skeleton
+	var skeleton = $( '#skeleton' );
+
+	ThemesManager.getTemplates(function(templates) {
+		_.each(templates, function (el) {
+
+			var d = Q.defer();
+			$.get(el.path, function (res) {
+				var s = document.createElement("script");
+				s.type = "text/x-template";
+				s.src = el.path;
+				s.id = el.key;
+				s.innerHTML = res;
+				$("body").append(s);
+				d.resolve(true);
+			});
+
+			ts.push(d.promise);
+
 		});
-		ts.push(d.promise);
 	});
 
 	return Q.all(ts);
 };
+
 
 var initApp = function () {
 	var mainWindow = new App.View.MainWindow();

@@ -64,7 +64,7 @@ config = {
 
 	tv_detail_jump_to: 'next',
 
-	theme_path: '/src/content/themes/cinematografik'
+	enabledTheme: 'cinematografik'
 
 };
 
