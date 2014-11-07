@@ -17,7 +17,7 @@
 
 		},
 
-		reset: function() {
+		reset: function () {
 			this.stream = false;
 			this.streamInfo = false;
 			this.src = false;
@@ -184,13 +184,9 @@
 					});
 					win.info(_.size(subs) + ' subtitles found');
 				} else {
-					subtitles = null;
 					win.warn('No subtitles returned');
 				}
-				hasSubtitles = true;
 			}).catch(function (err) {
-				subtitles = null;
-				hasSubtitles = true;
 				win.warn(err);
 			});
 		}

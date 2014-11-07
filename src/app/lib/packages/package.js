@@ -9,7 +9,7 @@ var CSON = require('season'),
 	__slice = [].slice,
 	Package,
 	Sandbox = require('./sandbox'),
-	Proxy = require('./proxy');
+	ProxyModule = require('./proxy');
 
 /*
  * Construction
@@ -27,7 +27,7 @@ function Package(path, metadata) {
 	this.name = (_ref1 = (_ref2 = this.metadata) != null ? _ref2.name : void 0) != null ? _ref1 : path.basename(this.path);
 
 	// setup proxy app
-	ProxyApp = new Proxy({
+	ProxyApp = new ProxyModule({
 		name: this.name,
 		permissions: {
 			providers: ['set', 'get']
@@ -161,7 +161,7 @@ Package.prototype.activateNow = function () {
 				this.loadAuthentification();
 
 			} else {
-				console.log("Rejected");
+				console.log('Rejected');
 				this.activationDeferred.reject();
 
 			}
@@ -255,7 +255,7 @@ Package.prototype.getMainModulePath = function () {
 	}
 	this.resolvedMainModulePath = true;
 	mainModulePath = this.metadata.main ? path.join(this.path, this.metadata.main) : path.join(this.path, 'index');
-	return this.mainModulePath = fs.resolveExtension(mainModulePath, [""].concat(__slice.call(_.keys(require.extensions))));
+	return this.mainModulePath = fs.resolveExtension(mainModulePath, [''].concat(__slice.call(_.keys(require.extensions))));
 };
 
 /*

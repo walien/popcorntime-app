@@ -29,6 +29,26 @@ var activeDatabase = [{
 	path: 'data/watched.db'
 }];
 
+
+// some helper
+function promisifyDatastore(datastore) {
+	datastore.insert = Q.denodeify(datastore.insert, datastore);
+	datastore.update = Q.denodeify(datastore.update, datastore);
+	datastore.remove = Q.denodeify(datastore.remove, datastore);
+}
+
+function promisifyDb(obj) {
+	return Q.Promise(function (resolve, reject) {
+		obj.exec(function (error, result) {
+			if (error) {
+				return reject(error);
+			} else {
+				return resolve(result);
+			}
+		});
+	});
+}
+
 function DatabaseManager(data_path) {
 
 	var that = this;
@@ -124,26 +144,6 @@ DatabaseManager.prototype.deleteDatabase = function () {
 		});
 
 		resolve();
-	});
-};
-
-
-// some helper
-function promisifyDatastore(datastore) {
-	datastore.insert = Q.denodeify(datastore.insert, datastore);
-	datastore.update = Q.denodeify(datastore.update, datastore);
-	datastore.remove = Q.denodeify(datastore.remove, datastore);
-};
-
-function promisifyDb(obj) {
-	return Q.Promise(function (resolve, reject) {
-		obj.exec(function (error, result) {
-			if (error) {
-				return reject(error);
-			} else {
-				return resolve(result);
-			}
-		});
 	});
 };
 

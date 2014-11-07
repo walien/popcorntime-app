@@ -243,19 +243,19 @@ var initTemplates = function () {
 	var ts = [];
 
 	// load skeleton
-	var skeleton = $( '#skeleton' );
+	var skeleton = $('#skeleton');
 
-	ThemesManager.getTemplates(function(templates) {
+	ThemesManager.getTemplates(function (templates) {
 		_.each(templates, function (el) {
 
 			var d = Q.defer();
 			$.get(el.path, function (res) {
-				var s = document.createElement("script");
-				s.type = "text/x-template";
+				var s = document.createElement('script');
+				s.type = 'text/x-template';
 				s.src = el.path;
 				s.id = el.key;
 				s.innerHTML = res;
-				$("body").append(s);
+				$('body').append(s);
 				d.resolve(true);
 			});
 
@@ -443,7 +443,7 @@ window.ondrop = function (e) {
 
 	var file = e.dataTransfer.files[0];
 
-	if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1 )) {
+	if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
 		var reader = new FileReader();
 
 		reader.onload = function (event) {
@@ -454,13 +454,13 @@ window.ondrop = function (e) {
 					window.alert('Error Loading File: ' + err);
 				} else {
 
-                    if (file.name.indexOf('.torrent') !== -1) {
-                        // startTorrentStream(path.join(App.settings.tmpLocation, file.name));
-                        handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
-                    } else if (file.name.indexOf('.srt') !== -1) {
-                        App.Settings.set('droppedSub', file.name);
-                        App.vent.trigger('videojs:drop_sub');
-                    }
+					if (file.name.indexOf('.torrent') !== -1) {
+						// startTorrentStream(path.join(App.settings.tmpLocation, file.name));
+						handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
+					} else if (file.name.indexOf('.srt') !== -1) {
+						App.Settings.set('droppedSub', file.name);
+						App.vent.trigger('videojs:drop_sub');
+					}
 
 				}
 			});

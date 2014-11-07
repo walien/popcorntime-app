@@ -86,8 +86,7 @@ module.exports = function (grunt) {
 				gitRef = gitRef.split(':')[1].trim();
 				gitBranch = path.basename(gitRef);
 				currCommit = grunt.file.read('.git/' + gitRef).trim();
-			}
-			catch (e) {
+			} catch (e) {
 				currCommit = gitRef.trim();
 				items = fs.readdirSync('.git/refs/heads');
 				gitBranch = items[0];
@@ -199,9 +198,9 @@ module.exports = function (grunt) {
 			},
 			setexecutable: {
 				command: [
-				'pct_rel="build/releases/Popcorn-Time"',
-				'chmod -R +x ${pct_rel}/mac/Popcorn-Time.app || : ',
-				'chmod +x ${pct_rel}/linux*/Popcorn-Time/Popcorn-Time || : '
+					'pct_rel="build/releases/Popcorn-Time"',
+					'chmod -R +x ${pct_rel}/mac/Popcorn-Time.app || : ',
+					'chmod +x ${pct_rel}/linux*/Popcorn-Time/Popcorn-Time || : '
 				].join('&&')
 			}
 		},

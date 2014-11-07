@@ -82,7 +82,7 @@
 					// settings
 					if (thisPackage.settings && Object.keys(thisPackage.settings).length > 0) {
 						_.each(thisPackage.settings, function (auth, key) {
-							auth._css = auth._ref.replace(".", "_");
+							auth._css = auth._ref.replace('.', '_');
 							auth._key = key;
 						});
 						thisPackageBundled.settings = thisPackage.settings;
@@ -105,7 +105,7 @@
 
 						_.each(thisPackage.authentification.loginForm, function (auth, key) {
 
-							auth._css = auth._ref.replace(".", "_");
+							auth._css = auth._ref.replace('.', '_');
 							auth._key = key;
 							thisAuth.inputElements.push(auth);
 
@@ -113,7 +113,7 @@
 
 						_.each(thisPackage.authentification.settings, function (auth, key) {
 
-							auth._css = auth._ref.replace(".", "_");
+							auth._css = auth._ref.replace('.', '_');
 							auth._key = key;
 							thisAuth.settingsElements.push(auth);
 
@@ -256,8 +256,7 @@
 							self.render();
 						});
 
-					})
-
+					});
 			}
 
 
@@ -674,12 +673,13 @@
 
 		getIPAddress: function () {
 			var ifaces = require('os').networkInterfaces();
+			var ip;
 			for (var dev in ifaces) {
-				var ip, alias = 0;
+				var alias = 0;
 				ifaces[dev].forEach(function (details) {
-					if (details.family == 'IPv4') {
+					if (details.family === 'IPv4') {
 						if (!/(loopback|vmware|internal|hamachi)/gi.test(dev + (alias ? ':' + alias : ''))) {
-							if ((details.address.substring(0, 8) == "192.168.") || (details.address.substring(0, 7) == "172.16.") || (details.address.substring(0, 5) == "10.0.")) {
+							if ((details.address.substring(0, 8) === '192.168.') || (details.address.substring(0, 7) === '172.16.') || (details.address.substring(0, 5) === '10.0.')) {
 								ip = details.address;
 								++alias;
 							}

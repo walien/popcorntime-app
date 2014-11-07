@@ -56,7 +56,7 @@
 
 
 		return deferred.promise;
-	};
+	}
 
 	var filterShows = function (items) {
 		var filtered = [];

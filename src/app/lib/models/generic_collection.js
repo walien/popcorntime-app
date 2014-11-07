@@ -170,7 +170,9 @@
 							_.each(items.results, function (item) {
 								var id = item[self.popid];
 
-								var thisSub = _.findWhere(subtitles, {_id: id});
+								var thisSub = _.findWhere(subtitles, {
+									_id: id
+								});
 
 								// delete _id it cause crash on model... ;/
 								delete thisSub._id;

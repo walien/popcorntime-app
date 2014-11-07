@@ -21,7 +21,7 @@ Player.info = function () {
 			duration: window.App.PlayerView.player.duration(),
 			streamUrl: 'not_supported_yet',
 			selectedSubtitle: ''
-		}
+		};
 
 		if (result.movie) {
 			result.imdb_id = window.App.PlayerView.model.get('imdb_id');
@@ -40,7 +40,7 @@ Player.info = function () {
 	}
 
 	return false;
-}
+};
 
 Player.isAvailable = function () {
 	if (window.App.PlayerView === undefined ||
@@ -49,7 +49,7 @@ Player.isAvailable = function () {
 		return false;
 	}
 	return true;
-}
+};
 
 Player.videojs = {};
 Player.videojs.on = function () {
@@ -57,6 +57,6 @@ Player.videojs.on = function () {
 		return window.App.PlayerView.player.on;
 	}
 	return false;
-}
+};
 
 module.exports = Player;

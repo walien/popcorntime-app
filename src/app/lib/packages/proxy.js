@@ -1,18 +1,6 @@
 var AppProxy,
-	_ = require('underscore');
-API = require('../api');
-
-function AppProxy(options) {
-	if (!options.name) {
-		throw new Error('Must provide an app name for api context');
-	}
-
-	if (!options.permissions) {
-		throw new Error('Must provide app permissions');
-	}
-
-	_.extend(this, generateProxyFunctions(options.name, options.permissions));
-}
+	_ = require('underscore'),
+	API = require('../api');
 
 function generateProxyFunctions(name, permissions) {
 
@@ -90,6 +78,18 @@ function generateProxyFunctions(name, permissions) {
 
 	};
 
-};
+}
+
+function AppProxy(options) {
+	if (!options.name) {
+		throw new Error('Must provide an app name for api context');
+	}
+
+	if (!options.permissions) {
+		throw new Error('Must provide app permissions');
+	}
+
+	_.extend(this, generateProxyFunctions(options.name, options.permissions));
+}
 
 module.exports = AppProxy;

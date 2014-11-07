@@ -7,7 +7,7 @@ function Common(App) {
 }
 
 Common.prototype.markEpisodeAsWatched = function (data) {
-	console.log("Mark as watched");
+	console.log('Mark as watched');
 };
 
 

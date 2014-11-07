@@ -7,6 +7,7 @@ var
 	rm = require('rimraf'),
 	path = require('path'),
 	crypto = require('crypto'),
+	request = require('request'),
 	zip = require('adm-zip'),
 	spawn = require('child_process').spawn,
 	UPDATE_ENDPOINT,
@@ -25,9 +26,15 @@ var
 	'GOm3OxA3zKXG4cjy6TyEKajYlT45Q+tgt1L1HuGAJjWFRSA0PP9ctC6nH+2N3HmW\n' +
 	'RTcms0CPio56gg==\n' +
 	'-----END PUBLIC KEY-----\n',
-	$;
+	_jQuery;
 
-function Updater(settingsInstance, jQuery, options) {
+function forcedBind(func, thisVar) {
+	return function () {
+		return func.apply(thisVar, arguments);
+	};
+}
+
+function Updater(settingsInstance, __jQuery, options) {
 	var that = this;
 	this.settings = settingsInstance;
 
@@ -42,7 +49,7 @@ function Updater(settingsInstance, jQuery, options) {
 	this.outputDir = this.settings.get('os') === 'linux' ? process.execPath : process.cwd();
 	this.updateData = null;
 
-	$ = jQuery;
+	_jQuery = __jQuery;
 
 	// check for update
 	this.update();
@@ -261,7 +268,7 @@ Updater.prototype.install = function (downloadPath) {
 
 Updater.prototype.displayNotification = function () {
 	var self = this;
-	var $el = $('#notification');
+	var $el = _jQuery('#notification');
 
 	$el.html(
 		'<h1>' + this.updateData.title + ' Installed</h1>' +
@@ -272,8 +279,8 @@ Updater.prototype.displayNotification = function () {
 		'</span>'
 	).addClass('blue');
 
-	var $restart = $('.btn.restart'),
-		$chnglog = $('.btn.chnglog');
+	var $restart = _jQuery('.btn.restart'),
+		$chnglog = _jQuery('.btn.chnglog');
 
 	$restart.on('click', function () {
 		var argv = gui.App.fullArgv;
@@ -287,14 +294,14 @@ Updater.prototype.displayNotification = function () {
 	});
 
 	$chnglog.on('click', function () {
-		var $changelog = $('#changelog-container').html(_.template($('#changelog-tpl').html())(this.updateData));
+		var $changelog = _jQuery('#changelog-container').html(_.template(_jQuery('#changelog-tpl').html())(this.updateData));
 		$changelog.find('.btn-close').on('click', function () {
 			$changelog.hide();
 		});
 		$changelog.show();
 	});
 
-	$('body').addClass('has-notification');
+	_jQuery('body').addClass('has-notification');
 };
 
 Updater.prototype.update = function () {

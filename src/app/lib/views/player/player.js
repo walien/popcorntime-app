@@ -212,7 +212,7 @@
 
 
 			this.player.one('play', function () {
-				_this.player.one('durationchange', function() {
+				_this.player.one('durationchange', function () {
 					_this.sendToTrakt(_this);
 				});
 				_this._WatchingTimer = setInterval(_this.sendToTrakt(_this), 10 * 60 * 1000); // 10 minutes
