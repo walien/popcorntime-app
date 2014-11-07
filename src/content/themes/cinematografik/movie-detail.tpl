@@ -1,7 +1,7 @@
-<%  
-if(typeof backdrop === "undefined"){ backdrop = ""; }; 
-if(typeof synopsis === "undefined"){ synopsis = "Synopsis not available."; }; 
-if(typeof runtime === "undefined"){ runtime = "N/A"; }; 
+<%
+if(typeof backdrop === "undefined"){ backdrop = ""; };
+if(typeof synopsis === "undefined"){ synopsis = "Synopsis not available."; };
+if(typeof runtime === "undefined"){ runtime = "N/A"; };
 %>
 
 <div data-bgr="<%= backdrop %>" class="backdrop"></div>
@@ -10,7 +10,7 @@ if(typeof runtime === "undefined"){ runtime = "N/A"; };
 <div class="fa fa-times close-icon"></div>
 
 <section class="poster-box">
-	<img src="images/cover-placeholder.jpg" data-cover="<%= image %>" class="mcover-image" />
+	<img src="<%=App.Settings.get('theme_path')%>/assets/images/cover-placeholder.jpg" data-cover="<%= image %>" class="mcover-image" />
 </section>
 
 <section class="content-box">
@@ -59,7 +59,7 @@ if(typeof runtime === "undefined"){ runtime = "N/A"; };
 		  <%= i18n.__("Subtitles") %>
 		  <div class="sub-flag-icon flag selected-lang none"></div>
 		  <div class="sub-dropdown-arrow"></div>
-		</div>                                            
+		</div>
 		<div class="flag-container">
 			<% if(typeof subtitle === 'undefined') { %>
 				<div class="subs-loading"><%= i18n.__("Please wait") %></div>
@@ -70,11 +70,11 @@ if(typeof runtime === "undefined"){ runtime = "N/A"; };
 				<% } %>
 			<% } %>
 		</div>
-		
+
 		<br>
-		
+
 		<div class="button dropup" id="player-chooser"></div>
-		
+
 		<div id="watch-trailer" class="button"><%=i18n.__("Watch Trailer") %></div>
 
 		<div class="movie-quality-container">
@@ -91,7 +91,7 @@ if(typeof runtime === "undefined"){ runtime = "N/A"; };
 					<div data-toogle="tooltip" data-placement="top" title="<%= torrents['720p'].filesize %>" class="q720">720p</div>
 				<% }else if (torrents["1080p"] !== undefined) { %>
 					<div data-toogle="tooltip" data-placement="top" title="<%= torrents['1080p'].filesize %>" class="q720">1080p</div>
-				<% } else { %>HDRip<% } %> 
+				<% } else { %>HDRip<% } %>
 			<% } %>
 		</div>
 

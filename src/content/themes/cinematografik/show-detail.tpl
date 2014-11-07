@@ -109,7 +109,7 @@
 										<span><%=episodeData.episode %></span>
 										<div><%=episodeData.title %></div>
 									</a>
-									
+
 									<i id="watched-<%=episodeData.season%>-<%=episodeData.episode%>" class="fa fa-eye watched"></i>
 
 
