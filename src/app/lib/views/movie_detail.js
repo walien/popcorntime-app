@@ -25,6 +25,100 @@
 			'click .rating-container': 'switchRating'
 		},
 
+		templateHelpers: {
+
+			stars: function () {
+				return [1,2,3,4,5];
+			},
+			nativeName: function (lang) {
+				return App.Localization.langcodes[lang].nativeName;
+			},
+
+			if_subtitle: function(options) {
+				if (this.subtitle) {
+					return options.fn();
+				} else {
+					return options.inverse();
+				}
+			},
+
+			each_subtitles: function(options) {
+				var ret = "";
+				var subtitles = this.model.get('subtitle');
+				console.log(subtitles);
+				for(var prop in subtitles) {
+			    	if (subtitles.hasOwnProperty(prop)) {
+						ret = ret + options.fn({property:prop,value:subtitles[prop]});
+			    	}
+			  	}
+				return ret;
+			},
+
+			if_quality: function (needed, options) {
+				var fnTrue=options.fn,
+					fnFalse=options.inverse;
+
+				if (this.torrents) {
+
+					var torrents = this.torrents;
+					var value;
+					var q720 = torrents['720p'] !== undefined;
+					var q1080 = torrents['1080p'] !== undefined;
+
+					if (q720 && q1080) {
+						value = '720p/1080p';
+					}else if (q1080) {
+						value = '1080p';
+					}else if (q720) {
+						value = '720p';
+					} else {
+						value = 'HDRip';
+					}
+
+					if (value === needed) {
+						return fnTrue();
+					} else {
+						return fnFalse();
+					}
+
+				} else {
+					return fnFalse();
+				}
+			},
+
+			image: function() {
+				var image;
+				switch (this.type) {
+					case 'show':
+						image = this.images.imageLowRes;
+					break;
+
+					case 'bookmarkedshow':
+					case 'bookmarkedmovie':
+					case 'movie':
+						image = this.imageLowRes;
+					break;
+				}
+				return image;
+			},
+
+			ratingStars: function() {
+				if (typeof this.rating === 'object') {
+					return this.rating/10;
+				} else {
+					return [];
+				}
+			},
+
+			rating: function() {
+				if (typeof this.rating === 'object') {
+					return this.model.get('rating')['percentage']/10;
+				} else {
+					return false;
+				}
+			}
+		},
+
 		initialize: function () {
 
 			var _this = this;
