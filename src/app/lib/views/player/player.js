@@ -41,17 +41,17 @@
 
 			subtitles: function () {
 
-				var subtracks = "";
+				var subtracks = '';
 				var subArray = [];
 				var defaultSubtitle = this.defaultSubtitle;
 
-				for (var lang in subtitle) {
-					var langcode = lang == "pb"? "pt-br" : lang;
+				for (var lang in this.subtitle) {
+					var langcode = lang === 'pb'? 'pt-br' : lang;
 					subArray.push({
-					"language": langcode,
-					"default": (defaultSubtitle === langcode ? 'default' : ''),
-					"languageName": (App.Localization.langcodes[langcode] !== undefined ? App.Localization.langcodes[langcode].nativeName : langcode),
-					"src": subtitle[lang]
+					'language': langcode,
+					'default': (defaultSubtitle === langcode ? 'default' : ''),
+					'languageName': (App.Localization.langcodes[langcode] !== undefined ? App.Localization.langcodes[langcode].nativeName : langcode),
+					'src': this.subtitle[lang]
 					});
 				}
 				subArray.sort(function (sub1, sub2) {

@@ -141,8 +141,8 @@ module.exports = function (grunt) {
 				linux64: buildPlatforms.linux64,
 				download_url: 'http://cdn.popcorntime.io/nw/'
 			},
-			src: ['./src/**', '!./src/app/styl/**',
-				'./node_modules/**', '!./node_modules/bower/**', '!./node_modules/*grunt*/**', '!./node_modules/stylus/**',
+			src: ['./src/**',
+				'./node_modules/**', '!./node_modules/bower/**', '!./node_modules/*grunt*/**',
 				'!./**/test*/**', '!./**/doc*/**', '!./**/example*/**', '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**',
 				'./package.json', './README.md', './LICENSE.txt', './.git.json'
 			]

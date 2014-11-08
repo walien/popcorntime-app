@@ -44,8 +44,8 @@
 				if (this.torrents) {
 
 					var torrents = this.torrents;
-					var q720 = torrents["720p"] !== undefined;
-					var q1080 = torrents["1080p"] !== undefined;
+					var q720 = torrents['720p'] !== undefined;
+					var q1080 = torrents['1080p'] !== undefined;
 
 					if (q720 && q1080) {
 						return '720p/1080p';
@@ -63,23 +63,24 @@
 			},
 
 			image: function() {
+				var image;
 				switch (this.type) {
 					case 'show':
-						return this.images.imageLowRes;
+						image = this.images.imageLowRes;
 					break;
 
 					case 'bookmarkedshow':
 					case 'bookmarkedmovie':
 					case 'movie':
-						return this.imageLowRes;
+						image = this.imageLowRes;
 					break;
 				}
-
+				return image;
 			},
 
 			ratingStars: function() {
 				if (typeof this.rating === 'object') {
-					return rating = this.rating/10;
+					return this.rating/10;
 				} else {
 					return [];
 				}
@@ -87,7 +88,7 @@
 
 			rating: function() {
 				if (typeof this.rating === 'object') {
-					return rating = this.model.get('rating')['percentage']/10;
+					return this.model.get('rating')['percentage']/10;
 				} else {
 					return false;
 				}

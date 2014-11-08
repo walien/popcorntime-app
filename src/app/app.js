@@ -33,14 +33,14 @@ var
 
 	Q = require('q'),
 
+	Handlebars = require('handlebars'),
+
 	Database = require('./lib/database')(gui.App.dataPath),
 	Settings = require('./lib/settings')(Database),
 	Updater = require('./lib/updater')(Settings, $),
 	PackagesManager = require('./lib/packages'),
 	ThemesManager = require('./lib/themes')(Settings),
 	Localization = require('./lib/localization');
-
-var Handlebars = require('handlebars');
 
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
@@ -117,7 +117,7 @@ _.extend(App, {
 // Handlebars render engine
 Backbone.Marionette.Renderer.render = function(template, data){
 	return Handlebars.compile($(template).html())(data);
-}
+};
 Handlebars.registerHelper('_', function(text) {
 	return new Handlebars.SafeString(i18n.__(text));
 });
@@ -270,7 +270,7 @@ var initTemplates = function () {
 	var ts = [];
 
 	// Set the CSS
-	var css = ThemesManager.config.css
+	var css = ThemesManager.config.css;
 
 	// hack for now, we'll use
 	// the first element in theme package.json

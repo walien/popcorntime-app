@@ -50,7 +50,6 @@
     "node-captions": "0.2.2",
     "node-webkit-fdialogs": "latest",
     "pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git",
-    "peerflix": "^0.17.0",
     "popcorn-opensubtitles": "git+https://git.popcorntime.io/stash/scm/thrd/popcorn-opensubtitles.git",
     "popcorn-streamer-server": "git+https://git.popcorntime.io/stash/scm/pt/popcorn-streamer-server.git",
     "q": "^2.0.2",
@@ -73,16 +72,15 @@
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-compress": "^0.9.1",
     "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-stylus": "0.16.0",
     "grunt-contrib-watch": "0.6.x",
     "grunt-exec": "0.4.x",
     "grunt-githooks": "^0.3.1",
     "grunt-jsbeautifier": "*",
     "grunt-node-webkit-builder": "0.1.x",
     "grunt-shell": "^1.1.1",
+    "grunt-update-submodules": "^0.4.1",
     "load-grunt-tasks": "0.4.0",
     "nw-gyp": "^0.12.2",
-    "stylus": "0.46.2",
     "tmp": "0.0.23"
   }
 }
