@@ -22,14 +22,76 @@
 			bookmarkIcon: '.actions-favorites',
 			watchedIcon: '.actions-watched'
 		},
+
 		modelEvents: {
 			'change': 'render'
 		},
+
 		events: {
 			'click .actions-favorites': 'toggleFavorite',
 			'click .actions-watched': 'toggleWatched',
 			'click .cover': 'showDetail',
 			'mouseover .cover': 'hoverItem'
+		},
+
+		templateHelpers: {
+
+			stars: function () {
+				return [1,2,3,4,5];
+			},
+
+			quality: function () {
+				if (this.torrents) {
+
+					var torrents = this.torrents;
+					var q720 = torrents["720p"] !== undefined;
+					var q1080 = torrents["1080p"] !== undefined;
+
+					if (q720 && q1080) {
+						return '720p/1080p';
+					}else if (q1080) {
+						return '1080p';
+					}else if (q720) {
+						return '720p';
+					} else {
+						return 'HDRip';
+					}
+
+				} else {
+					return false;
+				}
+			},
+
+			image: function() {
+				switch (this.type) {
+					case 'show':
+						return this.images.imageLowRes;
+					break;
+
+					case 'bookmarkedshow':
+					case 'bookmarkedmovie':
+					case 'movie':
+						return this.imageLowRes;
+					break;
+				}
+
+			},
+
+			ratingStars: function() {
+				if (typeof this.rating === 'object') {
+					return rating = this.rating/10;
+				} else {
+					return [];
+				}
+			},
+
+			rating: function() {
+				if (typeof this.rating === 'object') {
+					return rating = this.model.get('rating')['percentage']/10;
+				} else {
+					return false;
+				}
+			}
 		},
 
 		initialize: function () {

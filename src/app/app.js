@@ -124,6 +124,18 @@ Handlebars.registerHelper('_', function(text) {
 Handlebars.registerHelper('settings', function(key) {
 	return new Handlebars.SafeString(Settings.get(key));
 });
+Handlebars.registerHelper('if_settings', function(key, value) {
+	value = value || true;
+	if (Settings.get(key) === value) {
+		return true;
+	} else {
+		return false;
+	}
+});
+Handlebars.registerHelper('pluralize', function(number, single, plural) {
+  if (number === 1) { return single; }
+  else { return plural; }
+});
 
 // set database
 App.Database = Database;

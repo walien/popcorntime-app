@@ -24,10 +24,6 @@ var os = require('os');
 			'click .btn-os.fullscreen': 'toggleFullscreen'
 		},
 
-		initialize: function () {
-			this.nativeWindow = require('nw.gui').Window.get();
-		},
-
 		templateHelpers: {
 			fsTooltipPos: function () {
 				return App.Config.platform === 'darwin' ? 'left' : 'right';
@@ -38,6 +34,10 @@ var os = require('os');
 			platform: function () {
 				return App.Config.platform;
 			}
+		},
+
+		initialize: function () {
+			this.nativeWindow = require('nw.gui').Window.get();
 		},
 
 		maximize: function () {
