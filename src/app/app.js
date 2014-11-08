@@ -40,6 +40,7 @@ var
 	ThemesManager = require('./lib/themes')(Settings),
 	Localization = require('./lib/localization');
 
+var Handlebars = require('handlebars');
 
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
@@ -111,6 +112,17 @@ _.extend(App, {
 	Scrapers: {},
 	Providers: {},
 	Localization: {}
+});
+
+// Handlebars render engine
+Backbone.Marionette.Renderer.render = function(template, data){
+	return Handlebars.compile($(template).html())(data);
+}
+Handlebars.registerHelper('_', function(text) {
+	return new Handlebars.SafeString(i18n.__(text));
+});
+Handlebars.registerHelper('settings', function(key) {
+	return new Handlebars.SafeString(Settings.get(key));
 });
 
 // set database

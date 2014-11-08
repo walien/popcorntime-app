@@ -29,12 +29,14 @@ var os = require('os');
 		},
 
 		templateHelpers: {
-			getButtons: function () {
-				return ButtonOrder[App.Config.platform];
-			},
-
 			fsTooltipPos: function () {
 				return App.Config.platform === 'darwin' ? 'left' : 'right';
+			},
+			buttons: function () {
+				return ButtonOrder[App.Config.platform];
+			},
+			platform: function () {
+				return App.Config.platform;
 			}
 		},
 
