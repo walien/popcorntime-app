@@ -14,6 +14,26 @@
 			'click .links': 'links'
 		},
 
+		templateHelpers: {
+
+			git: function (key, len) {
+				len = len || false;
+				if (App.git) {
+					if (len) {
+						return App.git[key].slice(0,len);
+					} else {
+						return App.git[key];
+					}
+				} else {
+					return false;
+				}
+			},
+
+			if_git: function() {
+				return (App.git ? true : false);
+			}
+		},
+
 		onShow: function () {
 			$('.filter-bar').hide();
 			$('#header').addClass('header-shadow');
