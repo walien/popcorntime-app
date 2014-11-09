@@ -46,16 +46,16 @@
 				var defaultSubtitle = this.defaultSubtitle;
 
 				for (var lang in this.subtitle) {
-					var langcode = lang === 'pb'? 'pt-br' : lang;
+					var langcode = lang === 'pb' ? 'pt-br' : lang;
 					subArray.push({
-					'language': langcode,
-					'default': (defaultSubtitle === langcode ? 'default' : ''),
-					'languageName': (App.Localization.langcodes[langcode] !== undefined ? App.Localization.langcodes[langcode].nativeName : langcode),
-					'src': this.subtitle[lang]
+						'language': langcode,
+						'default': (defaultSubtitle === langcode ? 'default' : ''),
+						'languageName': (App.Localization.langcodes[langcode] !== undefined ? App.Localization.langcodes[langcode].nativeName : langcode),
+						'src': this.subtitle[lang]
 					});
 				}
 				subArray.sort(function (sub1, sub2) {
-						return sub1.language > sub2.language;
+					return sub1.language > sub2.language;
 				});
 
 				return subArray;

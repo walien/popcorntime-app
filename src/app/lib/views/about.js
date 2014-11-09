@@ -20,7 +20,7 @@
 				len = len || false;
 				if (App.git) {
 					if (len) {
-						return App.git[key].slice(0,len);
+						return App.git[key].slice(0, len);
 					} else {
 						return App.git[key];
 					}
@@ -29,7 +29,7 @@
 				}
 			},
 
-			if_git: function() {
+			if_git: function () {
 				return (App.git ? true : false);
 			}
 		},

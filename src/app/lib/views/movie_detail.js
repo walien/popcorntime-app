@@ -28,13 +28,13 @@
 		templateHelpers: {
 
 			stars: function () {
-				return [1,2,3,4,5];
+				return [1, 2, 3, 4, 5];
 			},
 			nativeName: function (lang) {
 				return App.Localization.langcodes[lang].nativeName;
 			},
 
-			if_subtitle: function(options) {
+			if_subtitle: function (options) {
 				if (this.subtitle) {
 					return options.fn();
 				} else {
@@ -42,21 +42,24 @@
 				}
 			},
 
-			each_subtitles: function(options) {
+			each_subtitles: function (options) {
 				var ret = "";
 				var subtitles = this.model.get('subtitle');
 				console.log(subtitles);
-				for(var prop in subtitles) {
-			    	if (subtitles.hasOwnProperty(prop)) {
-						ret = ret + options.fn({property:prop,value:subtitles[prop]});
-			    	}
-			  	}
+				for (var prop in subtitles) {
+					if (subtitles.hasOwnProperty(prop)) {
+						ret = ret + options.fn({
+							property: prop,
+							value: subtitles[prop]
+						});
+					}
+				}
 				return ret;
 			},
 
 			if_quality: function (needed, options) {
-				var fnTrue=options.fn,
-					fnFalse=options.inverse;
+				var fnTrue = options.fn,
+					fnFalse = options.inverse;
 
 				if (this.torrents) {
 
@@ -67,9 +70,9 @@
 
 					if (q720 && q1080) {
 						value = '720p/1080p';
-					}else if (q1080) {
+					} else if (q1080) {
 						value = '1080p';
-					}else if (q720) {
+					} else if (q720) {
 						value = '720p';
 					} else {
 						value = 'HDRip';
@@ -86,33 +89,33 @@
 				}
 			},
 
-			image: function() {
+			image: function () {
 				var image;
 				switch (this.type) {
-					case 'show':
-						image = this.images.imageLowRes;
+				case 'show':
+					image = this.images.imageLowRes;
 					break;
 
-					case 'bookmarkedshow':
-					case 'bookmarkedmovie':
-					case 'movie':
-						image = this.imageLowRes;
+				case 'bookmarkedshow':
+				case 'bookmarkedmovie':
+				case 'movie':
+					image = this.imageLowRes;
 					break;
 				}
 				return image;
 			},
 
-			ratingStars: function() {
+			ratingStars: function () {
 				if (typeof this.rating === 'object') {
-					return this.rating/10;
+					return this.rating / 10;
 				} else {
 					return [];
 				}
 			},
 
-			rating: function() {
+			rating: function () {
 				if (typeof this.rating === 'object') {
-					return this.model.get('rating')['percentage']/10;
+					return this.model.get('rating')['percentage'] / 10;
 				} else {
 					return false;
 				}

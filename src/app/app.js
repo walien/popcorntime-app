@@ -115,16 +115,16 @@ _.extend(App, {
 });
 
 // Handlebars render engine
-Backbone.Marionette.Renderer.render = function(template, data){
+Backbone.Marionette.Renderer.render = function (template, data) {
 	return Handlebars.compile($(template).html())(data);
 };
-Handlebars.registerHelper('_', function(text) {
+Handlebars.registerHelper('_', function (text) {
 	return new Handlebars.SafeString(i18n.__(text));
 });
-Handlebars.registerHelper('settings', function(key) {
+Handlebars.registerHelper('settings', function (key) {
 	return new Handlebars.SafeString(Settings.get(key));
 });
-Handlebars.registerHelper('if_settings', function(key, value) {
+Handlebars.registerHelper('if_settings', function (key, value) {
 	value = value || true;
 	if (Settings.get(key) === value) {
 		return true;
@@ -132,9 +132,12 @@ Handlebars.registerHelper('if_settings', function(key, value) {
 		return false;
 	}
 });
-Handlebars.registerHelper('pluralize', function(number, single, plural) {
-  if (number === 1) { return single; }
-  else { return plural; }
+Handlebars.registerHelper('pluralize', function (number, single, plural) {
+	if (number === 1) {
+		return single;
+	} else {
+		return plural;
+	}
 });
 
 // set database

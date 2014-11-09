@@ -37,7 +37,7 @@
 		templateHelpers: {
 
 			stars: function () {
-				return [1,2,3,4,5];
+				return [1, 2, 3, 4, 5];
 			},
 
 			quality: function () {
@@ -49,9 +49,9 @@
 
 					if (q720 && q1080) {
 						return '720p/1080p';
-					}else if (q1080) {
+					} else if (q1080) {
 						return '1080p';
-					}else if (q720) {
+					} else if (q720) {
 						return '720p';
 					} else {
 						return 'HDRip';
@@ -62,33 +62,33 @@
 				}
 			},
 
-			image: function() {
+			image: function () {
 				var image;
 				switch (this.type) {
-					case 'show':
-						image = this.images.imageLowRes;
+				case 'show':
+					image = this.images.imageLowRes;
 					break;
 
-					case 'bookmarkedshow':
-					case 'bookmarkedmovie':
-					case 'movie':
-						image = this.imageLowRes;
+				case 'bookmarkedshow':
+				case 'bookmarkedmovie':
+				case 'movie':
+					image = this.imageLowRes;
 					break;
 				}
 				return image;
 			},
 
-			ratingStars: function() {
+			ratingStars: function () {
 				if (typeof this.rating === 'object') {
-					return this.rating/10;
+					return this.rating / 10;
 				} else {
 					return [];
 				}
 			},
 
-			rating: function() {
+			rating: function () {
 				if (typeof this.rating === 'object') {
-					return this.model.get('rating')['percentage']/10;
+					return this.model.get('rating')['percentage'] / 10;
 				} else {
 					return false;
 				}
