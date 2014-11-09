@@ -43,7 +43,7 @@
 			},
 
 			each_subtitles: function (options) {
-				var ret = "";
+				var ret = '';
 				var subtitles = this.model.get('subtitle');
 				console.log(subtitles);
 				for (var prop in subtitles) {
