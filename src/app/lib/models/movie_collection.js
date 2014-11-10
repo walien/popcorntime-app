@@ -11,7 +11,7 @@
 			return {
 				torrents: App.Config.getProvider('movie'),
 				subtitle: App.Config.getProvider('subtitle'),
-				metadata: App.Trakt
+				metadata: App.Config.getProvider('metadata')
 			};
 		}
 	});

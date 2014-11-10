@@ -1,6 +1,9 @@
-[submodule "src/app/styl/third_party"]
-	path = src/app/styl/third_party
-	url = https://git.popcorntime.io/stash/scm/pt/popcorn-themes.git
-[submodule "src/app/language"]
-	path = src/app/language
+[submodule "src/content/languages"]
+	path = src/content/languages
 	url = https://git.popcorntime.io/stash/scm/pt/popcorn-i18n.git
+[submodule "src/content/packages"]
+	path = src/content/packages
+	url = https://git.popcorntime.io/stash/scm/pt/popcorn-packages.git
+[submodule "src/content/themes/cinematografik"]
+	path = src/content/themes/cinematografik
+	url = https://git.popcorntime.io/stash/scm/pt/cinematografik.git

@@ -33,62 +33,104 @@
 			var metadata = this.providers.metadata;
 			var torrents = this.providers.torrents;
 
-			/* XXX(xaiki): provider hack
-			 *
-			 * we actually do this to 'save' the provider number,
-			 * this is shit, as we can't dynamically switch
-			 * providers, the 'right' way to do it is to have every
-			 * provider declare a unique id, and then lookthem up in
-			 * a hash.
-			 */
-			var torrentPromises = _.map(torrents, function (torrentProvider, pid) { //XXX(xaiki): provider hack
-				var deferred = Q.defer();
 
-				var promises = [torrentProvider.fetch(self.filter)];
+			// Aggregate all torrents from providers
+			var providerPromises = _.map(torrents, function (provider) {
+				// Fetch torrents
+				return provider
+					.fetch(self.filter);
+			});
 
-				var idsPromise = promises[0].then(_.bind(torrentProvider.extractIds, torrentProvider));
+			// Aggregate all ids from providers
+			var providerIdPromises = _.map(providerPromises, function (provider, pid) {
+				// Wait for the torrent provider
+				return provider
+					// Then extract the torrent/item IDs
+					.then(_.bind(torrents[pid].extractIds, torrents[pid]));
+			});
 
-				if (subtitle) {
-					promises.push(idsPromise.then(_.bind(subtitle.fetch, subtitle)));
-				}
-				if (metadata) {
-					promises.push(idsPromise.then(_.bind(metadata.movie.listSummary, metadata)));
-				}
+			// If has a metadata provider, fetch it
+			var metadataFetchPromises;
+			if (metadata) {
+				metadataFetchPromises = _.map(providerIdPromises, function (provider) {
+					// Waits for the IDs from the torrent provider
+					return provider
+						// Then fetch metadata from the provider
+						.then(_.bind(metadata.movie.listSummary, metadata));
+				});
+			} else {
+				// Make sure anything depending on metadata
+				// will fail when no metadata is being loaded
+				metadataFetchPromises = [Q.reject()];
+			}
 
-				Q.all(promises)
-					.spread(function (torrents, subtitles, metadatas) {
-						// If a new request was started...
-						_.each(torrents.results, function (movie) {
-							var id = movie[self.popid];
-							/* XXX(xaiki): check if we already have this
-							 * torrent if we do merge our torrents with the
-							 * ones we already have and update, we don't
-							 * need to go through metadata, and we just lost
-							 * a trakt call for nothing. this should really
-							 * be handled in the YTS provider/API.
-							 */
-							var model = self.get(id);
-							if (model) {
+			// If has a subtitle provider, fetch it
+			var subtitlesFetchPromises;
+			if (subtitle) {
+				subtitlesFetchPromises = _.map(providerIdPromises, function (provider) {
+					// Waits for the IDs from the torrent provider
+					return provider
+						// Then fetch subtitles from the provider
+						.then(_.bind(subtitle.fetch, subtitle));
+				});
+			} else {
+				// Make sure anything depending on subtitles
+				// will fail when no subtitles are being loaded
+				subtitlesFetchPromises = [Q.reject()];
+			}
+
+			// Aggregate all items from torrent providers
+			var itemPromises = _.map(providerPromises, function (provider, pid) {
+				// Waits for the torrent provider
+				return provider
+					.then(function (items) {
+						_.each(items.results, function (item) {
+
+							item.subtitle = {};
+
+							// TODO: TEMP FIX TILL THE NEW API WILL BE PROPAGATED
+							if (item.type === 'show') {
+								_.extend(item.images, {
+									imageLowRes: item.images.lowres || item.images.poster
+								});
+							}
+
+							var id = item[self.popid];
+							// If the item is there already simply
+							// extend it with the new torrents.
+							if (self.get(id) != null) {
+								var model = self.get(id);
 								var ts = model.get('torrents');
-								_.extend(ts, movie.torrents);
+								_.extend(ts, item.torrents);
 								model.set('torrents', ts);
-
 								return;
 							}
-							movie.provider = torrentProvider.name;
 
-							if (subtitles) {
-								movie.subtitle = subtitles[id];
-							}
 
-							if (metadatas) {
-								var whash = {};
-								whash[self.popid] = id;
+							// TODO: Improve the way we get providers
+							item.provider = torrents[pid].name;
+						});
+						return items;
+					});
+			});
 
-								var info = _.findWhere(metadatas, whash);
-
+			// Aggregate metadata from the metadata provider
+			var metadataPromises;
+			if (metadata) {
+				// Make sure we have processed all the items first
+				metadataPromises = _.map(itemPromises, function (promise, i) {
+					// Link the torrent provider to the metadata provider
+					return Q.spread([promise, metadataFetchPromises[i]],
+						function (items, metadatas) {
+							_.each(items.results, function (item) {
+								var id = item[self.popid];
+								var query = {};
+								query[self.popid] = id;
+								// Find the metadata based on the ID
+								var info = _.findWhere(metadatas, query);
 								if (info) {
-									_.extend(movie, {
+									// If we have metadata, extend the item
+									_.extend(item, {
 										synopsis: info.overview,
 										genres: info.genres,
 										certification: info.certification,
@@ -98,30 +140,85 @@
 										trailer: info.trailer,
 										year: info.year,
 										image: info.images.poster,
+										imageLowRes: info.images.lowres || info.images.poster,
 										backdrop: info.images.fanart
 									});
+
+
 								} else {
 									win.warn('Unable to find %s on Trakt.tv', id);
 								}
-							}
+
+							});
+							return items;
 						});
-
-						return deferred.resolve(torrents);
-					})
-					.catch(function (err) {
-						self.state = 'error';
-						self.trigger('loaded', self, self.state);
-						win.error(err.message, err.stack);
-					});
-
-				return deferred.promise;
-			});
-
-			Q.all(torrentPromises).done(function (torrents) {
-				_.forEach(torrents, function (t) {
-					self.add(t.results);
 				});
-				self.hasMore = _.pluck(torrents, 'hasMore')[0];
+			}
+
+			// Aggregate subtitles from the subtitles provider
+			// The only pre-requisite for this promise is that
+			// the provider items have been aggregated. This
+			// continues to run in the background after the
+			// collection has "completed" loading.
+			var subtitlePromises;
+			if (subtitle) {
+				// Make sure we have processed all the items first
+				subtitlePromises = _.map(itemPromises, function (promise, i) {
+					// Link the torrent provider to the subtitle provider
+					return Q.spread([promise, subtitlesFetchPromises[i]],
+						function (items, subtitles) {
+							_.each(items.results, function (item) {
+								var id = item[self.popid];
+
+								var thisSub = _.findWhere(subtitles, {
+									_id: id
+								});
+
+								// delete _id it cause crash on model... ;/
+								delete thisSub._id;
+								delete thisSub._lastModified;
+								delete thisSub._ttl;
+
+								if (self.get(id) != null) {
+									// If we call late, the model will
+									// already be in the collection,
+									// we need to update it there.
+									var model = self.get(id);
+									model.set('subtitle', thisSub);
+								} else {
+									// If its not in the collection
+									// yet, just update the object.
+									item.subtitle = thisSub;
+
+								}
+							});
+							return items;
+						});
+				});
+			}
+
+			// Does this collection have a metadata provider? If so we wait for the
+			// metadata to be loaded before triggering loaded, if not, we wait til the
+			// torrent provider has loaded.
+			var endPromise = metadata ? Q.all(metadataPromises) : Q.all(providerPromises);
+
+			// Wait til all torrent or metadata providers
+			// are complete.
+			endPromise.done(function (items) {
+				// Add all results from all providers
+				_.forEach(items, function (item) {
+					self.add(item.results);
+				});
+				// If any of the providers "haveMore", set it to true
+				self.hasMore = _.any(_.pluck(items, 'hasMore'));
+				// Calculate the sum of all results returned by 1 or more providers
+				var sum = _.reduce(_.pluck(items, 'results'), function (ctx, set) {
+					return ctx + set.length;
+				}, 0);
+				if (self.hasMore && sum < 38) {
+					self.hasMore = false;
+				}
+				// Trigger the loaded event
 				self.trigger('sync', self);
 				self.state = 'loaded';
 				self.trigger('loaded', self, self.state);

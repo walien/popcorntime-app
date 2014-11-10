@@ -1,7 +1,6 @@
 (function (App) {
 	'use strict';
 
-	var resizeImage = App.Providers.Trakttv.resizeImage;
 
 	App.View.MovieDetail = Backbone.Marionette.ItemView.extend({
 		template: '#movie-detail-tpl',
@@ -26,12 +25,80 @@
 			'click .rating-container': 'switchRating'
 		},
 
+		templateHelpers: {
+
+			stars: function () {
+				return [1, 2, 3, 4, 5];
+			},
+
+			if_quality: function (needed, options) {
+				if (this.torrents) {
+
+					var torrents = this.torrents;
+					var value;
+					var q720 = torrents['720p'] !== undefined;
+					var q1080 = torrents['1080p'] !== undefined;
+
+					if (q720 && q1080) {
+						value = '720p/1080p';
+					} else if (q1080) {
+						value = '1080p';
+					} else if (q720) {
+						value = '720p';
+					} else {
+						value = 'HDRip';
+					}
+
+					if (value === needed) {
+						return options.fn(this);
+					} else {
+						return options.inverse(this);
+					}
+
+				} else {
+					return options.inverse(this);
+				}
+			},
+
+			image: function () {
+				var image;
+				switch (this.type) {
+				case 'show':
+					image = this.images.imageLowRes;
+					break;
+
+				case 'bookmarkedshow':
+				case 'bookmarkedmovie':
+				case 'movie':
+					image = this.imageLowRes;
+					break;
+				}
+				return image;
+			},
+
+			ratingStars: function () {
+				if (typeof this.rating === 'object') {
+					return this.rating / 10;
+				} else {
+					return [];
+				}
+			},
+
+			rating: function () {
+				if (typeof this.rating === 'object') {
+					return this.model.get('rating')['percentage'] / 10;
+				} else {
+					return false;
+				}
+			}
+		},
+
 		initialize: function () {
+
 			var _this = this;
-			this.model.set('backdrop', resizeImage(this.model.get('backdrop'), '940'));
 			if ((ScreenResolution.SD || ScreenResolution.HD) && !ScreenResolution.Retina) {
 				// Screen Resolution of 720p or less is fine to have 300x450px image
-				this.model.set('image', resizeImage(this.model.get('image'), '300'));
+				this.model.set('image', this.model.get('imageLowRes'));
 			}
 
 			//Handle keyboard shortcuts when other views are appended or removed
@@ -99,13 +166,13 @@
 			};
 
 			// switch to default subtitle
-			this.switchSubtitle(Settings.subtitle_language);
+			this.switchSubtitle(App.Settings.get('subtitle_language'));
 
 			if (this.model.get('bookmarked') === true) {
 				this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
 			}
 
-			if (AdvSettings.get('ratingStars') === false) {
+			if (App.Settings.get('ratingStars') === false) {
 				$('.star-container').addClass('hidden');
 				$('.number-container').removeClass('hidden');
 			}
@@ -141,11 +208,11 @@
 			if ($('.number-container').hasClass('hidden')) {
 				$('.number-container').removeClass('hidden');
 				$('.star-container').addClass('hidden');
-				AdvSettings.set('ratingStars', false);
+				App.Settings.set('ratingStars', false);
 			} else {
 				$('.number-container').addClass('hidden');
 				$('.star-container').removeClass('hidden');
-				AdvSettings.set('ratingStars', true);
+				App.Settings.set('ratingStars', true);
 			}
 		},
 
@@ -163,7 +230,7 @@
 		},
 
 		startStreaming: function () {
-			var torrentStart = new Backbone.Model({
+			var torrentStart = {
 				imdb_id: this.model.get('imdb_id'),
 				torrent: this.model.get('torrents')[this.model.get('quality')].url,
 				backdrop: this.model.get('backdrop'),
@@ -172,10 +239,11 @@
 				title: this.model.get('title'),
 				quality: this.model.get('quality'),
 				type: 'movie',
+				videotype: 'video/mp4',
 				device: App.Device.Collection.selected,
 				cover: this.model.get('image')
-			});
-			App.vent.trigger('stream:start', torrentStart);
+			};
+			App.vent.trigger('streamer:start', torrentStart);
 		},
 
 		toggleDropdown: function (e) {
@@ -205,8 +273,9 @@
 		playTrailer: function () {
 
 			var trailer = new Backbone.Model({
-				src: this.model.get('trailer'),
-				type: 'video/youtube',
+				trailerSrc: this.model.get('trailer'),
+				type: 'trailer',
+				videotype: 'video/youtube',
 				subtitle: null,
 				quality: false,
 				title: this.model.get('title')
@@ -246,8 +315,8 @@
 			var ratio = torrent.peer > 0 ? torrent.seed / torrent.peer : +torrent.seed;
 
 			$('.health-icon').tooltip({
-				html: true
-			})
+					html: true
+				})
 				.removeClass('Bad Medium Good Excellent')
 				.addClass(health)
 				.attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
@@ -262,14 +331,18 @@
 			}
 			var that = this;
 			if (this.model.get('bookmarked') === true) {
-				Database.deleteBookmark(this.model.get('imdb_id'))
+				App.Database.delete('bookmarks', {
+						imdb_id: this.model.get('imdb_id')
+					})
 					.then(function () {
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 						that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
 					})
 					.then(function () {
-						return Database.deleteMovie(that.model.get('imdb_id'));
+						return App.Database.delete('movies', {
+							imdb_id: that.model.get('imdb_id')
+						});
 					})
 					.then(function () {
 						that.model.set('bookmarked', false);
@@ -299,9 +372,12 @@
 					provider: this.model.get('provider'),
 				};
 
-				Database.addMovie(movie)
+				App.Database.add('movies', movie)
 					.then(function () {
-						return Database.addBookmark(that.model.get('imdb_id'), 'movie');
+						return App.Database.add('bookmarks', {
+							imdb_id: that.model.get('imdb_id'),
+							type: 'movie'
+						});
 					})
 					.then(function () {
 						win.info('Bookmark added (' + that.model.get('imdb_id') + ')');

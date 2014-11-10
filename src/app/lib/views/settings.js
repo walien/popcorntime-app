@@ -4,6 +4,7 @@
 
 	var AdmZip = require('adm-zip');
 	var fdialogs = require('node-webkit-fdialogs');
+	var _ = require('lodash');
 	var fs = require('fs');
 
 	var that;
@@ -26,21 +27,65 @@
 			'contextmenu input': 'rightclick_field',
 			'click .flush-bookmarks': 'flushBookmarks',
 			'click .flush-databases': 'flushAllDatabase',
-			'click .flush-subtitles': 'flushAllSubtitles',
 			'click #faketmpLocation': 'showCacheDirectoryDialog',
 			'click .default-settings': 'resetSettings',
 			'click .open-tmp-folder': 'openTmpFolder',
 			'click .open-database-folder': 'openDatabaseFolder',
 			'click .export-database': 'exportDatabase',
-			'click .import-database': 'inportDatabase',
-			'keyup #traktUsername': 'checkTraktLogin',
-			'keyup #traktPassword': 'checkTraktLogin',
-			'click #unauthTrakt': 'disconnectTrakt',
+			'click .import-database': 'importDatabase',
+			'click .package-signout': 'signout',
+			'click .btn-package': 'clickButtonPackage',
 			'change #tmpLocation': 'updateCacheDirectory',
-			'click #syncTrakt': 'syncTrakt',
 			'click .qr-code': 'generateQRcode',
 			'click #qrcode-overlay': 'closeModal',
 			'click #qrcode-close': 'closeModal'
+		},
+
+		templateHelpers: {
+
+			screens: function () {
+				return ['Movies', 'TV Series', 'Favorites', 'Anime', 'Watchlist', 'Last Open'];
+			},
+
+			tvDetailsJump: function () {
+				return {
+					'firstUnwatched': 'First Unwatched Episode',
+					'next': 'Next Episode In Series'
+				};
+			},
+
+			watchType: function () {
+				return {
+					'none': 'Show',
+					'fade': 'Fade',
+					'hide': 'Hide'
+				};
+			},
+
+			languages: function () {
+				var languages = [];
+				for (var key in App.Localization.allTranslations) {
+					key = App.Localization.allTranslations[key];
+					if (App.Localization.langcodes[key] !== undefined) {
+						languages.push(key);
+					}
+				}
+				return languages;
+			},
+
+			langCode: function () {
+				var languages = [];
+				for (var key in App.Localization.langcodes) {
+					if (App.Localization.langcodes[key].subtitle !== undefined && App.Localization.langcodes[key].subtitle === true) {
+						languages.push(key);
+					}
+				}
+				return languages;
+			},
+
+			subSize: function () {
+				return ['24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '48px', '50px', '52px', '54px', '56px', '58px', '60px'];
+			}
 		},
 
 		onShow: function () {
@@ -60,14 +105,86 @@
 				App.vent.trigger('settings:close');
 			});
 			that = this;
+			App.Settings.set('ipAddress', this.getIPAddress());
 
-			AdvSettings.set('ipAddress', this.getIPAddress());
+
+		},
+
+		onBeforeRender: function () {
+			// package settings render
+			this.renderPackageSettings();
+		},
+
+		renderPackageSettings: function () {
+			// Package settings initialization
+			var self = this;
+			var settingPackages = [];
+			var loadedPackages = App.PackagesManager.loadedPackages;
+			_.each(loadedPackages, function (thisPackage) {
+				var thisPackageBundled = {};
+				// ok make sure we have settings or auth
+				if ((thisPackage.settings && Object.keys(thisPackage.settings).length > 0) || (thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0)) {
+
+					// settings
+					if (thisPackage.settings && Object.keys(thisPackage.settings).length > 0) {
+						_.each(thisPackage.settings, function (auth, key) {
+							auth._css = auth._ref.replace('.', '_');
+							auth._key = key;
+						});
+						thisPackageBundled.settings = thisPackage.settings;
+					}
+
+					// authentification
+					// this require an event on keyup
+					if (thisPackage.authentification && Object.keys(thisPackage.authentification).length > 0) {
+
+						var thisAuth = {};
+						thisAuth.signinHandler = _.bind(thisPackage.bundledPackage[thisPackage.authentification.signinHandler], thisPackage.bundledPackage);
+						thisAuth.signoutHandler = _.bind(thisPackage.bundledPackage[thisPackage.authentification.signoutHandler], thisPackage.bundledPackage);
+
+						thisAuth.authenticated = thisPackage.bundledPackage.authenticated;
+
+						thisAuth.package = thisPackage.metadata.name;
+
+						thisAuth.inputElements = [];
+						thisAuth.settingsElements = [];
+
+						_.each(thisPackage.authentification.loginForm, function (auth, key) {
+
+							auth._css = auth._ref.replace('.', '_');
+							auth._key = key;
+							thisAuth.inputElements.push(auth);
+
+						});
+
+						_.each(thisPackage.authentification.settings, function (auth, key) {
+
+							auth._css = auth._ref.replace('.', '_');
+							auth._key = key;
+							thisAuth.settingsElements.push(auth);
+
+						});
+
+						thisPackageBundled.authentification = thisAuth;
+
+					}
+
+					thisPackageBundled.metadata = thisPackage.metadata;
+					settingPackages.push(thisPackageBundled);
+				}
+
+			});
+
+			this.model.set('loadedPackages', loadedPackages);
+			this.model.set('settingPackages', settingPackages);
+			this.model.set('authPackages', _.compact(_.pluck(settingPackages, 'authentification')));
 		},
 
 		onRender: function () {
-			if (App.settings.showAdvancedSettings) {
+			if (App.Settings.get('showAdvancedSettings')) {
 				$('.advanced').css('display', 'flex');
 			}
+
 		},
 
 		rightclick_field: function (e) {
@@ -125,7 +242,7 @@
 		generateQRcode: function () {
 
 			var QRCodeInfo = {
-				ip: AdvSettings.get('ipAddress'),
+				ip: App.Settings.get('ipAddress'),
 				port: $('#httpApiPort').val(),
 				user: $('#httpApiUsername').val(),
 				pass: $('#httpApiPassword').val()
@@ -150,9 +267,51 @@
 			App.vent.trigger('keyboard:toggle');
 		},
 
+		clickButtonPackage: function (e) {
+			var self = this;
+			var authPackages = this.model.get('authPackages');
+
+			e.preventDefault();
+
+			// get active button
+			var field = $(e.currentTarget);
+			var oldHTML = field.html();
+
+			var thisPackage = App.PackagesManager.getLoadedPackage(field.attr('data-package'));
+			var thisHandler = field.attr('data-handler');
+
+			if (_.isFunction(thisPackage.bundledPackage[thisHandler])) {
+
+				field.html(i18n.__('Plese wait...')).addClass('disabled').prop('disabled', true);
+
+				// we run our function
+				// should be a promise
+				thisPackage.bundledPackage[thisHandler]()
+					.then(function () {
+
+						field.text(i18n.__('Done')).removeClass('disabled').addClass('green').delay(3000).queue(function () {
+							field.dequeue();
+							self.render();
+						});
+
+					})
+					.catch(function () {
+
+						field.text(i18n.__('Error')).removeClass('disabled').addClass('red').delay(3000).queue(function () {
+							field.dequeue();
+							self.render();
+						});
+
+					});
+			}
+
+
+		},
+
 		saveSetting: function (e) {
 			var value = false;
 			var data = {};
+			var self = this;
 
 			// get active field
 			var field = $(e.currentTarget);
@@ -180,7 +339,7 @@
 			case 'movies_quality':
 			case 'start_screen':
 				if ($('option:selected', field).val() === 'Last Open') {
-					AdvSettings.set('lastTab', App.currentview);
+					App.Settings.set('lastTab', App.currentview);
 				}
 				/* falls through */
 			case 'watchedCovers':
@@ -211,9 +370,6 @@
 			case 'streamPort':
 				value = field.val();
 				break;
-			case 'traktUsername':
-			case 'traktPassword':
-				return;
 			case 'tmpLocation':
 				value = path.join(field.val(), 'Popcorn-Time');
 				break;
@@ -227,28 +383,109 @@
 				}
 				break;
 			default:
-				win.warn('Setting not defined: ' + field.attr('name'));
+				if (field.is(':checkbox')) {
+					if (field.is(':checked')) {
+						value = true;
+					} else {
+						value = false;
+					}
+				} else {
+					value = field.val();
+				}
+
+				break;
 			}
 			win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
 
 
 			// update active session
-			App.settings[field.attr('name')] = value;
+			App.Settings.set(field.attr('name'), value);
 
 			if (apiDataChanged) {
 				App.vent.trigger('initHttpApi');
 			}
 
 			//save to db
-			App.db.writeSetting({
-				key: field.attr('name'),
-				value: value
-			})
-			.then(function () {
-				that.ui.success_alert.show().delay(3000).fadeOut(400);
+			App.Database.update('settings', {
+					key: field.attr('name')
+				}, {
+					value: value
+				})
+				.then(function () {
+					that.ui.success_alert.show().delay(3000).fadeOut(400);
+				});
+
+			// authentification handling
+			var authPackages = this.model.get('authPackages');
+
+			var myAuthRequired = _.find(authPackages, function (element) {
+				return _.find(element.inputElements, function (item) {
+					return item._ref === field.attr('name');
+				});
 			});
+			if (myAuthRequired) {
+
+				// we confirm we have all value...
+				var haveAllValues = true;
+				var dataMapping = {};
+				_.each(myAuthRequired.inputElements, function (element) {
+
+					var val = $('#' + element._css).val();
+					if (val.length === 0) {
+						haveAllValues = false;
+					} else {
+						dataMapping[element._key] = val;
+					}
+
+				});
+				if (haveAllValues) {
+					var thisPackage = field.attr('data-package');
+
+					$('.package_' + thisPackage + ' .authentification .invalid-cross').hide();
+					$('.package_' + thisPackage + ' .authentification .valid-tick').hide();
+					$('.package_' + thisPackage + ' .authentification .loading-spinner').show();
+
+					myAuthRequired.signinHandler(dataMapping)
+						.then(function (valid) {
+							$('.package_' + thisPackage + ' .authentification .loading-spinner').hide();
+							// Stop multiple requests interfering with each other
+							$('.package_' + thisPackage + ' .authentification .invalid-cross').hide();
+							$('.package_' + thisPackage + ' .authentification .valid-tick').hide();
+							if (valid) {
+								$('.package_' + thisPackage + ' .authentification .valid-tick').show().delay(2000).queue(function () {
+									self.render().dequeue;
+								});
+							} else {
+								$('.package_' + thisPackage + ' .authentification .invalid-cross').show();
+							}
+						}).catch(function (err) {
+							$('.package_' + thisPackage + ' .authentification .loading-spinner').hide();
+							$('.package_' + thisPackage + ' .authentification .invalid-cross').show();
+						});
+
+				}
+
+			}
 			that.syncSetting(field.attr('name'), value);
 		},
+
+
+		signout: function (e) {
+			var self = this;
+			var btn = $(e.currentTarget);
+
+			if (!that.areYouSure(btn, i18n.__('Signin out'))) {
+				return;
+			}
+
+			var myPackage = _.find(this.model.get('authPackages'), function (pack) {
+				return pack.package === btn.attr('data-package');
+			});
+			myPackage.signoutHandler();
+			self.ui.success_alert.show().delay(3000).fadeOut(400);
+			self.render();
+		},
+
 		syncSetting: function (setting, value) {
 
 			switch (setting) {
@@ -282,74 +519,18 @@
 				win.setAlwaysOnTop(value);
 				break;
 			case 'theme':
-				$('link#theme').attr('href', 'themes/' + value + '.css');
+				//$('head').append('<link rel="stylesheet" href="themes/' + value + '.css" type="text/css" />');
 				App.vent.trigger('updatePostersSizeStylesheet');
 				break;
 			case 'start_screen':
-				AdvSettings.set('startScreen', value);
+				App.Settings.set('startScreen', value);
 				break;
 			default:
 
 			}
 
 		},
-		checkTraktLogin: _.debounce(function (e) {
-			var self = this;
-			var username = document.querySelector('#traktUsername').value;
-			var password = document.querySelector('#traktPassword').value;
 
-			if (username === '' || password === '') {
-				return;
-			}
-
-			$('.invalid-cross').hide();
-			$('.valid-tick').hide();
-			$('.loading-spinner').show();
-			// trakt.authenticate automatically saves the username and pass on success!
-			App.Trakt.authenticate(username, password).then(function (valid) {
-				$('.loading-spinner').hide();
-				// Stop multiple requests interfering with each other
-				$('.invalid-cross').hide();
-				$('.valid-tick').hide();
-				if (valid) {
-					$('.valid-tick').show().delay(2000).queue(function () {
-						self.render().dequeue;
-					});
-				} else {
-					$('.invalid-cross').show();
-				}
-			}).catch(function (err) {
-				$('.loading-spinner').hide();
-				$('.invalid-cross').show();
-			});
-		}, 750),
-
-		disconnectTrakt: function (e) {
-			var self = this;
-
-			App.settings['traktUsername'] = '';
-			App.settings['traktPassword'] = '';
-			App.Trakt.authenticated = false;
-
-			App.db.writeSetting({
-				key: 'traktUsername',
-				value: ''
-			})
-				.then(function () {
-					return App.db.writeSetting({
-						key: 'traktPassword',
-						value: ''
-					});
-				})
-				.then(function () {
-					self.ui.success_alert.show().delay(3000).fadeOut(400);
-				});
-
-			_.defer(function () {
-				App.Trakt = App.Providers.get('Trakttv');
-				self.render();
-			});
-		},
 
 		flushBookmarks: function (e) {
 			var that = this;
@@ -377,10 +558,10 @@
 
 			that.alertMessageWait(i18n.__('We are resetting the settings'));
 
-			Database.resetSettings()
+			App.Database.delete('settings', {}, true)
 				.then(function () {
 					that.alertMessageSuccess(true);
-					AdvSettings.set('disclaimerAccepted', 1);
+					App.Settings.set('disclaimerAccepted', 1);
 				});
 		},
 
@@ -393,29 +574,12 @@
 			}
 
 			that.alertMessageWait(i18n.__('We are flushing your databases'));
-
-			Database.deleteDatabases()
+			App.CacheV2.deleteDatabase()
 				.then(function () {
-					that.alertMessageSuccess(true);
-				});
-		},
-
-		flushAllSubtitles: function (e) {
-			var that = this;
-			var btn = $(e.currentTarget);
-
-			if (!that.areYouSure(btn, i18n.__('Flushing...'))) {
-				return;
-			}
-
-			that.alertMessageWait(i18n.__('We are flushing your subtitle cache'));
-
-			var cache = new App.Cache('subtitle');
-			cache.flushTable()
-				.then(function () {
-
-					that.alertMessageSuccess(false, btn, i18n.__('Flush subtitles cache'), i18n.__('Subtitle cache deleted'));
-
+					App.Database.deleteDatabase()
+						.then(function () {
+							that.alertMessageSuccess(true);
+						});
 				});
 		},
 
@@ -439,23 +603,23 @@
 		},
 
 		openTmpFolder: function () {
-			console.log('Opening: ' + App.settings['tmpLocation']);
-			gui.Shell.openItem(App.settings['tmpLocation']);
+			console.log('Opening: ' + App.Settings.get('tmpLocation'));
+			gui.Shell.openItem(App.Settings.get('tmpLocation'));
 		},
 
 		openDatabaseFolder: function () {
-			console.log('Opening: ' + App.settings['databaseLocation']);
-			gui.Shell.openItem(App.settings['databaseLocation']);
+			console.log('Opening: ' + App.Settings.get('databaseLocation'));
+			gui.Shell.openItem(App.Settings.get('databaseLocation'));
 		},
 
 		exportDatabase: function (e) {
 			var that = this;
 			var zip = new AdmZip();
 			var btn = $(e.currentTarget);
-			var databaseFiles = fs.readdirSync(App.settings['databaseLocation']);
+			var databaseFiles = fs.readdirSync(App.Settings.get('databaseLocation'));
 
 			databaseFiles.forEach(function (entry) {
-				zip.addLocalFile(App.settings['databaseLocation'] + '/' + entry);
+				zip.addLocalFile(App.Settings.get('databaseLocation') + '/' + entry);
 			});
 
 			fdialogs.saveFile(zip.toBuffer(), function (err, path) {
@@ -466,7 +630,7 @@
 
 		},
 
-		inportDatabase: function () {
+		importDatabase: function () {
 			var that = this;
 
 			fdialogs.readFile(function (err, content, path) {
@@ -476,7 +640,7 @@
 				try {
 					var zip = new AdmZip(content);
 
-					zip.extractAllTo(App.settings['databaseLocation'] + '/', /*overwrite*/ true);
+					zip.extractAllTo(App.Settings.get('databaseLocation') + '/', /*overwrite*/ true);
 					that.alertMessageSuccess(true);
 				} catch (err) {
 
@@ -557,49 +721,25 @@
 
 		},
 
-		syncTrakt: function () {
-
-			var oldHTML = document.getElementById('syncTrakt').innerHTML;
-			$('#syncTrakt').text(i18n.__('Syncing...')).addClass('disabled').prop('disabled', true);
-
-			App.Trakt.sync()
-				.then(function () {
-					$('#syncTrakt').text(i18n.__('Done')).removeClass('disabled').addClass('green').delay(3000).queue(function () {
-						$('#syncTrakt').removeClass('green').prop('disabled', false);
-						document.getElementById('syncTrakt').innerHTML = oldHTML;
-						$('#syncTrakt').dequeue();
-					});
-				})
-				.catch(function (err) {
-					win.error(err);
-					$('#syncTrakt').text(i18n.__('Error')).removeClass('disabled').addClass('red').delay(3000).queue(function () {
-						$('#syncTrakt').removeClass('red').prop('disabled', false);
-						document.getElementById('syncTrakt').innerHTML = oldHTML;
-						$('#syncTrakt').dequeue();
-					});
-				});
-		},
-
 		getIPAddress: function () {
-			var ip, alias = 0;
 			var ifaces = require('os').networkInterfaces();
+			var ip;
 			for (var dev in ifaces) {
-			  ifaces[dev].forEach(function(details){
-				if (details.family === 'IPv4') {
-					if(!/(loopback|vmware|internal|hamachi)/gi.test(dev + (alias ? ':' + alias : ''))){
-						if( details.address.substring(0, 8) === '192.168.' ||
-							details.address.substring(0, 7) === '172.16.' ||
-							details.address.substring(0, 5) === '10.0.'
-						) {
-							ip = details.address;
-							++alias;
+				var alias = 0;
+				ifaces[dev].forEach(function (details) {
+					if (details.family === 'IPv4') {
+						if (!/(loopback|vmware|internal|hamachi)/gi.test(dev + (alias ? ':' + alias : ''))) {
+							if ((details.address.substring(0, 8) === '192.168.') || (details.address.substring(0, 7) === '172.16.') || (details.address.substring(0, 5) === '10.0.')) {
+								ip = details.address;
+								++alias;
+							}
 						}
 					}
-				}
-			  });
+				});
 			}
 			return ip;
 		}
+
 	});
 
 	App.View.Settings = Settings;

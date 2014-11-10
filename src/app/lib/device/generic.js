@@ -53,7 +53,8 @@
 			if (!this.selected) {
 				this.selected = this.models[0];
 			}
-			/* SlashmanX: Just testing for now, 
+
+			/* SlashmanX: Just testing for now,
 			 ** replaces localhost IP with network IP,
 			 ** will remove when new streamer implemented
 			 */
@@ -64,7 +65,12 @@
 				for (var k2 in interfaces[k]) {
 					var address = interfaces[k][k2];
 					if (address.family === 'IPv4' && !address.internal) {
-						streamModel.attributes.src = streamModel.attributes.src.replace('127.0.0.1', address.address);
+						if (streamModel.get('type') !== 'trailer') {
+							streamModel.attributes.src = App.Streamer.streamInfo.src.replace('127.0.0.1', address.address);
+						} else {
+							streamModel.attributes.src = streamModel.get('trailerSrc').replace('127.0.0.1', address.address);
+						}
+
 						addresses.push(address.address);
 					}
 				}
@@ -118,4 +124,11 @@
 		Collection: collection,
 		ChooserView: createChooserView
 	};
+
+	function setDevice(name, fn) {
+		App.Device[name] = fn;
+	}
+
+	App.Device.set = setDevice;
+
 })(window.App);

@@ -1,7 +1,8 @@
 (function (App) {
 	'use strict';
 
-	var _this;
+	var _this,
+		Launch = require('./lib/launch')(App);
 
 	var MainWindow = Backbone.Marionette.Layout.extend({
 		template: '#main-window-tpl',
@@ -57,8 +58,6 @@
 			App.vent.on('anime:list', _.bind(this.showAnime, this));
 			App.vent.on('favorites:list', _.bind(this.showFavorites, this));
 			App.vent.on('watchlist:list', _.bind(this.showWatchlist, this));
-			App.vent.on('shows:update', _.bind(this.updateShows, this));
-			App.vent.on('shows:init', _.bind(this.initShows, this));
 
 			// Add event to show disclaimer
 			App.vent.on('show:disclaimer', _.bind(this.showDisclaimer, this));
@@ -121,26 +120,31 @@
 			// Show loading modal on startup
 			var that = this;
 			this.Content.show(new App.View.InitModal());
-			App.db.initialize()
-				.then(function () {
-					$('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
+
+			console.log('init');
+
+			Launch.init()
+				.done(function () {
+
+					App.vent.trigger('main:ready');
+					App.vent.trigger('updatePostersSizeStylesheet');
 					// Always on top
-					win.setAlwaysOnTop(App.settings.alwaysOnTop);
+					win.setAlwaysOnTop(App.Settings.get('alwaysOnTop'));
 
 					// we check if the disclaimer is accepted
-					if (!AdvSettings.get('disclaimerAccepted')) {
+					if (!App.Settings.get('disclaimerAccepted')) {
 						that.showDisclaimer();
 					}
 
 					that.InitModal.close();
 
-					if (AdvSettings.get('startScreen') === 'Watchlist') {
+					if (App.Settings.get('startScreen') === 'Watchlist') {
 						that.showWatchlist();
-					} else if (AdvSettings.get('startScreen') === 'Favorites') {
+					} else if (App.Settings.get('startScreen') === 'Favorites') {
 						that.showFavorites();
-					} else if (AdvSettings.get('startScreen') === 'TV Series') {
+					} else if (App.Settings.get('startScreen') === 'TV Series') {
 						that.showShows();
-					} else if (AdvSettings.get('startScreen') === 'Anime') {
+					} else if (App.Settings.get('startScreen') === 'Anime') {
 						that.showAnime();
 					} else {
 						that.showMovies();
@@ -148,7 +152,6 @@
 
 					// Focus the window when the app opens
 					that.nativeWindow.focus();
-
 				});
 
 			// Cancel all new windows (Middle clicks / New Tab)
@@ -166,8 +169,6 @@
 				}
 			});
 
-			App.vent.trigger('updatePostersSizeStylesheet');
-			App.vent.trigger('main:ready');
 
 		},
 
@@ -190,39 +191,6 @@
 			this.MovieDetail.close();
 
 			this.Content.show(new App.View.AnimeBrowser());
-		},
-
-		updateShows: function (e) {
-			var that = this;
-			App.vent.trigger('show:closeDetail');
-			this.Content.show(new App.View.InitModal());
-			App.db.syncDB(function () {
-				that.InitModal.close();
-				that.showShows();
-				// Focus the window when the app opens
-				that.nativeWindow.focus();
-
-			});
-		},
-
-		// used in app to re-triger a api resync
-		initShows: function (e) {
-			var that = this;
-			App.vent.trigger('settings:close');
-			this.Content.show(new App.View.InitModal());
-			App.db.initDB(function (err, data) {
-				that.InitModal.close();
-
-				if (!err) {
-					// we write our new update time
-					AdvSettings.set('tvshow_last_sync', +new Date());
-				}
-
-				App.vent.trigger('shows:list');
-				// Focus the window when the app opens
-				that.nativeWindow.focus();
-
-			});
 		},
 
 		showFavorites: function (e) {
@@ -305,16 +273,15 @@
 			}));
 		},
 
-		showSettings: function (settingsModel) {
+		showSettings: function () {
 			this.Settings.show(new App.View.Settings({
-				model: settingsModel
+				model: new Backbone.Model()
 			}));
 		},
 
 		syncTraktOnStart: function () {
-			if (Settings.syncOnStart) {
-                Database.deleteWatched();
-				App.Trakt.sync();
+			if (App.Settings.get('syncOnStart')) {
+				App.Providers.trakttv.sync();
 			}
 		},
 
@@ -359,48 +326,43 @@
 		updatePostersSizeStylesheet: function () {
 
 			var that = this;
+			var postersWidth = App.Settings.get('postersWidth');
+			var postersHeight = Math.round(postersWidth * App.Settings.get('postersSizeRatio'));
+			var postersWidthPercentage = (postersWidth - App.Settings.get('postersMinWidth')) / (App.Settings.get('postersMaxWidth') - App.Settings.get('postersMinWidth')) * 100;
+			var fontSize = ((App.Settings.get('postersMaxFontSize') - App.Settings.get('postersMinFontSize')) * postersWidthPercentage / 100) + App.Settings.get('postersMinFontSize');
 
-			App.db.getSetting({
-				key: 'postersWidth'
-			})
-				.then(function (doc) {
-					var postersWidth = doc.value;
-					var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
-					var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
-					var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;
+			var stylesheetContents = [
+				'.list .items .item {',
+				'width:', postersWidth, 'px;',
+				'}',
 
-					var stylesheetContents = [
-						'.list .items .item {',
-						'width:', postersWidth, 'px;',
-						'}',
+				'.list .items .item .cover,',
+				'.load-more {',
+				'background-size: cover;',
+				'width: ', postersWidth, 'px;',
+				'height: ', postersHeight, 'px;',
+				'}',
 
-						'.list .items .item .cover,',
-						'.load-more {',
-						'background-size: cover;',
-						'width: ', postersWidth, 'px;',
-						'height: ', postersHeight, 'px;',
-						'}',
+				'.item {',
+				'font-size: ' + fontSize + 'em;',
+				'}'
+			].join('');
 
-						'.item {',
-						'font-size: ' + fontSize + 'em;',
-						'}'
-					].join('');
+			$('#postersSizeStylesheet').remove();
 
-					$('#postersSizeStylesheet').remove();
+			$('<style>', {
+				'id': 'postersSizeStylesheet'
+			}).text(stylesheetContents).appendTo('head');
 
-					$('<style>', {
-						'id': 'postersSizeStylesheet'
-					}).text(stylesheetContents).appendTo('head');
+			// Copy the value to Settings so we can get it from templates
+			App.Settings.set('postersWidth', postersWidth);
 
-					// Copy the value to Settings so we can get it from templates
-					Settings.postersWidth = postersWidth;
+			// Display PostersWidth
+			var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
+			if (typeof App.currentview !== 'undefined') {
+				that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
+			}
 
-					// Display PostersWidth
-					var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
-					if (typeof App.currentview !== 'undefined') {
-						that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
-					}
-				});
 		}
 	});
 

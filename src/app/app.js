@@ -31,7 +31,16 @@ var
 
 	moment = require('moment'),
 
-	Q = require('q');
+	Q = require('q'),
+
+	Handlebars = require('handlebars'),
+
+	Database = require('./lib/database')(gui.App.dataPath),
+	Settings = require('./lib/settings')(Database),
+	Updater = require('./lib/updater')(Settings, $),
+	PackagesManager = require('./lib/packages'),
+	ThemesManager = require('./lib/themes')(Settings),
+	Localization = require('./lib/localization');
 
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
@@ -62,6 +71,7 @@ if (gui.App.fullArgv.indexOf('--reset') !== -1) {
 	var data_path = require('nw.gui').App.dataPath;
 
 	localStorage.clear();
+	indexedDB.deleteDatabase('cache');
 
 	fs.unlinkSync(path.join(data_path, 'data/watched.db'), function (err) {
 		if (err) {
@@ -104,12 +114,107 @@ _.extend(App, {
 	Localization: {}
 });
 
+// Handlebars render engine
+Backbone.Marionette.Renderer.render = function (template, data) {
+	return Handlebars.compile($(template).html())(data);
+};
+Handlebars.registerHelper('_', function (text) {
+	return new Handlebars.SafeString(i18n.__(text));
+});
+Handlebars.registerHelper('settings', function (key) {
+	return new Handlebars.SafeString(Settings.get(key));
+});
+Handlebars.registerHelper('if_settings', function (key, value, options) {
+	if (!options) {
+		options = value;
+		value = true;
+	}
+	if (Settings.get(key) === value) {
+		return options.fn(this);
+	} else {
+		return options.inverse(this);
+	}
+});
+Handlebars.registerHelper('pluralize', function (number, single, plural) {
+	if (number === 1) {
+		return single;
+	} else {
+		return plural;
+	}
+});
+
+Handlebars.registerHelper('languageTitle', function (lang) {
+	return App.Localization.langcodes[lang].nativeName;
+});
+
+Handlebars.registerHelper('date', function (date) {
+	return moment.unix(date).lang(App.Settings.get('language')).format('LLLL');
+});
+
+Handlebars.registerHelper('xif', function (v1, operator, v2, options) {
+
+	switch (operator) {
+	case '==':
+		return (v1 === v2) ? options.fn(this) : options.inverse(this);
+	case '===':
+		return (v1 === v2) ? options.fn(this) : options.inverse(this);
+	case '<':
+		return (v1 < v2) ? options.fn(this) : options.inverse(this);
+	case '<=':
+		return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+	case '>':
+		return (v1 > v2) ? options.fn(this) : options.inverse(this);
+	case '>=':
+		return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+	case '&&':
+		return (v1 && v2) ? options.fn(this) : options.inverse(this);
+	case '||':
+		return (v1 || v2) ? options.fn(this) : options.inverse(this);
+	default:
+		return options.inverse(this);
+	}
+});
+
 // set database
-App.db = Database;
+App.Database = Database;
 
 // Set settings
-App.advsettings = AdvSettings;
-App.settings = Settings;
+App.Settings = Settings;
+
+// Set Packages
+App.PackagesManager = PackagesManager;
+
+// Set ThemesManager
+App.ThemesManager = ThemesManager;
+
+// Gui
+App.gui = gui;
+
+// language
+App.Localization = Localization;
+
+// Handles language detection and internationalization
+i18n.configure({
+	defaultLocale: 'en',
+	locales: App.Localization.allTranslations,
+	directory: './src/content/languages'
+});
+
+Database.find('bookmarks').then(function (data) {
+	App.userBookmarks = data;
+});
+
+Database.find('watched', {
+	type: 'movie'
+}).then(function (data) {
+	App.watchedMovies = _.pluck(data, 'movie_id');
+});
+
+Database.find('watched', {
+	type: 'episode'
+}).then(function (data) {
+	App.watchedShows = _.pluck(data, 'imdb_id');
+});
 
 fs.readFile('./.git.json', 'utf8', function (err, json) {
 	if (!err) {
@@ -125,6 +230,33 @@ App.addRegions({
 //Keeps a list of stacked views
 App.ViewStack = [];
 
+/**
+ * TO be moved
+ */
+var ScreenResolution = {
+	get SD() {
+		return window.screen.width < 1280 || window.screen.height < 720;
+	},
+	get HD() {
+		return window.screen.width >= 1280 && window.screen.width < 1920 || window.screen.height >= 720 && window.screen.height < 1080;
+	},
+	get FullHD() {
+		return window.screen.width >= 1920 && window.screen.width < 2000 || window.screen.height >= 1080 && window.screen.height < 1600;
+	},
+	get UltraHD() {
+		return window.screen.width >= 2000 || window.screen.height >= 1600;
+	},
+	get QuadHD() {
+		return window.screen.width >= 3000 || window.screen.height >= 1800;
+	},
+	get Standard() {
+		return window.devicePixelRatio <= 1;
+	},
+	get Retina() {
+		return window.devicePixelRatio > 1;
+	}
+};
+
 App.addInitializer(function (options) {
 	// this is the 'do things with resolutions and size initializer
 	var zoom = 0;
@@ -136,8 +268,8 @@ App.addInitializer(function (options) {
 		zoom = 1;
 	}
 
-	var width = parseInt(localStorage.width ? localStorage.width : Settings.defaultWidth);
-	var height = parseInt(localStorage.height ? localStorage.height : Settings.defaultHeight);
+	var width = parseInt(localStorage.width ? localStorage.width : App.Settings.get('defaultWidth'));
+	var height = parseInt(localStorage.height ? localStorage.height : App.Settings.get('defaultHeight'));
 	var x = parseInt(localStorage.posX ? localStorage.posX : -1);
 	var y = parseInt(localStorage.posY ? localStorage.posY : -1);
 
@@ -171,20 +303,41 @@ App.addInitializer(function (options) {
 });
 
 var initTemplates = function () {
+
 	// Load in external templates
 	var ts = [];
 
-	_.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
-		var d = Q.defer();
-		$.get(el.src, function (res) {
-			el.innerHTML = res;
-			d.resolve(true);
+	// Set the CSS
+	var css = ThemesManager.config.css;
+
+	// hack for now, we'll use
+	// the first element in theme package.json
+
+	css = css[Object.keys(css)[0]];
+	$('head').append('<link rel="stylesheet" href="' + path.join(ThemesManager.themePath, css) + '" type="text/css" />');
+
+	ThemesManager.getTemplates(function (templates) {
+		_.each(templates, function (el) {
+
+			var d = Q.defer();
+			$.get(el.path, function (res) {
+				var s = document.createElement('script');
+				s.type = 'text/x-template';
+				s.src = el.path;
+				s.id = el.key;
+				s.innerHTML = res;
+				$('body').append(s);
+				d.resolve(true);
+			});
+
+			ts.push(d.promise);
+
 		});
-		ts.push(d.promise);
 	});
 
 	return Q.all(ts);
 };
+
 
 var initApp = function () {
 	var mainWindow = new App.View.MainWindow();
@@ -213,8 +366,8 @@ if(process.platform === 'win32' && parseFloat(os.release(), 10) > 6.1) {
 
 */
 // Create the System Temp Folder. This is used to store temporary data like movie files.
-if (!fs.existsSync(App.settings.tmpLocation)) {
-	fs.mkdir(App.settings.tmpLocation);
+if (!fs.existsSync(App.Settings.get('tmpLocation'))) {
+	fs.mkdir(App.Settings.get('tmpLocation'));
 }
 
 var deleteFolder = function (path) {
@@ -255,33 +408,21 @@ win.on('move', function (x, y) {
 
 // Wipe the tmpFolder when closing the app (this frees up disk space)
 win.on('close', function () {
-	if (App.settings.deleteTmpOnClose) {
-		deleteFolder(App.settings.tmpLocation);
+	if (App.Settings.get('deleteTmpOnClose')) {
+		deleteFolder(App.Settings.get('tmpLocation'));
 	}
-
+	deleteFolder(path.join(os.tmpDir(), 'webtorrent'));
 	win.close(true);
 });
 
-String.prototype.capitalize = function () {
-	return this.charAt(0).toUpperCase() + this.slice(1);
-};
 
-String.prototype.capitalizeEach = function () {
-	return this.replace(/\w*/g, function (txt) {
-		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-	});
-};
-
-String.prototype.endsWith = function (suffix) {
-	return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
 // Developer Shortcuts
 Mousetrap.bind(['shift+f12', 'f12', 'command+0'], function (e) {
 	win.showDevTools();
 });
 Mousetrap.bind(['shift+f10', 'f10', 'command+9'], function (e) {
-	console.log('Opening: ' + App.settings['tmpLocation']);
-	gui.Shell.openItem(App.settings['tmpLocation']);
+	console.log('Opening: ' + App.Settings.get('tmpLocation'));
+	gui.Shell.openItem(App.Settings.get('tmpLocation'));
 });
 Mousetrap.bind('mod+,', function (e) {
 	App.vent.trigger('about:close');
@@ -373,30 +514,32 @@ window.ondrop = function (e) {
 
 	var file = e.dataTransfer.files[0];
 
-	if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1 )) {
+	if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
 		var reader = new FileReader();
 
 		reader.onload = function (event) {
 			var content = reader.result;
 
-			fs.writeFile(path.join(App.settings.tmpLocation, file.name), content, function (err) {
+			fs.writeFile(path.join(App.Settings.get('tmpLocation'), file.name), content, function (err) {
 				if (err) {
 					window.alert('Error Loading File: ' + err);
 				} else {
-                    if (file.name.indexOf('.torrent') !== -1) {
-                        // startTorrentStream(path.join(App.settings.tmpLocation, file.name));
-                        handleTorrent(path.join(App.settings.tmpLocation, file.name));
-                    } else if (file.name.indexOf('.srt') !== -1) {
-                        AdvSettings.set('droppedSub', file.name);
-                        App.vent.trigger('videojs:drop_sub');
-                    }
+
+					if (file.name.indexOf('.torrent') !== -1) {
+						// startTorrentStream(path.join(App.settings.tmpLocation, file.name));
+						handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
+					} else if (file.name.indexOf('.srt') !== -1) {
+						App.Settings.set('droppedSub', file.name);
+						App.vent.trigger('videojs:drop_sub');
+					}
+
 				}
 			});
 
 		};
 
 		reader.readAsBinaryString(file);
-        
+
 	} else {
 		var data = e.dataTransfer.getData('text/plain');
 		handleTorrent(data);
@@ -452,5 +595,5 @@ if (gui.App.fullArgv.indexOf('-f') !== -1) {
  * Show 404 page on uncaughtException
  */
 process.on('uncaughtException', function (err) {
-	window.console.error(err, err.stack);
+	window.console.error(err, err.stack || false);
 });

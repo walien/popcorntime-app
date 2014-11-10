@@ -38,8 +38,8 @@
 		},
 		setactive: function (set) {
 
-			if (AdvSettings.get('startScreen') === 'Last Open') {
-				AdvSettings.set('lastTab', set);
+			if (App.Settings.get('startScreen') === 'Last Open') {
+				App.Settings.set('lastTab', set);
 			}
 
 			$('.filter-bar').find('.active').removeClass('active');
@@ -65,7 +65,7 @@
 				$('#filterbar-watchlist').addClass('active');
 				break;
 			}
-            $('.sorters .dropdown-menu a:nth(0)').addClass('active');
+			$('.sorters .dropdown-menu a:nth(0)').addClass('active');
 			$('.genres .dropdown-menu a:nth(0)').addClass('active');
 			$('.types .dropdown-menu a:nth(0)').addClass('active');
 		},
@@ -111,10 +111,10 @@
 
 			var activetab;
 
-			if (AdvSettings.get('startScreen') === 'Last Open') {
-				activetab = AdvSettings.get('lastTab');
+			if (App.Settings.get('startScreen') === 'Last Open') {
+				activetab = App.Settings.get('lastTab');
 			} else {
-				activetab = AdvSettings.get('startScreen');
+				activetab = App.Settings.get('startScreen');
 			}
 
 			if (typeof App.currentview === 'undefined') {
@@ -201,8 +201,8 @@
 
 			if (this.previousSort === sorter) {
 				this.model.set('order', this.model.get('order') * -1);
-            } else if (this.previousSort !== sorter && sorter === 'alphabet') {
-                this.model.set('order', this.model.get('order') * -1);
+			} else if (this.previousSort !== sorter && sorter === 'alphabet') {
+				this.model.set('order', this.model.get('order') * -1);
 			} else {
 				this.model.set('order', -1);
 			}

@@ -319,38 +319,29 @@
 		},
 
 		increasePoster: function (e) {
-			var postersWidthIndex = Settings.postersJump.indexOf(parseInt(Settings.postersWidth));
+			var postersWidth = App.Settings.get('postersJump');
+			var postersWidthIndex = postersWidth.indexOf(parseInt(App.Settings.get('postersWidth')));
 
-			if (postersWidthIndex !== -1 && postersWidthIndex + 1 in Settings.postersJump) {
-				App.db.writeSetting({
-					key: 'postersWidth',
-					value: Settings.postersJump[postersWidthIndex + 1]
-				})
-					.then(function () {
-						App.vent.trigger('updatePostersSizeStylesheet');
-					});
+			if (postersWidthIndex !== -1 && postersWidthIndex + 1 in postersWidth) {
+				App.Settings.set('postersWidth', postersWidth[postersWidthIndex + 1]);
+				App.vent.trigger('updatePostersSizeStylesheet');
 			} else {
 				// do nothing for now
 			}
 		},
 
 		decreasePoster: function (e) {
-			var postersWidth;
-			var postersWidthIndex = Settings.postersJump.indexOf(parseInt(Settings.postersWidth));
+			var postersWidth = App.Settings.get('postersJump');
+			var postersWidthIndex = postersWidth.indexOf(parseInt(App.Settings.get('postersWidth')));
 
-			if (postersWidthIndex !== -1 && postersWidthIndex - 1 in Settings.postersJump) {
-				postersWidth = Settings.postersJump[postersWidthIndex - 1];
+			if (postersWidthIndex !== -1 && postersWidthIndex - 1 in postersWidth) {
+				postersWidth = postersWidth[postersWidthIndex - 1];
 			} else {
-				postersWidth = Settings.postersJump[0];
+				postersWidth = postersWidth[0];
 			}
 
-			App.db.writeSetting({
-				key: 'postersWidth',
-				value: postersWidth
-			})
-				.then(function () {
-					App.vent.trigger('updatePostersSizeStylesheet');
-				});
+			App.Settings.set('postersWidth', postersWidth);
+			App.vent.trigger('updatePostersSizeStylesheet');
 		},
 
 

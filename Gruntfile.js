@@ -18,7 +18,7 @@ var parseBuildPlatforms = function (argumentPlatform) {
 
 	return buildPlatforms;
 };
- 
+
 module.exports = function (grunt) {
 	"use strict";
 
@@ -29,24 +29,10 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	grunt.registerTask('default', [
-		'css',
+		'submodule',
 		'jshint',
 		'bower_clean',
 		'injectgit'
-	]);
-
-	// Called from the npm hook
-	grunt.registerTask('setup', [
-		'githooks'
-	]);
-
-	grunt.registerTask('css', [
-		'officalcss'
-	]);
-
-	grunt.registerTask('themes', [
-		'shell:themes',
-		'unofficalcss'
 	]);
 
 	grunt.registerTask('js', [
@@ -54,14 +40,17 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('build', [
-		'css',
 		'injectgit',
 		'bower_clean',
-		'lang',
+		'submodule',
 		'nodewebkit',
 		'shell:setexecutable'
 	]);
-	grunt.registerTask('lang', ['shell:language']);
+
+	grunt.registerTask('submodule', [
+		'clean:submodule',
+		'shell:submodule',
+	]);
 
 	grunt.registerTask('dist', [
 		'clean:releases',
@@ -76,7 +65,6 @@ module.exports = function (grunt) {
 		'exec:createWinUpdate',
 		'package' // all platforms
 	]);
-
 
 	grunt.registerTask('start', function () {
 		var start = parseBuildPlatforms();
@@ -93,14 +81,6 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('officalcss', [
-		'stylus:offical'
-	]);
-	grunt.registerTask('unofficalcss', [
-		'clean:css',
-		'stylus:third_party'
-	]);
-
 	grunt.registerTask('package', [
 		'shell:packageLinux64',
 		'shell:packageLinux32',
@@ -109,16 +89,18 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('injectgit', function () {
+
+		var gitRef, gitBranch, path, currCommit;
+		
 		if (grunt.file.exists('.git/')) {
-			var gitBranch, currCommit;
-			var path = require('path');
-			var gitRef = grunt.file.read('.git/HEAD');
+			path = require('path');
+			gitRef = grunt.file.read('.git/HEAD');
 			try {
 				gitRef = gitRef.split(':')[1].trim();
 				gitBranch = path.basename(gitRef);
 				currCommit = grunt.file.read('.git/' + gitRef).trim();
-			}
-			catch (e) {
+
+			} catch (e) {
 				var fs = require('fs');
 				currCommit = gitRef.trim();
 				var items = fs.readdirSync('.git/refs/heads');
@@ -156,35 +138,6 @@ module.exports = function (grunt) {
 			}
 		},
 
-		stylus: {
-			third_party: {
-				options: {
-					'resolve url': true,
-					use: ['nib'],
-					compress: false,
-					paths: ['src/app/styl']
-				},
-				expand: true,
-				cwd: 'src/app/styl/third_party',
-				src: '*.styl',
-				dest: 'src/app/themes/',
-				ext: '.css'
-			},
-			offical: {
-				options: {
-					'resolve url': true,
-					use: ['nib'],
-					compress: false,
-					paths: ['src/app/styl']
-				},
-				expand: true,
-				cwd: 'src/app/styl',
-				src: '*.styl',
-				dest: 'src/app/themes/',
-				ext: '.css'
-			}
-		},
-
 		nodewebkit: {
 			options: {
 				version: '0.9.2',
@@ -199,8 +152,8 @@ module.exports = function (grunt) {
 				linux64: buildPlatforms.linux64,
 				download_url: 'http://cdn.popcorntime.io/nw/'
 			},
-			src: ['./src/**', '!./src/app/styl/**',
-				'./node_modules/**', '!./node_modules/bower/**', '!./node_modules/*grunt*/**', '!./node_modules/stylus/**',
+			src: ['./src/**',
+				'./node_modules/**', '!./node_modules/bower/**', '!./node_modules/*grunt*/**',
 				'!./**/test*/**', '!./**/doc*/**', '!./**/example*/**', '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**',
 				'./package.json', './README.md', './LICENSE.txt', './.git.json'
 			]
@@ -256,35 +209,17 @@ module.exports = function (grunt) {
 		},
 
 		shell: {
-			themes: {
+			submodule: {
 				command: [
-					'git submodule init',
-					'cd src/app/styl/third_party/',
-					'git checkout master',
-					'git pull --force',
-					'cd ../../../../',
-					'git submodule update',
-					'cd src/app/styl/third_party/',
-					'git reset --hard origin/master'
+					'git submodule update --init'
 				].join('&&')
 			},
-			language: {
-				command: [
-					'git submodule init',
-					'cd src/app/language/',
-					'git checkout master',
-					'git pull --force',
-					'cd ../../../',
-					'git submodule update',
-					'cd src/app/language/',
-					'git reset --hard origin/master'
-				].join('&&')
-			}, 
 			setexecutable: {
 				command: [
 					'pct_rel="build/releases/Popcorn-Time"',
 					'chmod -R +x ${pct_rel}/mac/Popcorn-Time.app || : ',
 					'chmod +x ${pct_rel}/linux*/Popcorn-Time/Popcorn-Time || : '
+
 				].join('&&')
 			},
 			packageLinux64: {
@@ -298,21 +233,21 @@ module.exports = function (grunt) {
 				command: [
 					'cd build/releases/Popcorn-Time/linux32/Popcorn-Time',
 					'tar --exclude-vcs -caf "../Popcorn-Time-' + currentVersion + '-Linux-32.tar.xz" .',
-					'echo "Linux32 Sucessfully packaged" || echo "Linux32 failed to package"' 
+					'echo "Linux32 Sucessfully packaged" || echo "Linux32 failed to package"'
 				].join('&&')
 			},
 			packageWin: {
 				command: [
 					'cd build/releases/Popcorn-Time/win/Popcorn-Time',
 					'tar --exclude-vcs -caf "../Popcorn-Time-' + currentVersion + '-Win.tar.xz" .',
-					'echo "Windows Sucessfully packaged" || echo "Windows failed to package"' 
+					'echo "Windows Sucessfully packaged" || echo "Windows failed to package"'
 				].join('&&')
 			},
 			packageMac: {
 				command: [
 					'cd build/releases/Popcorn-Time/mac/',
 					'tar --exclude-vcs -caf "Popcorn-Time-' + currentVersion + '-Mac.tar.xz" Popcorn-Time.app',
-					'echo "Mac Sucessfully packaged" || echo "Mac failed to package"' 
+					'echo "Mac Sucessfully packaged" || echo "Mac failed to package"'
 				].join('&&')
 			}
 		},
@@ -362,22 +297,10 @@ module.exports = function (grunt) {
 
 		clean: {
 			releases: ['build/releases/Popcorn-Time/**'],
+			submodule: ['src/content/packages/**', 'src/content/languages/**', 'src/content/themes/**'],
 			css: ['src/app/themes/**'],
 			dist: ['dist/windows/*.exe', 'dist/mac/*.dmg'],
 			update: ['build/updater/*.*']
-		},
-
-		watch: {
-			options: {
-				dateFormat: function (time) {
-					grunt.log.writeln('Completed in ' + time + 'ms at ' + (new Date()).toLocaleTimeString());
-					grunt.log.writeln('Waiting for more changes...');
-				}
-			},
-			scripts: {
-				files: ['./src/app/styl/*.styl', './src/app/styl/**/*.styl'],
-				tasks: ['css']
-			}
 		}
 
 	});
