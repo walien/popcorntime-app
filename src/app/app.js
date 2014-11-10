@@ -130,7 +130,6 @@ Handlebars.registerHelper('if_settings', function (key, value, options) {
 		value = true;
 	}
 	if (Settings.get(key) === value) {
-		console.log("OK!");
 		return options.fn(this);
 	} else {
 		return options.inverse(this);
@@ -149,31 +148,31 @@ Handlebars.registerHelper('languageTitle', function (lang) {
 });
 
 Handlebars.registerHelper('date', function (date) {
-	return moment.unix(date).lang(App.Settings.get('language')).format("LLLL");
+	return moment.unix(date).lang(App.Settings.get('language')).format('LLLL');
 });
 
 Handlebars.registerHelper('xif', function (v1, operator, v2, options) {
 
-    switch (operator) {
-        case '==':
-            return (v1 == v2) ? options.fn(this) : options.inverse(this);
-        case '===':
-            return (v1 === v2) ? options.fn(this) : options.inverse(this);
-        case '<':
-            return (v1 < v2) ? options.fn(this) : options.inverse(this);
-        case '<=':
-            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-        case '>':
-            return (v1 > v2) ? options.fn(this) : options.inverse(this);
-        case '>=':
-            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-        case '&&':
-            return (v1 && v2) ? options.fn(this) : options.inverse(this);
-        case '||':
-            return (v1 || v2) ? options.fn(this) : options.inverse(this);
-        default:
-            return options.inverse(this);
-    }
+	switch (operator) {
+	case '==':
+		return (v1 === v2) ? options.fn(this) : options.inverse(this);
+	case '===':
+		return (v1 === v2) ? options.fn(this) : options.inverse(this);
+	case '<':
+		return (v1 < v2) ? options.fn(this) : options.inverse(this);
+	case '<=':
+		return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+	case '>':
+		return (v1 > v2) ? options.fn(this) : options.inverse(this);
+	case '>=':
+		return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+	case '&&':
+		return (v1 && v2) ? options.fn(this) : options.inverse(this);
+	case '||':
+		return (v1 || v2) ? options.fn(this) : options.inverse(this);
+	default:
+		return options.inverse(this);
+	}
 });
 
 // set database

@@ -41,7 +41,7 @@ var health_checked = false;
 
 			torrents: function (options) {
 				var torrents = {};
-				_.each(this.episodes, function(value) {
+				_.each(this.episodes, function (value) {
 					if (!torrents[value.season]) {
 						torrents[value.season] = {};
 					}
@@ -50,7 +50,7 @@ var health_checked = false;
 				return torrents;
 			},
 
-			genre: function() {
+			genre: function () {
 				return this.genres[0];
 			}
 		},

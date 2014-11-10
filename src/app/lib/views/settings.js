@@ -43,48 +43,48 @@
 
 		templateHelpers: {
 
-			screens: function() {
-				return ["Movies","TV Series","Favorites","Anime", "Watchlist", "Last Open"];
+			screens: function () {
+				return ['Movies', 'TV Series', 'Favorites', 'Anime', 'Watchlist', 'Last Open'];
 			},
 
-			tvDetailsJump: function() {
+			tvDetailsJump: function () {
 				return {
-					"firstUnwatched": "First Unwatched Episode",
-					"next": "Next Episode In Series"
+					'firstUnwatched': 'First Unwatched Episode',
+					'next': 'Next Episode In Series'
 				};
 			},
 
-			watchType: function() {
+			watchType: function () {
 				return {
-					"none": "Show",
-					"fade": "Fade",
-					"hide": "Hide"
+					'none': 'Show',
+					'fade': 'Fade',
+					'hide': 'Hide'
 				};
 			},
 
 			languages: function () {
 				var languages = [];
-				for(var key in App.Localization.allTranslations) {
+				for (var key in App.Localization.allTranslations) {
 					key = App.Localization.allTranslations[key];
 					if (App.Localization.langcodes[key] !== undefined) {
-						languages.push(key);
-					}
-				};
-				return languages;
-			},
-
-			langCode: function() {
-				var languages = [];
-				for(var key in App.Localization.langcodes) {
-					if (App.Localization.langcodes[key].subtitle !== undefined && App.Localization.langcodes[key].subtitle == true) {
 						languages.push(key);
 					}
 				}
 				return languages;
 			},
 
-			subSize: function() {
-				return ["24px","26px","28px","30px","32px","34px","36px","38px","48px","50px","52px","54px","56px","58px","60px"];
+			langCode: function () {
+				var languages = [];
+				for (var key in App.Localization.langcodes) {
+					if (App.Localization.langcodes[key].subtitle !== undefined && App.Localization.langcodes[key].subtitle === true) {
+						languages.push(key);
+					}
+				}
+				return languages;
+			},
+
+			subSize: function () {
+				return ['24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '48px', '50px', '52px', '54px', '56px', '58px', '60px'];
 			}
 		},
 
