@@ -30,37 +30,8 @@
 			stars: function () {
 				return [1, 2, 3, 4, 5];
 			},
-			nativeName: function (lang) {
-				return App.Localization.langcodes[lang].nativeName;
-			},
-
-			if_subtitle: function (options) {
-				if (this.subtitle) {
-					return options.fn();
-				} else {
-					return options.inverse();
-				}
-			},
-
-			each_subtitles: function (options) {
-				var ret = '';
-				var subtitles = this.model.get('subtitle');
-				console.log(subtitles);
-				for (var prop in subtitles) {
-					if (subtitles.hasOwnProperty(prop)) {
-						ret = ret + options.fn({
-							property: prop,
-							value: subtitles[prop]
-						});
-					}
-				}
-				return ret;
-			},
 
 			if_quality: function (needed, options) {
-				var fnTrue = options.fn,
-					fnFalse = options.inverse;
-
 				if (this.torrents) {
 
 					var torrents = this.torrents;
@@ -79,13 +50,13 @@
 					}
 
 					if (value === needed) {
-						return fnTrue();
+						return options.fn(this);
 					} else {
-						return fnFalse();
+						return options.inverse(this);
 					}
 
 				} else {
-					return fnFalse();
+					return options.inverse(this);
 				}
 			},
 

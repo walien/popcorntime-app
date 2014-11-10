@@ -124,12 +124,16 @@ Handlebars.registerHelper('_', function (text) {
 Handlebars.registerHelper('settings', function (key) {
 	return new Handlebars.SafeString(Settings.get(key));
 });
-Handlebars.registerHelper('if_settings', function (key, value) {
-	value = value || true;
+Handlebars.registerHelper('if_settings', function (key, value, options) {
+	if (!options) {
+		options = value;
+		value = true;
+	}
 	if (Settings.get(key) === value) {
-		return true;
+		console.log("OK!");
+		return options.fn(this);
 	} else {
-		return false;
+		return options.inverse(this);
 	}
 });
 Handlebars.registerHelper('pluralize', function (number, single, plural) {
@@ -138,6 +142,38 @@ Handlebars.registerHelper('pluralize', function (number, single, plural) {
 	} else {
 		return plural;
 	}
+});
+
+Handlebars.registerHelper('languageTitle', function (lang) {
+	return App.Localization.langcodes[lang].nativeName;
+});
+
+Handlebars.registerHelper('date', function (date) {
+	return moment.unix(date).lang(App.Settings.get('language')).format("LLLL");
+});
+
+Handlebars.registerHelper('xif', function (v1, operator, v2, options) {
+
+    switch (operator) {
+        case '==':
+            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+        case '===':
+            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+        case '<':
+            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+        case '<=':
+            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+        case '>':
+            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+        case '>=':
+            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+        case '&&':
+            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+        case '||':
+            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+        default:
+            return options.inverse(this);
+    }
 });
 
 // set database

@@ -1,4 +1,5 @@
 var torrentHealth = require('torrent-health');
+var moment = require('moment');
 var health_checked = false;
 
 (function (App) {
@@ -30,6 +31,28 @@ var health_checked = false;
 			'click .health-icon': 'getTorrentHealth',
 			'click .playerchoicemenu li a': 'selectPlayer',
 			'click .rating-container-tv': 'switchRating'
+		},
+
+		templateHelpers: {
+
+			seasons: function (options) {
+				return _.uniq(_.pluck(this.episodes, 'season'));
+			},
+
+			torrents: function (options) {
+				var torrents = {};
+				_.each(this.episodes, function(value) {
+					if (!torrents[value.season]) {
+						torrents[value.season] = {};
+					}
+					torrents[value.season][value.episode] = value;
+				});
+				return torrents;
+			},
+
+			genre: function() {
+				return this.genres[0];
+			}
 		},
 
 		toggleFavorite: function (e) {

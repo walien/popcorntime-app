@@ -41,6 +41,53 @@
 			'click #qrcode-close': 'closeModal'
 		},
 
+		templateHelpers: {
+
+			screens: function() {
+				return ["Movies","TV Series","Favorites","Anime", "Watchlist", "Last Open"];
+			},
+
+			tvDetailsJump: function() {
+				return {
+					"firstUnwatched": "First Unwatched Episode",
+					"next": "Next Episode In Series"
+				};
+			},
+
+			watchType: function() {
+				return {
+					"none": "Show",
+					"fade": "Fade",
+					"hide": "Hide"
+				};
+			},
+
+			languages: function () {
+				var languages = [];
+				for(var key in App.Localization.allTranslations) {
+					key = App.Localization.allTranslations[key];
+					if (App.Localization.langcodes[key] !== undefined) {
+						languages.push(key);
+					}
+				};
+				return languages;
+			},
+
+			langCode: function() {
+				var languages = [];
+				for(var key in App.Localization.langcodes) {
+					if (App.Localization.langcodes[key].subtitle !== undefined && App.Localization.langcodes[key].subtitle == true) {
+						languages.push(key);
+					}
+				}
+				return languages;
+			},
+
+			subSize: function() {
+				return ["24px","26px","28px","30px","32px","34px","36px","38px","48px","50px","52px","54px","56px","58px","60px"];
+			}
+		},
+
 		onShow: function () {
 
 			this.render();
@@ -553,13 +600,13 @@
 		},
 
 		openTmpFolder: function () {
-			console.log('Opening: ' + App.settings['tmpLocation']);
-			gui.Shell.openItem(App.settings['tmpLocation']);
+			console.log('Opening: ' + App.Settings.get('tmpLocation'));
+			gui.Shell.openItem(App.Settings.get('tmpLocation'));
 		},
 
 		openDatabaseFolder: function () {
-			console.log('Opening: ' + App.settings['databaseLocation']);
-			gui.Shell.openItem(App.settings['databaseLocation']);
+			console.log('Opening: ' + App.Settings.get('databaseLocation'));
+			gui.Shell.openItem(App.Settings.get('databaseLocation'));
 		},
 
 		exportDatabase: function (e) {
