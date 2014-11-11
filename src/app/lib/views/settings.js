@@ -85,6 +85,14 @@
 
 			subSize: function () {
 				return ['24px', '26px', '28px', '30px', '32px', '34px', '36px', '38px', '48px', '50px', '52px', '54px', '56px', '58px', '60px'];
+			},
+
+			cssFiles: function () {
+				return App.ThemesManager.getAllCss();
+			},
+
+			themes: function () {
+				return App.ThemesManager.getAllThemes();
 			}
 		},
 
@@ -344,6 +352,7 @@
 				/* falls through */
 			case 'watchedCovers':
 			case 'theme':
+			case 'css':
 				value = $('option:selected', field).val();
 				break;
 			case 'language':
@@ -519,8 +528,16 @@
 				win.setAlwaysOnTop(value);
 				break;
 			case 'theme':
-				//$('head').append('<link rel="stylesheet" href="themes/' + value + '.css" type="text/css" />');
-				App.vent.trigger('updatePostersSizeStylesheet');
+				App.Settings.set('activeTheme', value);
+				App.Settings.set('activeCss', false); // reset css
+				that.alertMessageSuccess(true);
+				break;
+			case 'css':
+				App.Settings.set('activeCss', value);
+				App.ThemesManager.getActiveCss(function (css) {
+					$('head').append('<link rel="stylesheet" href="' + css.path + '" type="text/css" />');
+					App.vent.trigger('updatePostersSizeStylesheet');
+				});
 				break;
 			case 'start_screen':
 				App.Settings.set('startScreen', value);

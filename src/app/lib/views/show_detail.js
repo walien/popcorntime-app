@@ -40,17 +40,18 @@ var health_checked = false;
 			},
 
 			ratings: function () {
+				var i;
 				var p_rating = Math.round(this.rating.percentage) / 20; // Roundoff number
 
 				// full stars
 				var full = [];
-				for (var i = 1; i <= Math.floor(p_rating); i++) {
+				for (i = 1; i <= Math.floor(p_rating); i++) {
 					full.push(i);
 				}
 
 				// empty stars
 				var empty = [];
-				for (var i = Math.ceil(p_rating); i < 5; i++) {
+				for (i = Math.ceil(p_rating); i < 5; i++) {
 					empty.push(i);
 				}
 

@@ -91,7 +91,7 @@ module.exports = function (grunt) {
 	grunt.registerTask('injectgit', function () {
 
 		var gitRef, gitBranch, path, currCommit;
-		
+
 		if (grunt.file.exists('.git/')) {
 			path = require('path');
 			gitRef = grunt.file.read('.git/HEAD');

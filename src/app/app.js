@@ -313,8 +313,9 @@ var initTemplates = function () {
 	// hack for now, we'll use
 	// the first element in theme package.json
 
-	css = css[Object.keys(css)[0]];
-	$('head').append('<link rel="stylesheet" href="' + path.join(ThemesManager.themePath, css) + '" type="text/css" />');
+	ThemesManager.getActiveCss(function (css) {
+		$('head').append('<link rel="stylesheet" href="' + css.path + '" type="text/css" />');
+	});
 
 	ThemesManager.getTemplates(function (templates) {
 		_.each(templates, function (el) {
