@@ -32,7 +32,6 @@
 			'click .triggerUpdate': 'updateDB'
 		},
 
-
 		focus: function (e) {
 			e.focus();
 		},

@@ -119,10 +119,10 @@ Backbone.Marionette.Renderer.render = function (template, data) {
 	return Handlebars.compile($(template).html())(data);
 };
 Handlebars.registerHelper('_', function (text) {
-	return new Handlebars.SafeString(i18n.__(text));
+	return i18n.__(text);
 });
 Handlebars.registerHelper('settings', function (key) {
-	return new Handlebars.SafeString(Settings.get(key));
+	return Settings.get(key);
 });
 Handlebars.registerHelper('if_settings', function (key, value, options) {
 	if (!options) {
@@ -149,6 +149,18 @@ Handlebars.registerHelper('languageTitle', function (lang) {
 
 Handlebars.registerHelper('date', function (date) {
 	return moment.unix(date).lang(App.Settings.get('language')).format('LLLL');
+});
+
+Handlebars.registerHelper('capitalize', function (data) {
+	console.log(data);
+
+	return data.charAt(0).toUpperCase() + data.slice(1);
+});
+
+Handlebars.registerHelper('capitalizeEach', function (data) {
+	return data.replace(/\w*/g, function (txt) {
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
 });
 
 Handlebars.registerHelper('xif', function (v1, operator, v2, options) {
