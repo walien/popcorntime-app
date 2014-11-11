@@ -97,6 +97,9 @@ Updater.prototype.check = function () {
 		}
 
 		var updateData = data[self.settings.get('os')];
+		var currentVersion = self.settings.get('version');
+
+		// arch
 		if (self.settings.get('os') === 'linux') {
 			updateData = updateData[self.settings.get('arch')];
 		}
@@ -105,11 +108,12 @@ Updater.prototype.check = function () {
 		if (!updateData.version.match(/-\d+$/)) {
 			updateData.version += '-0';
 		}
-		if (!self.settings.get('version').match(/-\d+$/)) {
-			self.settings.get('version').version += '-0';
+		
+		if (!currentVersion.match(/-\d+$/)) {
+			currentVersion += '-0';
 		}
 
-		if (semver.gt(updateData.version, self.settings.get('version'))) {
+		if (semver.gt(updateData.version, currentVersion)) {
 			console.debug('Updating to version %s', updateData.version);
 			self.updateData = updateData;
 			return true;
@@ -155,8 +159,7 @@ Updater.prototype.verify = function (source) {
 };
 
 function installWindows(downloadPath, updateData) {
-	var outputDir = path.dirname(downloadPath),
-		installDir = path.join(outputDir, 'app');
+	var installDir = path.dirname(downloadPath);
 	var defer = Q.defer();
 
 	var pack = new zip(downloadPath);
