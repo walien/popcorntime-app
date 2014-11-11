@@ -27,8 +27,27 @@
 
 		templateHelpers: {
 
-			stars: function () {
-				return [1, 2, 3, 4, 5];
+			ratings: function () {
+				var p_rating = Math.round(this.rating) / 2; // Roundoff number
+
+				// full stars
+				var full = [];
+				for (var i = 1; i <= Math.floor(p_rating); i++) {
+					full.push(i);
+				}
+
+				// empty stars
+				var empty = [];
+				for (var i = Math.ceil(p_rating); i < 5; i++) {
+					empty.push(i);
+				}
+
+				return {
+					value: p_rating,
+					half: ((p_rating % 1) > 0) ? true : false,
+					full: full,
+					empty: empty
+				};
 			},
 
 			if_quality: function (needed, options) {
@@ -74,22 +93,6 @@
 					break;
 				}
 				return image;
-			},
-
-			ratingStars: function () {
-				if (typeof this.rating === 'object') {
-					return this.rating / 10;
-				} else {
-					return [];
-				}
-			},
-
-			rating: function () {
-				if (typeof this.rating === 'object') {
-					return this.model.get('rating')['percentage'] / 10;
-				} else {
-					return false;
-				}
 			}
 		},
 
