@@ -268,6 +268,19 @@
 
 			});
 
+			this.player.on('ended', function () {
+				// For now close player. In future we will check if auto-play etc and get next episode
+
+				if (_this.model.get('auto_play')) {
+
+					_this.playNextNow();
+
+				} else {
+					_this.closePlayer();
+				}
+
+			});
+
 
 		},
 
