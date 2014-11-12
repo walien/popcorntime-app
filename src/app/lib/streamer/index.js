@@ -29,6 +29,7 @@
 			var self = this;
 			var torrenturl = data.torrent;
 			var version = semver.parse(App.Settings.get('version'));
+			var filename = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
 			var torrentVersion = '';
 			torrentVersion += version.major;
 			torrentVersion += version.minor;
@@ -45,7 +46,7 @@
 				buffer: (BUFFERING_SIZE / 100),
 				port: 2014,
 				writeDir: App.Settings.get('tmpLocation'),
-				index: data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4',
+				index: filename,
 				torrent: {
 					id: '-PC' + torrentVersion + '-'
 				}
@@ -70,7 +71,7 @@
 				//self.stop();
 			});
 
-			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), 'filename.mp4'));
+			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), filename));
 
 			var stateModel = new Backbone.Model({
 				backdrop: data.backdrop,
@@ -131,7 +132,6 @@
 
 		},
 		prettySpeed: function (speed) {
-
 			speed = speed || 0;
 			var converted = Math.floor(Math.log(speed) / Math.log(1024));
 			return (speed / Math.pow(1024, converted)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted] + '/s';
@@ -140,24 +140,6 @@
 			var converted_speed = 0;
 			var percent = 0;
 
-			/*
-			if (engine.files[this.fileindex].length) {
-				var total_size = engine.files[this.fileindex].length;
-			} else {
-				var total_size = engine.length;
-			}
-			if (total_size >= 1000000000) {
-				total_size = (total_size / 1000000000).toFixed(2) + ' GB';
-			} else if (total_size >= 1000000) {
-				total_size = (total_size / 1000000).toFixed(2) + ' MB';
-			}
-
-			if (engine.files[this.fileindex].length) {
-				var raw_size = engine.files[this.fileindex].length;
-			} else {
-				var raw_size = engine.length;
-			}
-			*/
 			var streamInfo = {
 				downloaded: this.data.downloaded,
 				peers: this.data.peers,
@@ -167,7 +149,7 @@
 				downloadSpeed: this.data.downloadSpeed,
 				eta: this.data.eta,
 				progress: this.data.progress,
-				size: 95681456 //debuging size -- use real once when xeon adds it in popcorn - streamer callback
+				size: this.data.size //debuging size -- use real once when xeon adds it in popcorn - streamer callback
 			};
 
 			this.streamInfo = streamInfo;
