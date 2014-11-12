@@ -85,6 +85,10 @@
 			var BUFFERING_SIZE = 10 * 1024 * 1024;
 			var percent;
 			var streamInfo = App.Streamer.streamInfo;
+			if(App.Streamer.state)
+			{
+				this.ui.stateTextDownload.text(i18n.__(App.Streamer.state));
+			}
 			if (streamInfo) {
 				that.ui.seedStatus.css('visibility', 'visible');
 				var downloaded = streamInfo.downloaded / (1024 * 1024);
@@ -97,8 +101,8 @@
 				percent = percent.toFixed();
 
 				that.ui.downloadPercent.text(percent + '%');
-				that.ui.downloadSpeed.text(streamInfo.downloadSpeed);
-				that.ui.uploadSpeed.text(streamInfo.uploadSpeed);
+				that.ui.downloadSpeed.text(streamInfo.prettyDownloadSpeed);
+				that.ui.uploadSpeed.text(streamInfo.prettyUploadSpeed);
 				that.ui.progressbar.stop().animate({
 					width: percent + '%'
 				}, 100, 'swing');
@@ -106,12 +110,11 @@
 
 					if (this.player === 'local') {
 						var playerModel = new Backbone.Model(that.model.get('data'));
-						App.vent.trigger('stream:local', playerModel);
+						//App.vent.trigger('stream:local', playerModel);
 					} else {
 
 						App.vent.trigger('stream:ready', that.model.get('player'));
 					}
-
 
 					if (that.model.get('player') && that.model.get('player').get('type') !== 'local') {
 						that.ui.player.text(that.model.get('player').get('name'));

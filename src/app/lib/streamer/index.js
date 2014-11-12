@@ -42,7 +42,7 @@
 			this.reset();
 
 			this.stream = new PTStreamer(torrenturl, {
-				progressInterval: 100,
+				progressInterval: 200,
 				buffer: (BUFFERING_SIZE / 100),
 				port: 2014,
 				writeDir: App.Settings.get('tmpLocation'),
@@ -145,14 +145,16 @@
 			{
 				return;
 			}
-			
+
 			var streamInfo = {
 				downloaded: this.data.downloaded,
 				peers: this.data.peers,
 				connections: this.data.connections,
 				seeds: this.data.seeds,
 				uploadSpeed: this.data.uploadSpeed,
+				prettyUploadSpeed: this.prettySpeed(this.data.uploadSpeed),
 				downloadSpeed: this.data.downloadSpeed,
+				prettyDownloadSpeed: this.prettySpeed(this.data.downloadSpeed),
 				eta: this.data.eta,
 				progress: this.data.progress,
 				size: this.data.size //debuging size -- use real once when xeon adds it in popcorn - streamer callback

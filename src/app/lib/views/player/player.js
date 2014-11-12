@@ -319,8 +319,8 @@
 		refreshStreamStats: function () {
 			App.Streamer.updateInfo();
 
-			this.ui.downloadSpeed.text(this.prettySpeed(App.Streamer.streamInfo.downloadSpeed));
-			this.ui.uploadSpeed.text(this.prettySpeed(App.Streamer.streamInfo.uploadSpeed));
+			this.ui.downloadSpeed.text(App.Streamer.streamInfo.prettyDownloadSpeed);
+			this.ui.uploadSpeed.text(App.Streamer.streamInfo.prettyUploadSpeed);
 			this.ui.activePeers.text(App.Streamer.streamInfo.active_peers);
 			var percent = App.Streamer.streamInfo.progress;
 			percent = percent.toFixed();
@@ -328,11 +328,6 @@
 				percent = 1;
 			}
 			this.ui.percentCompleted.text(percent + '%');
-		},
-		prettySpeed: function (speed) {
-			speed = speed || 0;
-			var converted = Math.floor(Math.log(speed) / Math.log(1024));
-			return (speed / Math.pow(1024, converted)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted] + '/s';
 		},
 		isMovie: function () {
 			return this.model.get('tvdb_id') === undefined;
