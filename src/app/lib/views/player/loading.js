@@ -110,7 +110,7 @@
 
 					if (this.player === 'local') {
 						var playerModel = new Backbone.Model(that.model.get('data'));
-						//App.vent.trigger('stream:local', playerModel);
+						App.vent.trigger('stream:local', playerModel);
 					} else {
 
 						App.vent.trigger('stream:ready', that.model.get('player'));
