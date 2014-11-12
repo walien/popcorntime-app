@@ -38,11 +38,11 @@
 
 			data.videotype = data.videotype || 'video/mp4';
 			data.subtitle = data.subtitle || {};
-
+			
 			this.reset();
 
 			this.stream = new PTStreamer(torrenturl, {
-				progressInterval: 200,
+				progressInterval: 100,
 				buffer: (BUFFERING_SIZE / 100),
 				port: 2014,
 				writeDir: App.Settings.get('tmpLocation'),
@@ -72,6 +72,7 @@
 			});
 
 			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), filename));
+			this.updateInfo();
 
 			var stateModel = new Backbone.Model({
 				backdrop: data.backdrop,
@@ -140,6 +141,11 @@
 			var converted_speed = 0;
 			var percent = 0;
 
+			if(!this.data)
+			{
+				return;
+			}
+			
 			var streamInfo = {
 				downloaded: this.data.downloaded,
 				peers: this.data.peers,
