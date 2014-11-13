@@ -704,7 +704,9 @@ Localization.langcodes = {
 	},
 	'sv': {
 		name: 'Swedish',
-		nativeName: 'svenska'
+		nativeName: 'svenska',
+		subtitle: true,
+		encoding: ['iso-8859-1']
 	},
 	'sw': {
 		name: 'Swahili',
