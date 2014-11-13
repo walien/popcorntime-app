@@ -36,7 +36,7 @@ function Package(path, metadata) {
 
 	SandboxApp = new Sandbox();
 
-	console.log('Loading package: ' + this.name);
+	//console.log('Loading package: ' + this.name);
 }
 
 Package.prototype.keymaps = null;
@@ -70,7 +70,7 @@ Package.loadMetadata = function (packagePath, ignoreErrors) {
 	}
 
 	metadata.name = path.basename(packagePath);
-	console.debug(metadata);
+	//console.debug(metadata);
 	return metadata;
 };
 
@@ -103,7 +103,8 @@ Package.prototype.load = function () {
 
 			} catch (_error) {
 				error = _error;
-				return console.log('Failed to load package named ' + _this.name, (_ref1 = error.stack) != null ? _ref1 : error);
+				//return console.log('Failed to load package named ' + _this.name, (_ref1 = error.stack) != null ? _ref1 : error);
+				return 'Failed to load package named ' + _this.name, (_ref1 = error.stack) != null ? _ref1 : error;
 			}
 		};
 	})(this));
@@ -168,7 +169,7 @@ Package.prototype.activateNow = function () {
 		}
 	} catch (_error) {
 		e = _error;
-		console.log('Failed to activate package named ' + this.name, e.stack);
+		//console.log('Failed to activate package named ' + this.name, e.stack);
 	}
 
 	return this.activationDeferred.resolve();
