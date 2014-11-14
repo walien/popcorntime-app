@@ -25,6 +25,7 @@ function PackageManager(options) {
 	this.activePackages = {};
 
 	this.packageDirPaths.push(path.join(this.options.path, 'src', 'content', 'packages'));
+
 }
 
 /*
@@ -171,6 +172,35 @@ PackageManager.prototype.resolvePackagePath = function (name) {
 	}
 };
 
+PackageManager.prototype.generatePackage = function (name) {
+
+	// we check if path exist
+	var newPath = path.join(_.first(this.packageDirPaths), name);
+	if (!fs.isDirectorySync(newPath)) {
+
+		fs.mkdir(newPath,function(e){
+
+			var template = {};
+
+			// create lib path
+			fs.mkdirSync(path.join(newPath, 'lib'));
+
+			// build our skeleton
+			fs.writeFileSync(path.join(newPath, 'README.md'), '# ' + name);
+			fs.writeFileSync(path.join(newPath, 'package.json'), JSON.stringify(JSON.parse(fs.readFileSync(path.join(__dirname, 'skeleton/package.json'), 'utf8')), null, 4).replace(/{{name}}/g, name) + '\n');
+			fs.writeFileSync(path.join(newPath, '/lib/' + name + '.js'), fs.readFileSync(path.join(__dirname, 'skeleton/lib.js')));
+
+			// open the new created package
+			window.App.gui.Shell.openItem(newPath);
+		});
+
+	} else {
+		window.alert('This package name already exist...');
+	}
+
+};
+
+
 /*
  * Deps
  * Not supported in 0.0.1
@@ -194,6 +224,5 @@ PackageManager.prototype.getPackageDependencies = function() {
     return this.packageDependencies;
 };
  */
-
 
 module.exports = new PackageManager();

@@ -1,0 +1,14 @@
+{
+  "name": "{{name}}",
+  "main": "./lib/{{name}}",
+  "version": "0.0.1",
+  "private": true,
+  "description": "PopcornTime.io Package",
+  "activationEvents": [],
+  "repository": "",
+  "license": "GPL v3",
+  "engines": {
+    "popcorntime": "*"
+  },
+  "dependencies": {}
+}
