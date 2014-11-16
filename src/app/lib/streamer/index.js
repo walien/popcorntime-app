@@ -34,7 +34,7 @@
 			if (data.type === 'episode') {
 				title = data.metadata.showName + ' - ' + i18n.__('Season') + ' ' + data.metadata.season + ', ' + i18n.__('Episode') + ' ' + data.metadata.episode + ' - ' + data.metadata.episodeName;
 			} else {
-				title = metadata.title;
+				title = data.metadata.title;
 			}
 
 			var filename = title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
