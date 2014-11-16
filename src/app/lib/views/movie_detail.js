@@ -235,17 +235,19 @@
 
 		startStreaming: function () {
 			var torrentStart = {
-				imdb_id: this.model.get('imdb_id'),
 				torrent: this.model.get('torrents')[this.model.get('quality')].url,
-				backdrop: this.model.get('backdrop'),
+				metadata: {
+					backdrop: this.model.get('backdrop'),
+					title: this.model.get('title'),
+					cover: this.model.get('image'),
+					imdb_id: this.model.get('imdb_id')
+				},
 				subtitle: this.model.get('subtitle'),
 				defaultSubtitle: this.subtitle_selected,
-				title: this.model.get('title'),
 				quality: this.model.get('quality'),
 				type: 'movie',
-				videotype: 'video/mp4',
-				device: App.Device.Collection.selected,
-				cover: this.model.get('image')
+				device: App.Device.Collection.selected
+
 			};
 			App.vent.trigger('streamer:start', torrentStart);
 		},
@@ -319,8 +321,8 @@
 			var ratio = torrent.peer > 0 ? torrent.seed / torrent.peer : +torrent.seed;
 
 			$('.health-icon').tooltip({
-					html: true
-				})
+				html: true
+			})
 				.removeClass('Bad Medium Good Excellent')
 				.addClass(health)
 				.attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
@@ -336,8 +338,8 @@
 			var that = this;
 			if (this.model.get('bookmarked') === true) {
 				App.Database.delete('bookmarks', {
-						imdb_id: this.model.get('imdb_id')
-					})
+					imdb_id: this.model.get('imdb_id')
+				})
 					.then(function () {
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
