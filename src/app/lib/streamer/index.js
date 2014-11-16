@@ -27,9 +27,17 @@
 
 		start: function (data) {
 			var self = this;
+			var title;
 			var torrenturl = data.torrent;
 			var version = semver.parse(App.Settings.get('version'));
-			var filename = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
+
+			if (data.type === 'episode') {
+				title = data.metadata.showName + ' - ' + i18n.__('Season') + ' ' + data.metadata.season + ', ' + i18n.__('Episode') + ' ' + data.metadata.episode + ' - ' + data.metadata.episodeName;
+			} else {
+				title = metadata.title;
+			}
+
+			var filename = title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
 			var torrentVersion = '';
 			torrentVersion += version.major;
 			torrentVersion += version.minor;
@@ -38,7 +46,7 @@
 
 			data.videotype = data.videotype || 'video/mp4';
 			data.subtitle = data.subtitle || {};
-			
+
 			this.reset();
 
 			this.stream = new PTStreamer(torrenturl, {
@@ -75,30 +83,12 @@
 			this.updateInfo();
 
 			var stateModel = new Backbone.Model({
-				backdrop: data.backdrop,
-				title: data.title,
+				backdrop: data.metadata.backdrop,
+				title: title,
 				player: data.device,
 				show_controls: false,
 				data: data
 			});
-
-			// manage our subtitle
-			// maybe this will be removed soon
-			var extractSubtitle = data.extract_subtitle;
-			if (typeof extractSubtitle === 'object') {
-
-				extractSubtitle.filename = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
-				var subskw = [];
-
-				for (var key in App.Localization.langcodes) {
-					if (App.Localization.langcodes[key].keywords !== undefined) {
-						subskw[key] = App.Localization.langcodes[key].keywords;
-					}
-				}
-
-				extractSubtitle.keywords = subskw;
-				this.getSubtitles(extractSubtitle);
-			}
 
 			App.vent.trigger('stream:started', stateModel);
 		},
@@ -141,8 +131,7 @@
 			var converted_speed = 0;
 			var percent = 0;
 
-			if(!this.data)
-			{
+			if (!this.data) {
 				return;
 			}
 

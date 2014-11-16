@@ -21,7 +21,6 @@
 			uploadSpeed: '.upload_speed',
 			progressbar: '#loadingbar-contents',
 
-			title: '.title',
 			player: '.player-name',
 			streaming: '.external-play',
 			controls: '.player-controls',
@@ -73,9 +72,7 @@
 
 			this.initKeyboardShortcuts();
 
-			this.ui.title.text(this.model.get('title'));
 			this.player = this.model.get('player').get('id');
-
 
 			this.StateUpdate();
 
@@ -85,8 +82,7 @@
 			var BUFFERING_SIZE = 10 * 1024 * 1024;
 			var percent;
 			var streamInfo = App.Streamer.streamInfo;
-			if(App.Streamer.state)
-			{
+			if (App.Streamer.state) {
 				this.ui.stateTextDownload.text(i18n.__(App.Streamer.state));
 			}
 			if (streamInfo) {

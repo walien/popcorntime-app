@@ -485,7 +485,6 @@ var health_checked = false;
 					selected_quality: selected_quality
 				},
 				status: that.model.get('status'),
-				extract_subtitle: epInfo,
 				device: App.Device.Collection.selected
 
 			};
