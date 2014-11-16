@@ -114,8 +114,8 @@ var health_checked = false;
 				bookmarked = false;
 
 				App.Database.delete('bookmarks', {
-						imdb_id: this.model.get('imdb_id')
-					})
+					imdb_id: this.model.get('imdb_id')
+				})
 					.then(function () {
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
@@ -255,8 +255,8 @@ var health_checked = false;
 
 			var episodesSeen = [];
 			App.Database.find('watched', {
-					tvdb_id: this.model.get('tvdb_id').toString()
-				})
+				tvdb_id: this.model.get('tvdb_id').toString()
+			})
 				.then(function (data) {
 					_.each(data, function (value, state) {
 						// we'll mark episode already watched
@@ -356,17 +356,17 @@ var health_checked = false;
 			};
 
 			App.Database.get('watched', {
-					tvdb_id: currentValue.tvdb_id.toString(),
-					imdb_id: currentValue.imdb_id.toString(),
-					season: currentValue.season.toString(),
-					episode: currentValue.episode.toString()
-				})
+				tvdb_id: currentValue.tvdb_id.toString(),
+				imdb_id: currentValue.imdb_id.toString(),
+				season: currentValue.season.toString(),
+				episode: currentValue.episode.toString()
+			})
 				.then(function (watched) {
 					if (watched) {
 
 						App.Database.find('watched', {
-								tvdb_id: currentValue.tvdb_id
-							})
+							tvdb_id: currentValue.tvdb_id
+						})
 							.then(function (response) {
 								if (response.length === 1) {
 									App.watchedShows.splice(App.watchedShows.indexOf(currentValue.imdb_id), 1);
@@ -387,8 +387,8 @@ var health_checked = false;
 					} else {
 
 						App.Database.find('watched', {
-								tvdb_id: currentValue.tvdb_id
-							})
+							tvdb_id: currentValue.tvdb_id
+						})
 							.then(function (response) {
 								if (response.length === 0) {
 									App.watchedShows.push(currentValue.imdb_id.toString());
@@ -443,45 +443,18 @@ var health_checked = false;
 			var season = $(e.currentTarget).attr('data-season');
 			var name = $(e.currentTarget).attr('data-title');
 
-			title += ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name;
-			var epInfo = {
-				type: 'tvshow',
-				videotype: 'video/mp4',
-				imdbid: that.model.get('imdb_id'),
-				tvdbid: that.model.get('tvdb_id'),
-				season: season,
-				episode: episode
-			};
-
-
+			//title += ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name;
 			var episodes = [];
 			var episodes_data = [];
 			var selected_quality = $(e.currentTarget).attr('data-quality');
-			var auto_play = false;
 
 			if (App.Settings.get('playNextEpisodeAuto')) {
 				_.each(this.model.get('episodes'), function (value) {
 					var epaInfo = {
-						id: parseInt(value.season) * 100 + parseInt(value.episode),
-						backdrop: that.model.get('images').fanart,
-						defaultSubtitle: App.Settings.get('subtitle_language'),
-						episode: value.episode,
-						season: value.season,
-						title: that.model.get('title') + ' - ' + i18n.__('Season') + ' ' + value.season + ', ' + i18n.__('Episode') + ' ' + value.episode + ' - ' + value.title,
+						title: value.title,
 						torrents: value.torrents,
-						extract_subtitle: {
-							type: 'tvshow',
-							imdbid: that.model.get('imdb_id'),
-							tvdbid: value.tvdb_id,
-							season: value.season,
-							episode: value.episode
-						},
 						tvdb_id: value.tvdb_id,
-						imdb_id: that.model.get('imdb_id'),
-						device: App.Device.Collection.selected,
-						cover: that.model.get('images').poster,
-						status: that.model.get('status'),
-						type: 'episode'
+						imdb_id: that.model.get('imdb_id')
 					};
 					episodes_data.push(epaInfo);
 					episodes.push(parseInt(value.season) * 100 + parseInt(value.episode));
@@ -489,34 +462,32 @@ var health_checked = false;
 				episodes.sort();
 				episodes_data = _.sortBy(episodes_data, 'id');
 
-				if (parseInt(season) * 100 + parseInt(episode) !== episodes[episodes.length - 1]) {
-					auto_play = true;
-				}
-
 			} else {
 				episodes_data = null;
 			}
 
-
 			var torrentStart = {
 				torrent: $(e.currentTarget).attr('data-torrent'),
-				backdrop: that.model.get('images').fanart,
 				type: 'episode',
-				tvdb_id: that.model.get('tvdb_id'),
-				imdb_id: that.model.get('imdb_id'),
-				episode: episode,
-				season: season,
-				title: title,
+				metadata: {
+					episode: episode,
+					season: season,
+					episodeName: name,
+					showName: title,
+					cover: that.model.get('images').poster,
+					tvdb_id: that.model.get('tvdb_id'),
+					imdb_id: that.model.get('imdb_id'),
+					backdrop: that.model.get('images').fanart
+				},
+				autoPlayData: {
+					episodes: episodes,
+					episodes_data: episodes_data,
+					selected_quality: selected_quality
+				},
 				status: that.model.get('status'),
 				extract_subtitle: epInfo,
-				quality: $(e.currentTarget).attr('data-quality'),
-				defaultSubtitle: App.Settings.get('subtitle_language'),
-				device: App.Device.Collection.selected,
-				cover: that.model.get('images').poster,
-				episodes: episodes,
-				auto_play: auto_play,
-				auto_play_id: parseInt(season) * 100 + parseInt(episode),
-				auto_play_data: episodes_data
+				device: App.Device.Collection.selected
+
 			};
 			win.info('Playing next episode automatically:', App.Settings.get('playNextEpisodeAuto'));
 
@@ -787,8 +758,8 @@ var health_checked = false;
 					var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
 					$('.health-icon').tooltip({
-							html: true
-						})
+						html: true
+					})
 						.removeClass('fa-spin')
 						.removeClass('fa-spinner')
 						.addClass('fa-circle')
@@ -801,8 +772,8 @@ var health_checked = false;
 
 		resetHealth: function () {
 			$('.health-icon').tooltip({
-					html: true
-				})
+				html: true
+			})
 				.removeClass('fa-spin')
 				.removeClass('fa-spinner')
 				.addClass('fa-circle')
