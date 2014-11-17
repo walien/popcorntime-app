@@ -476,7 +476,7 @@ if (process.platform === 'darwin') {
 // package builder
 Mousetrap.bind('ctrl+shift+p', function (e) {
 	e.preventDefault();
-	var packageName = prompt("Please enter new package name", "my-package");
+	var packageName = prompt('Please enter new package name', 'my-package');
 	if (packageName != null) {
 		PackagesManager.generatePackage(packageName);
 	}
