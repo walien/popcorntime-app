@@ -470,9 +470,7 @@ var health_checked = false;
 				torrent: $(e.currentTarget).attr('data-torrent'),
 				type: 'episode',
 				metadata: {
-					episode: episode,
-					season: season,
-					episodeName: name,
+					title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
 					showName: title,
 					cover: that.model.get('images').poster,
 					tvdb_id: that.model.get('tvdb_id'),

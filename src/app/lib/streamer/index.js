@@ -27,17 +27,10 @@
 
 		start: function (data) {
 			var self = this;
-			var title;
 			var torrenturl = data.torrent;
 			var version = semver.parse(App.Settings.get('version'));
 
-			if (data.type === 'episode') {
-				title = data.metadata.showName + ' - ' + i18n.__('Season') + ' ' + data.metadata.season + ', ' + i18n.__('Episode') + ' ' + data.metadata.episode + ' - ' + data.metadata.episodeName;
-			} else {
-				title = data.metadata.title;
-			}
-
-			var filename = title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
+			var filename = data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp4';
 			var torrentVersion = '';
 			torrentVersion += version.major;
 			torrentVersion += version.minor;
@@ -84,7 +77,7 @@
 
 			var stateModel = new Backbone.Model({
 				backdrop: data.metadata.backdrop,
-				title: title,
+				title: data.metadata.title,
 				player: data.device,
 				show_controls: false,
 				data: data

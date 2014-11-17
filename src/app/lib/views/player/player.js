@@ -108,23 +108,6 @@
 
 			Trakt = App.Providers.get('trakttv');
 
-			// CHECK IF DUPLICATE ??
-			$('#header').removeClass('header-shadow').hide();
-			// Test to make sure we have title
-			win.info('Watching:', this.model.get('title'));
-			$('.filter-bar').show();
-			$('#player_drag').show();
-			_this = this;
-			// Double Click to toggle Fullscreen
-			$('#video_player').dblclick(function (event) {
-				_this.toggleFullscreen();
-				// Stop any mouseup events pausing video
-				event.preventDefault();
-			});
-			// END
-
-
-			win.info('Watching:', this.model.get('title'));
 
 			this.prossessType();
 			this.setUI();
@@ -174,7 +157,6 @@
 
 			var player = this.video.player();
 			this.player = player;
-			App.PlayerView = this;
 
 			/* The following is a hack to make VideoJS listen to
                mouseup instead of mousedown for pause/play on the
@@ -199,8 +181,7 @@
 
 
 		setUI: function () {
-			this.ui.title.text(this.model.get('title'));
-
+			this.ui.title.text(this.model.attributes.metadata.title);
 			this.player = this.video.player();
 
 			this.player.usingNativeControls(false);
@@ -215,22 +196,6 @@
 			$('.filter-bar').show();
 			$('#player_drag').show();
 
-			_this = this;
-			// Double Click to toggle Fullscreen
-			$('#video_player').dblclick(function (event) {
-				_this.toggleFullscreen();
-				// Stop any mouseup events pausing video
-				event.preventDefault();
-			});
-
-			if (this.model.get('type') !== 'trailer') {
-				$('.eye-info-player').mouseenter(function () {
-					_this.refreshStreamStats();
-				});
-				this.refreshStreamStats();
-			}
-
-			App.PlayerView = this;
 			App.vent.trigger('player:ready', {});
 
 		},
@@ -280,6 +245,20 @@
 				}
 
 			});
+
+			// Double Click to toggle Fullscreen
+			$('#video_player').dblclick(function (event) {
+				_this.toggleFullscreen();
+				// Stop any mouseup events pausing video
+				event.preventDefault();
+			});
+
+			if (this.model.get('type') !== 'trailer') {
+				$('.eye-info-player').mouseenter(function () {
+					_this.refreshStreamStats();
+				});
+				this.refreshStreamStats();
+			}
 
 
 		},
