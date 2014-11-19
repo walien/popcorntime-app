@@ -4,7 +4,7 @@
 	var AnimeCollection = App.Model.Collection.extend({
 		model: App.Model.Movie,
 		popid: 'mal_id',
-		type: 'animes',
+		type: 'anime',
 		getProviders: function () {
 			return {
 				torrents: App.Config.getProvider('anime'),
