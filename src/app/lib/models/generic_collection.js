@@ -131,21 +131,7 @@
 								var info = _.findWhere(metadatas, query);
 								if (info) {
 									// If we have metadata, extend the item
-									_.extend(item, {
-										synopsis: info.overview,
-										genres: info.genres,
-										certification: info.certification,
-										runtime: info.runtime,
-										tagline: info.tagline,
-										title: info.title,
-										trailer: info.trailer,
-										year: info.year,
-										image: info.images.poster,
-										imageLowRes: info.images.lowres || info.images.poster,
-										backdrop: info.images.fanart
-									});
-
-
+									_.extend(item, info);
 								} else {
 									win.warn(self.type + ': Unable to find ' + id + ' on ' + metadata.name);
 								}
