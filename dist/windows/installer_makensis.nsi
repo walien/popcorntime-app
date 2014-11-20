@@ -277,7 +277,7 @@ Section ; App Files
         File /r "..\..\src\app\language"
         File /r "..\..\src\app\lib"
         File /r "..\..\src\app\templates"
-        File /r "..\..\src/app\themes"
+        File /r "..\..\src\app\themes"
         File /r /x ".*" /x "test*" /x "example*" "..\..\src\app\vendor"
         File "..\..\src\app\index.html"
         File "..\..\src\app\*.js"
@@ -314,6 +314,21 @@ Section ; App Files
 
     ;Create uninstaller
     WriteUninstaller "$INSTDIR\Uninstall.exe"
+	
+	;Shortcut for the key.
+	!define REG_U "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+
+	;Write uninstall strings.
+	WriteRegStr HKCU "${REG_U}" "DisplayName" "${APP_NAME} ${PT_VERSION}"
+	WriteRegStr HKCU "${REG_U}" "DisplayVersion" "${PT_VERSION}"
+	WriteRegStr HKCU "${REG_U}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+	WriteRegStr HKCU "${REG_U}" "Publisher" "popcorntime.io"
+	WriteRegStr HKCU "${REG_U}" "DisplayIcon" '"$INSTDIR\src\app\images\popcorntime.ico"'
+	
+	;Get Size of directory
+	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+	IntFmt $0 "0x%08X" $0
+	WriteRegDWORD HKCU "${REG_U}" "EstimatedSize" "$0"
 
 SectionEnd
 
@@ -342,7 +357,7 @@ Section "uninstall"
     RMDir /r "$INSTDIR"
     RMDir /r "$SMPROGRAMS\${APP_NAME}"
     Delete "$DESKTOP\${APP_NAME}.lnk"
-
+	DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
     MessageBox MB_YESNO|MB_ICONQUESTION "$(removeDataFolder)" IDNO NoUninstallData
     RMDir /r "$LOCALAPPDATA\${DATA_FOLDER}"
     NoUninstallData:
