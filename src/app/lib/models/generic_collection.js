@@ -55,8 +55,9 @@
 				metadataFetchPromises = _.map(providerIdPromises, function (provider) {
 					// Waits for the IDs from the torrent provider
 					return provider
-						// Then fetch metadata from the provider
-						.then(_.bind(metadata.movie.listSummary, metadata));
+					// Then fetch metadata from the provider
+
+						.then(_.bind(metadata[self.type].listSummary, metadata));
 				});
 			} else {
 				// Make sure anything depending on metadata
@@ -130,23 +131,9 @@
 								var info = _.findWhere(metadatas, query);
 								if (info) {
 									// If we have metadata, extend the item
-									_.extend(item, {
-										synopsis: info.overview,
-										genres: info.genres,
-										certification: info.certification,
-										runtime: info.runtime,
-										tagline: info.tagline,
-										title: info.title,
-										trailer: info.trailer,
-										year: info.year,
-										image: info.images.poster,
-										imageLowRes: info.images.lowres || info.images.poster,
-										backdrop: info.images.fanart
-									});
-
-
+									_.extend(item, info);
 								} else {
-									win.warn('Unable to find %s on Trakt.tv', id);
+									win.warn(self.type + ': Unable to find ' + id + ' on ' + metadata.name);
 								}
 
 							});

@@ -4,7 +4,7 @@
 	var ShowCollection = App.Model.Collection.extend({
 		model: App.Model.Movie,
 		popid: 'imdb_id',
-		type: 'shows',
+		type: 'show',
 		getProviders: function () {
 			return {
 				torrents: App.Config.getProvider('tvshow'),
