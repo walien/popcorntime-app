@@ -1,13 +1,6 @@
 (function (App) {
 	'use strict';
 
-	var _this;
-	var autoplayisshown = false;
-	var precachestarted = false;
-	var next_episode_model = false;
-	var Trakt;
-
-
 	var Player = Backbone.Marionette.ItemView.extend({
 		template: '#player-tpl',
 		className: 'player',
@@ -65,6 +58,9 @@
 		initialize: function () {
 			this.video = false;
 			this.inFullscreen = win.isFullscreen;
+
+			this.Trakt = App.Providers.get('trakttv');
+
 		},
 
 		closePlayer: function () {
@@ -84,9 +80,9 @@
 					App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 				} else {
 					if (type === 'episode') {
-						Trakt.show.cancelWatching();
+						this.Trakt.show.cancelWatching();
 					} else {
-						Trakt[type].cancelWatching();
+						this.Trakt[type].cancelWatching();
 					}
 
 				}
@@ -106,8 +102,6 @@
 
 		onShow: function () {
 
-			Trakt = App.Providers.get('trakttv');
-
 
 			this.prossessType();
 			this.setUI();
@@ -118,6 +112,7 @@
 		},
 
 		prossessType: function () {
+			var that = this;
 			if (this.model.get('type') === 'trailer') {
 
 				$('<div/>').appendTo('#main-window').addClass('trailer_mouse_catch'); // XXX Sammuel86 Trailer UI Show FIX/HACK
@@ -133,8 +128,8 @@
 				this.ui.eyeInfo.hide();
 
 				$('.trailer_mouse_catch').show().mousemove(function (event) { // XXX Sammuel86 Trailer UI Show FIX/HACK
-					if (!_this.player.userActive()) {
-						_this.player.userActive(true);
+					if (!that.player.userActive()) {
+						that.player.userActive(true);
 					}
 				});
 				$('.trailer_mouse_catch').click(function () { // XXX Sammuel86 Trailer UI Show FIX/HACK
@@ -166,12 +161,12 @@
 			this.player.tech.on('mouseup', function (event) {
 				if (event.target.origEvent) {
 					if (!event.target.origEvent.originalEvent.defaultPrevented) {
-						_this.player.tech.onClick(event);
+						that.player.tech.onClick(event);
 					}
 					// clean up after ourselves
 					delete event.target.origEvent;
 				} else {
-					_this.player.tech.onClick(event);
+					that.player.tech.onClick(event);
 				}
 			});
 			// Force custom controls
@@ -202,13 +197,13 @@
 
 
 		setPlayerEvents: function () {
-			var _this = this;
+			var that = this;
 			var type = this.model.get('type');
 			this.player.on('error', function (error) {
 				if (type === 'movie') {
-					Trakt.movie.cancelWatching();
+					that.Trakt.movie.cancelWatching();
 				} else {
-					Trakt.show.cancelWatching();
+					that.Trakt.show.cancelWatching();
 				}
 				// TODO: user errors
 				if (type === 'trailer') {
@@ -221,14 +216,14 @@
 
 
 			this.player.one('play', function () {
-				_this.player.one('durationchange', function () {
-					_this.sendToTrakt(_this);
+				that.player.one('durationchange', function () {
+					that.sendToTrakt(that);
 				});
-				_this._WatchingTimer = setInterval(_this.sendToTrakt(_this), 10 * 60 * 1000); // 10 minutes
+				that._WatchingTimer = setInterval(that.sendToTrakt(that), 10 * 60 * 1000); // 10 minutes
 
 
-				if (_this.model.get('auto_play')) {
-					_this._AutoPlayCheckTimer = setInterval(_this.checkAutoPlay(_this), 10 * 100 * 1); // every 1 sec
+				if (that.model.get('auto_play')) {
+					that._AutoPlayCheckTimer = setInterval(that.checkAutoPlay(that), 10 * 100 * 1); // every 1 sec
 				}
 
 			});
@@ -236,26 +231,26 @@
 			this.player.on('ended', function () {
 				// For now close player. In future we will check if auto-play etc and get next episode
 
-				if (_this.model.get('auto_play')) {
+				if (that.model.get('auto_play')) {
 
-					_this.playNextNow();
+					that.playNextNow();
 
 				} else {
-					_this.closePlayer();
+					that.closePlayer();
 				}
 
 			});
 
 			// Double Click to toggle Fullscreen
 			$('#video_player').dblclick(function (event) {
-				_this.toggleFullscreen();
+				that.toggleFullscreen();
 				// Stop any mouseup events pausing video
 				event.preventDefault();
 			});
 
 			if (this.model.get('type') !== 'trailer') {
 				$('.eye-info-player').mouseenter(function () {
-					_this.refreshStreamStats();
+					that.refreshStreamStats();
 				});
 				this.refreshStreamStats();
 			}
@@ -267,43 +262,42 @@
 			_this = _this || this;
 			if (_this.model.get('type') === 'movie') {
 				win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
-				Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+				_this.Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 			} else {
 				win.debug('Reporting we are watching ' + _this.model.get('tvdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '%');
-				Trakt.show.watching(_this.model.get('tvdb_id'), _this.model.get('season'), _this.model.get('episode'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+				_this.Trakt.show.watching(_this.model.get('tvdb_id'), _this.model.get('season'), _this.model.get('episode'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
 			}
 		},
 
 		checkAutoPlay: function (_this) {
-			_this = _this || this;
-			if (_this.model.get('type') !== 'movie' && next_episode_model) {
-				if ((_this.video.duration() - _this.video.currentTime()) < 60 && _this.video.currentTime() > 30) {
+			if (this.model.get('type') !== 'movie' && this.next_episode_model) {
+				if ((this.video.duration() - this.video.currentTime()) < 60 && this.video.currentTime() > 30) {
 
-					if (!autoplayisshown) {
+					if (!this.autoplayisshown) {
 
-						if (!precachestarted) {
-							App.vent.trigger('preload:start', next_episode_model);
-							precachestarted = true;
+						if (!this.precachestarted) {
+							App.vent.trigger('preload:start', this.next_episode_model);
+							this.precachestarted = true;
 						}
 
 						console.log('Showing Auto Play message');
-						autoplayisshown = true;
+						this.autoplayisshown = true;
 						$('.playing_next').show();
 						$('.playing_next').appendTo('div#video_player');
-						if (!_this.player.userActive()) {
-							_this.player.userActive(true);
+						if (!this.player.userActive()) {
+							this.player.userActive(true);
 						}
 					}
 
-					var count = Math.round(_this.video.duration() - _this.video.currentTime());
+					var count = Math.round(this.video.duration() - this.video.currentTime());
 					$('.playing_next span').text(count + ' ' + i18n.__('Seconds'));
 
 				} else {
-					if (autoplayisshown) {
+					if (this.autoplayisshown) {
 						console.log('Hiding Auto Play message');
 						$('.playing_next').hide();
 						$('.playing_next span').text('');
-						autoplayisshown = false;
+						this.autoplayisshown = false;
 					}
 				}
 			}
@@ -339,7 +333,7 @@
 			if (this.video.currentTime() / this.video.duration() >= 0.8) {
 				App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 			} else {
-				Trakt[type].cancelWatching();
+				this.Trakt[type].cancelWatching();
 			}
 
 			try {

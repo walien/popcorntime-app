@@ -282,9 +282,9 @@
 				trailerSrc: this.model.get('trailer'),
 				type: 'trailer',
 				videotype: 'video/youtube',
-				subtitle: null,
-				quality: false,
-				title: this.model.get('title')
+				metadata: {
+					title: this.model.get('title')
+				}
 			});
 			App.vent.trigger('stream:ready', trailer);
 		},
