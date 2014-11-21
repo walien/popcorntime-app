@@ -36,7 +36,7 @@ var health_checked = false;
 		templateHelpers: {
 
 			seasons: function (options) {
-				return _.uniq(_.pluck(this.episodes, 'season'));
+				return _.uniq(_.pluck(this.episodes, 'season')).sort();
 			},
 
 			ratings: function () {
@@ -153,7 +153,6 @@ var health_checked = false;
 				_.bind(this.onWatched, this));
 			App.vent.on('show:unwatched:' + this.model.id,
 				_.bind(this.onUnWatched, this));
-
 			var images = this.model.get('images');
 
 			// TODO: Till we'll add metadata for Tvshow
