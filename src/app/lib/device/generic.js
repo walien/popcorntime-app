@@ -66,7 +66,7 @@
 					var address = interfaces[k][k2];
 					if (address.family === 'IPv4' && !address.internal) {
 						if (streamModel.get('type') !== 'trailer') {
-							streamModel.attributes.src = App.Streamer.streamInfo.src.replace('127.0.0.1', address.address);
+							streamModel.attributes.src = App.Streamer.src.replace('127.0.0.1', address.address);
 						} else {
 							streamModel.attributes.src = streamModel.get('trailerSrc').replace('127.0.0.1', address.address);
 						}
