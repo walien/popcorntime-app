@@ -72,6 +72,9 @@
 				//self.stop();
 			});
 
+
+			this.getSubtitles(data.metadata, filename, data.type);
+
 			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), filename));
 			this.updateInfo();
 
@@ -145,7 +148,20 @@
 			this.streamInfo = streamInfo;
 		},
 
-		getSubtitles: function (data) {
+		getSubtitles: function (data, filename, type) {
+
+			var subskw = [];
+
+			for (var key in App.Localization.langcodes) {
+				if (App.Localization.langcodes[key].keywords !== undefined) {
+					subskw[key] = App.Localization.langcodes[key].keywords;
+				}
+			}
+
+			data.filename = filename;
+			data.keywords = subskw;
+			data.type = type;
+
 			win.debug('Subtitle data request:', data);
 			var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
 			subtitleProvider.fetch(data).then(function (subs) {

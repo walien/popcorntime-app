@@ -471,6 +471,8 @@ var health_checked = false;
 				metadata: {
 					title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
 					showName: title,
+					season: season,
+					episode: episode,
 					cover: that.model.get('images').poster,
 					tvdb_id: that.model.get('tvdb_id'),
 					imdb_id: that.model.get('imdb_id'),
