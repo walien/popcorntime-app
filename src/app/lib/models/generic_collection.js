@@ -55,9 +55,8 @@
 				metadataFetchPromises = _.map(providerIdPromises, function (provider) {
 					// Waits for the IDs from the torrent provider
 					return provider
-					// Then fetch metadata from the provider
-
-						.then(_.bind(metadata[self.type].listSummary, metadata));
+						// Then fetch metadata from the provider
+						.then(_.bind(metadata.movie.listSummary, metadata));
 				});
 			} else {
 				// Make sure anything depending on metadata
