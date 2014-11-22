@@ -73,7 +73,7 @@
 			});
 
 
-			this.getSubtitles(data.metadata, filename, data.type);
+			//this.getSubtitles(data.metadata, filename, data.type);
 
 			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), filename));
 			this.updateInfo();
