@@ -347,27 +347,26 @@
 
 			App.vent.trigger('preload:stop');
 			App.vent.trigger('player:close');
-			App.vent.trigger('stream:start', next_episode_model);
+			App.vent.trigger('stream:start', this.next_episode_model);
 
 		},
 		prossessNext: function () {
-			var episodes = _this.model.get('episodes');
+			var episodes = this.model.get('episodes');
 
-			if (_this.model.get('auto_id') !== episodes[episodes.length - 1]) {
+			if (this.model.get('auto_id') !== episodes[episodes.length - 1]) {
 
-				var auto_play_data = _this.model.get('auto_play_data');
-				var current_quality = _this.model.get('quality');
+				var auto_play_data = this.model.get('auto_play_data');
+				var current_quality = this.model.get('quality');
 				var idx;
 
 				_.find(auto_play_data, function (data, dataIdx) {
-					if (data.id === _this.model.get('auto_id')) {
+					if (data.id === this.model.get('auto_id')) {
 						idx = dataIdx;
 						return true;
 					}
 				});
 				var next_episode = auto_play_data[idx + 1];
 
-				next_episode.auto_play = true;
 				next_episode.auto_id = parseInt(next_episode.season) * 100 + parseInt(next_episode.episode);
 				next_episode.auto_play_data = auto_play_data;
 				next_episode.episodes = episodes;
@@ -379,7 +378,7 @@
 					next_episode.torrent = next_episode[next_episode.torrents.length - 1].url; //select highest quality available if user selected not found
 				}
 
-				next_episode_model = new Backbone.Model(next_episode);
+				this.next_episode_model = new Backbone.Model(next_episode);
 			}
 		},
 		bindKeyboardShortcuts: function () {
@@ -603,9 +602,9 @@
 				return;
 			}
 			if (event.wheelDelta > 0) { // Scroll up
-				_this.adjustVolume(0.1);
+				this.adjustVolume(0.1);
 			} else { // Scroll down
-				_this.adjustVolume(-0.1);
+				this.adjustVolume(-0.1);
 			}
 		},
 
