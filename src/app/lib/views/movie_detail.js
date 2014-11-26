@@ -170,7 +170,14 @@
 			};
 
 			// switch to default subtitle
-			this.switchSubtitle(App.Settings.get('subtitle_language'));
+			var subtitle_language = App.Settings.get('subtitle_language');
+			
+			for(var i=0; i<subtitle_language.length; ++i){
+				this.switchSubtitle(subtitle_language[i]);
+				if(this.subtitle_selected !== 'none'){
+					break;
+				}
+			}
 
 			if (this.model.get('bookmarked') === true) {
 				this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));

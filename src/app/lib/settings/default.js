@@ -26,7 +26,7 @@ config = {
 	lastTab: '',
 	moviesShowQuality: false,
 	movies_quality: 'all',
-	subtitle_language: 'none',
+	subtitle_language: [],
 	subtitle_size: '28px',
 	subtitle_color: '#ffffff',
 	subtitle_shadows: 'true',
