@@ -152,8 +152,6 @@ Handlebars.registerHelper('date', function (date) {
 });
 
 Handlebars.registerHelper('capitalize', function (data) {
-	console.log(data);
-
 	return data.charAt(0).toUpperCase() + data.slice(1);
 });
 

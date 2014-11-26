@@ -344,7 +344,6 @@
 			case 'subtitle_size':
 			case 'tv_detail_jump_to':
 			case 'subtitle_language':
-			case 'movies_quality':
 			case 'start_screen':
 				if ($('option:selected', field).val() === 'Last Open') {
 					App.Settings.set('lastTab', App.currentview);

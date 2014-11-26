@@ -25,7 +25,6 @@ config = {
 	startScreen: 'Movies',
 	lastTab: '',
 	moviesShowQuality: false,
-	movies_quality: 'all',
 	subtitle_language: 'none',
 	subtitle_size: '28px',
 	subtitle_color: '#ffffff',

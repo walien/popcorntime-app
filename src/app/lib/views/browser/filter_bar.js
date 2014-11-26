@@ -11,7 +11,8 @@
 			searchClear: '.search .clear',
 			sorterValue: '.sorters .value',
 			typeValue: '.types .value',
-			genreValue: '.genres  .value'
+			genreValue: '.genres .value',
+			qualityValue: '.qualities .value'
 		},
 		events: {
 			'hover  @ui.searchInput': 'focus',
@@ -21,6 +22,7 @@
 			'click  @ui.search': 'focusSearch',
 			'click .sorters .dropdown-menu a': 'sortBy',
 			'click .genres .dropdown-menu a': 'changeGenre',
+			'click .qualities .dropdown-menu a': 'changeQuality',
 			'click .types .dropdown-menu a': 'changeType',
 			'click #filterbar-settings': 'settings',
 			'click #filterbar-about': 'about',
@@ -66,6 +68,7 @@
 			}
 			$('.sorters .dropdown-menu a:nth(0)').addClass('active');
 			$('.genres .dropdown-menu a:nth(0)').addClass('active');
+			$('.qualities .dropdown-menu a:nth(0)').addClass('active');
 			$('.types .dropdown-menu a:nth(0)').addClass('active');
 		},
 		rightclick_search: function (e) {
@@ -162,7 +165,8 @@
 			var searchvalue = this.ui.searchInput.val();
 			this.model.set({
 				keywords: this.ui.searchInput.val(),
-				genre: ''
+				genre: '',
+				quality: 'all'
 			});
 
 			this.ui.searchInput.blur();
@@ -183,7 +187,8 @@
 			e.preventDefault();
 			this.model.set({
 				keywords: '',
-				genre: ''
+				genre: '',
+				quality: 'all'
 			});
 
 			this.ui.searchInput.val('');
@@ -239,6 +244,20 @@
 			this.model.set({
 				keyword: '',
 				genre: genre
+			});
+		},
+
+		changeQuality: function (e) {
+			App.vent.trigger('about:close');
+			this.$('.qualities .active').removeClass('active');
+			$(e.target).addClass('active');
+
+
+			var quality = $(e.target).attr('data-value');
+			this.ui.qualityValue.text(i18n.__(quality));
+
+			this.model.set({
+				quality: quality
 			});
 		},
 
