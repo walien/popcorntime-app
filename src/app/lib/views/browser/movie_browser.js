@@ -5,8 +5,7 @@
 		collectionModel: App.Model.MovieCollection,
 		filters: {
 			genres: App.Config.genres,
-			sorters: App.Config.sorters,
-			qualities: App.Config.qualities
+			sorters: App.Config.sorters
 		}
 	});
 

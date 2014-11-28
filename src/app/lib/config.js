@@ -127,13 +127,6 @@
 			'Thriller',
 			'Western'
 		],
-		
-		qualities: [
-			'All',
-			'720p',
-			'1080p',
-			'3D'
-		],
 
 		cache: {
 			name: 'cachedb',

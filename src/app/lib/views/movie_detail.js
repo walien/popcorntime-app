@@ -15,7 +15,8 @@
 			'click #watch-now': 'startStreaming',
 			'click #watch-trailer': 'playTrailer',
 			'click .close-icon': 'closeDetails',
-			'click .quality': 'setQuality',
+			'click #switch-hd-on': 'enableHD',
+			'click #switch-hd-off': 'disableHD',
 			'click .favourites-toggle': 'toggleFavourite',
 			'click .movie-imdb-link': 'openIMDb',
 			'click .sub-dropdown': 'toggleDropdown',
@@ -52,7 +53,23 @@
 
 			if_quality: function (needed, options) {
 				if (this.torrents) {
-					if (this.torrents[needed] !== undefined) {
+
+					var torrents = this.torrents;
+					var value;
+					var q720 = torrents['720p'] !== undefined;
+					var q1080 = torrents['1080p'] !== undefined;
+
+					if (q720 && q1080) {
+						value = '720p/1080p';
+					} else if (q1080) {
+						value = '1080p';
+					} else if (q720) {
+						value = '720p';
+					} else {
+						value = 'HDRip';
+					}
+
+					if (value === needed) {
 						return options.fn(this);
 					} else {
 						return options.inverse(this);
@@ -120,18 +137,15 @@
 				this.model.set('quality', '1080p');
 			} else if (torrents['720p'] !== undefined) {
 				this.model.set('quality', '720p');
-			} else if (torrents['3D'] !== undefined) {
-				this.model.set('quality', '3D');
 			} else if (torrents['480p'] !== undefined) {
 				this.model.set('quality', '480p');
 			} else if (torrents['HDRip'] !== undefined) {
 				this.model.set('quality', 'HDRip');
 			}
 
-			$('.quality[data-quality='+this.model.get('quality')+']').addClass('activeq');
 			this.renderHealth();
 
-			$('.star-container,.movie-imdb-link,.quality,input').tooltip({
+			$('.star-container,.movie-imdb-link,.q720,input').tooltip({
 				html: true
 			});
 
@@ -279,14 +293,24 @@
 			App.vent.trigger('movie:closeDetail');
 		},
 
-		setQuality: function (e) {
+		enableHD: function () {
 			var torrents = this.model.get('torrents');
-			var selectedQuality = $(e.currentTarget).attr('data-quality');
-			$('.activeq').removeClass('activeq');
-			$(e.currentTarget).addClass('activeq');
-			if (torrents[selectedQuality] !== undefined) {
+			win.info('HD Enabled');
+
+			if (torrents['1080p'] !== undefined) {
 				torrents = this.model.get('torrents');
-				this.model.set('quality', selectedQuality);
+				this.model.set('quality', '1080p');
+				win.debug(this.model.get('quality'));
+			}
+		},
+
+		disableHD: function () {
+			var torrents = this.model.get('torrents');
+			win.info('HD Disabled');
+
+			if (torrents['720p'] !== undefined) {
+				torrents = this.model.get('torrents');
+				this.model.set('quality', '720p');
 				win.debug(this.model.get('quality'));
 			}
 		},
@@ -375,15 +399,12 @@
 		},
 
 		toggleQuality: function (e) {
-			var activeQuality = $('.activeq');
-			var nextQuality = activeQuality.next('.quality');
-			if(nextQuality.length === 0){
-				nextQuality = $('.activeq').prevAll('.quality').last();
+			if ($('#switch-hd-off').is(':checked')) {
+				$('#switch-hd-on').trigger('click');
+			} else {
+				$('#switch-hd-off').trigger('click');
 			}
-			nextQuality.click();
-
-			// Found no references to this, check if ok to delete
-			// App.vent.emit('qualitychange');
+			App.vent.emit('qualitychange');
 
 			if (e.type) {
 				e.preventDefault();
