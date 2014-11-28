@@ -484,7 +484,9 @@ Localization.langcodes = {
 	},
 	'mk': {
 		name: 'Macedonian',
-		nativeName: 'македонски јазик'
+		nativeName: 'македонски јазик',
+		subtitle: true,
+		encoding: ['Windows-1251']
 	},
 	'ml': {
 		name: 'Malayalam',
