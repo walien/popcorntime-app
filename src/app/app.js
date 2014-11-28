@@ -139,7 +139,7 @@ Handlebars.registerHelper('if_settings', function (key, value, options) {
 	}
 });
 Handlebars.registerHelper('each_settings', function(key, options) {
-  var ret = "";
+  var ret = '';
 
   var items = Settings.get(key);
 
