@@ -42,6 +42,7 @@
 			}));
 		},
 		onFilterChange: function () {
+			console.log(this.filter);
 
 			this.collection = new this.collectionModel([], {
 				filter: this.filter
