@@ -21,9 +21,8 @@ Launcher.prototype.init = function () {
 			// maybe we should set user language? :D
 			i18n.setLocale(that.app.Settings.get('language'));
 		})
-		.then(function () {
-			// load packages (final phase)
-			return that.loadPackages();
+		.then(function() {
+			return that.app.PackagesManager.loadPackages();
 		});
 };
 
@@ -123,18 +122,6 @@ Launcher.prototype.loadWatchedEpisodes = function () {
 	});
 };
 
-Launcher.prototype.loadPackages = function () {
-	var that = this;
-	return Q.Promise(function (resolve, reject) {
-		that.app.PackagesManager.loadPackages(function (error, result) {
-			if (error) {
-				return reject(error);
-			} else {
-				return resolve();
-			}
-		});
-	});
-};
 
 module.exports = function (App) {
 	return new Launcher(App);

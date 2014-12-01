@@ -1,4 +1,5 @@
-var path = require('path'),
+var Q = require('q'),
+	path = require('path'),
 	_ = require('underscore'),
 	fs = require('fs-plus'),
 	Package = require('./package'),
@@ -32,46 +33,16 @@ function PackageManager(options) {
  * Paths
  */
 PackageManager.prototype.getAvailablePackagePaths = function () {
-	var packageDirPath,
-		packageVersion,
-		packageName,
-		packagePath,
-		packagePaths = [],
-		packagesPath;
+	var packagePaths = [];
 
-	var _ref = this.packageDirPaths;
-
-	for (var _i in _ref) {
-		packageDirPath = _ref[_i];
-
-		var _ref1 = fs.listSync(packageDirPath);
-
-		for (var _j in _ref1) {
-			packagePath = _ref1[_j];
-
+	// return our packages paths
+	_.each(this.packageDirPaths, function(packageDirPath) {
+		_.each(fs.listSync(packageDirPath), function(packagePath) {
 			if (fs.isDirectorySync(packagePath)) {
 				packagePaths.push(packagePath);
 			}
-
-		}
-	}
-
-	/*
-	 * Used if we want to extract package from node_modules
-
-	packagesPath = path.join(this.options.path, 'node_modules');
-	var _ref2 = this.getPackageDependencies();
-
-	for (packageName in _ref2) {
-	    packageVersion = _ref2[packageName];
-	    packagePath = path.join(packagesPath, packageName);
-
-	    if (fs.isDirectorySync(packagePath)) {
-	        packagePaths.push(packagePath);
-	    }
-
-	}
-	 */
+		})
+	});
 
 	return _.uniq(packagePaths);
 };
@@ -80,32 +51,29 @@ PackageManager.prototype.getAvailablePackagePaths = function () {
  * Load all packages
  */
 PackageManager.prototype.loadPackages = function (callback) {
-	var _len,
-		packagePath,
-		self = this;
+	var self = this;
 
-	packagePaths = this.getAvailablePackagePaths();
+	return Q.Promise(function (resolve, reject) {
+		packagePaths = self.getAvailablePackagePaths();
 
-	packagePaths = packagePaths.filter((function (_this) {
-		return function (packagePath) {
-			return !_this.isPackageDisabled(path.basename(packagePath));
-		};
-	})(this));
+		_.each(packagePaths, function (packagePath) {
+			try {
+				self.loadPackage(packagePath);
+			} catch (error) {
+				return console.log('Failed to load package ' + (path.basename(packagePath)), error);
+			}
+		});
 
-	packagePaths = _.uniq(packagePaths, function (packagePath) {
-		return path.basename(packagePath);
+		// once all packages are loaded we trigger the
+		// afterActivate event available
+		_.each(this.loadedPackages, function (myPackage) {
+			if (_.isFunction(myPackage.bundledPackage.afterActivate)) {
+				myPackage.bundledPackage.afterActivate();
+			}
+		});
+
+		return resolve();
 	});
-
-	_.each(packagePaths, function (packagePath) {
-		self.loadPackage(packagePath);
-	});
-
-	_.each(this.loadedPackages, function (myPackage) {
-		if (_.isFunction(myPackage.bundledPackage.afterActivate)) {
-			myPackage.bundledPackage.afterActivate();
-		}
-	});
-	return callback(false, true);
 };
 
 /*
@@ -113,9 +81,12 @@ PackageManager.prototype.loadPackages = function (callback) {
  */
 PackageManager.prototype.loadPackage = function (nameOrPath) {
 	var error, metadata, name, pack, packagePath, _ref, _ref1;
+
+	// already loaded?
 	if (pack = this.getLoadedPackage(nameOrPath)) {
 		return pack;
 	}
+
 	if (packagePath = this.resolvePackagePath(nameOrPath)) {
 		name = path.basename(nameOrPath);
 		if (pack = this.getLoadedPackage(name)) {
@@ -147,10 +118,6 @@ PackageManager.prototype.loadPackage = function (nameOrPath) {
 /*
  * Helper functions
  */
-
-PackageManager.prototype.isPackageDisabled = function (name) {
-	return false;
-};
 
 PackageManager.prototype.getLoadedPackages = function () {
 	return _.values(this.loadedPackages);
