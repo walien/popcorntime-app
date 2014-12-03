@@ -238,6 +238,11 @@ App.addRegions({
 	Window: '.main-window-region'
 });
 
+App.ActiveProvider = {
+	filters: false,
+	config: false
+}
+
 
 //Keeps a list of stacked views
 App.ViewStack = [];

@@ -53,11 +53,11 @@
 			this.nativeWindow = require('nw.gui').Window.get();
 
 			// Application events
-			App.vent.on('movies:list', _.bind(this.showMovies, this));
-			App.vent.on('shows:list', _.bind(this.showShows, this));
-			App.vent.on('anime:list', _.bind(this.showAnime, this));
 			App.vent.on('favorites:list', _.bind(this.showFavorites, this));
 			App.vent.on('watchlist:list', _.bind(this.showWatchlist, this));
+
+			// generic providers list
+			App.vent.on('provider:list', _.bind(this.showProvider, this));
 
 			// Add event to show disclaimer
 			App.vent.on('show:disclaimer', _.bind(this.showDisclaimer, this));
@@ -142,12 +142,8 @@
 						that.showWatchlist();
 					} else if (App.Settings.get('startScreen') === 'Favorites') {
 						that.showFavorites();
-					} else if (App.Settings.get('startScreen') === 'TV Series') {
-						that.showShows();
-					} else if (App.Settings.get('startScreen') === 'Anime') {
-						that.showAnime();
 					} else {
-						that.showMovies();
+						that.showProvider(App.Tabs.getFirst().provider);
 					}
 
 					// Focus the window when the app opens
@@ -172,25 +168,16 @@
 
 		},
 
-		showMovies: function (e) {
+		showProvider: function(provider) {
+
+			if (provider === undefined) {
+				provider = App.Tabs.getFirst().provider;
+			}
+
 			this.Settings.close();
 			this.MovieDetail.close();
-
-			this.Content.show(new App.View.MovieBrowser());
-		},
-
-		showShows: function (e) {
-			this.Settings.close();
-			this.MovieDetail.close();
-
-			this.Content.show(new App.View.ShowBrowser());
-		},
-
-		showAnime: function (e) {
-			this.Settings.close();
-			this.MovieDetail.close();
-
-			this.Content.show(new App.View.AnimeBrowser());
+			App.ActiveProvider = App.PackagesManager.getLoadedPackage(provider).bundledPackage;
+			this.Content.show(new App.View.ProviderBrowser());
 		},
 
 		showFavorites: function (e) {

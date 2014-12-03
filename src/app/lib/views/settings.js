@@ -397,6 +397,9 @@
 				break;
 			case 'activeProviders':
 				// enable the provider for the selected type
+				value = {};
+				value[field.attr('data-type')] = field.val();
+
 				App.Providers.enable(field.attr('data-type'), field.val());
 				break;
 			default:
@@ -412,7 +415,7 @@
 
 				break;
 			}
-			win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
+			win.info('Setting changed: ' + field.attr('name') + ' - ', value);
 
 
 			// update active session
@@ -529,7 +532,7 @@
 				break;
 			case 'language':
 			case 'watchedCovers':
-				App.vent.trigger('movies:list');
+				App.vent.trigger('provider:list');
 				App.vent.trigger('settings:show');
 				break;
 			case 'alwaysOnTop':

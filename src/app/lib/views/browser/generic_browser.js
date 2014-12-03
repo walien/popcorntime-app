@@ -17,8 +17,11 @@
 			ItemList: '.list-region'
 		},
 
-		initialize: function () {
-			this.filter = new App.Model.Filter(this.filters);
+		initialize: function () {},
+
+		onShow: function () {
+
+			this.filter = new App.Model.Filter(App.ActiveProvider.filters);
 
 			this.collection = new this.collectionModel([], {
 				filter: this.filter
@@ -28,9 +31,6 @@
 
 			this.listenTo(this.filter, 'change', this.onFilterChange);
 
-		},
-
-		onShow: function () {
 			this.bar = new App.View.FilterBar({
 				model: this.filter
 			});

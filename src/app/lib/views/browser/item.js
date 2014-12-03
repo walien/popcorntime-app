@@ -336,7 +336,7 @@
 							$(this).remove();
 							$('.items').append($('<li/>').addClass('item ghost'));
 							if ($('.items li').length === 0) {
-								App.vent.trigger('movies:list', []);
+								App.vent.trigger('provider:list');
 							}
 						});
 					});

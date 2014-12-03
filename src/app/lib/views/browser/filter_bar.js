@@ -24,12 +24,28 @@
 			'click .types .dropdown-menu a': 'changeType',
 			'click #filterbar-settings': 'settings',
 			'click #filterbar-about': 'about',
-			'click .showMovies': 'showMovies',
-			'click .showShows': 'showShows',
-			'click .showAnime': 'showAnime',
 			'click #filterbar-favorites': 'showFavorites',
 			'click #filterbar-watchlist': 'showWatchlist',
-			'click .triggerUpdate': 'updateDB'
+			'click .triggerUpdate': 'updateDB',
+			'click .providers': 'changeProviderView'
+		},
+
+		templateHelpers: {
+			tabs: function() {
+				return App.Settings.get('tabs');
+			}
+		},
+
+		changeProviderView: function(e) {
+			e.preventDefault();
+			$('.filter-bar').find('.active').removeClass('active');
+			var provider = $(e.currentTarget).attr('data-provider');
+
+			App.currentview = 'provider:'+provider;
+			App.vent.trigger('about:close');
+			App.vent.trigger('provider:list', provider);
+			$(e.currentTarget).addClass('active')
+
 		},
 
 		focus: function (e) {
@@ -43,18 +59,6 @@
 
 			$('.filter-bar').find('.active').removeClass('active');
 			switch (set) {
-			case 'TV Series':
-			case 'shows':
-				$('.source.showShows').addClass('active');
-				break;
-			case 'Movies':
-			case 'movies':
-				$('.source.showMovies').addClass('active');
-				break;
-			case 'Anime':
-			case 'anime':
-				$('.source.showAnime').addClass('active');
-				break;
 			case 'Favorites':
 			case 'favorites':
 				$('#filterbar-favorites').addClass('active');
@@ -250,31 +254,6 @@
 
 		about: function (e) {
 			App.vent.trigger('about:show');
-		},
-
-		showShows: function (e) {
-			e.preventDefault();
-			App.currentview = 'shows';
-			App.vent.trigger('about:close');
-			App.vent.trigger('shows:list', []);
-			this.setactive('TV Series');
-		},
-
-		showAnime: function (e) {
-			e.preventDefault();
-			App.currentview = 'anime';
-			App.vent.trigger('about:close');
-			App.vent.trigger('anime:list', []);
-			this.setactive('Anime');
-		},
-
-		showMovies: function (e) {
-			e.preventDefault();
-
-			App.currentview = 'movies';
-			App.vent.trigger('about:close');
-			App.vent.trigger('movies:list', []);
-			this.setactive('Movies');
 		},
 
 		showFavorites: function (e) {

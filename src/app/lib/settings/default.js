@@ -216,7 +216,8 @@ config = {
 	},
 
 	// dynamics
-	availableProviders: {}
+	availableProviders: {},
+	tabs: []
 
 };
 

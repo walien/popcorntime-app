@@ -127,6 +127,9 @@
 	App.Providers.get = getProvider;
 	App.Providers.getByType = getProviderByType;
 
+	App.Providers.enable = enable;
+	App.Providers.disable = disable;
+
 	// register a new provider
 	App.Providers.set = setProvider;
 

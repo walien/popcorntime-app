@@ -52,6 +52,10 @@ function generateProxyFunctions(name, permissions) {
 				_.pick(window.App.Providers, 'get', 'set')
 			),
 
+			tabs: passThruAppContextToApi('tabs',
+				_.pick(window.App.Tabs, 'set')
+			),
+
 			database: window.App.Database,
 
 			localization: passThruAppContextToApi('localization',
