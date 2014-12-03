@@ -115,7 +115,7 @@
 		onShow: function () {
 			this.Header.show(new App.View.TitleBar());
 			// Set the app title (for Windows mostly)
-			this.nativeWindow.title = App.Config.title;
+			this.nativeWindow.title = App.Settings.get('title');
 
 			// Show loading modal on startup
 			var that = this;

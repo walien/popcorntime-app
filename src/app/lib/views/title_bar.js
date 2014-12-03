@@ -26,13 +26,13 @@ var os = require('os');
 
 		templateHelpers: {
 			fsTooltipPos: function () {
-				return App.Config.platform === 'darwin' ? 'left' : 'right';
+				return App.Settings.get('platform') === 'darwin' ? 'left' : 'right';
 			},
 			buttons: function () {
-				return ButtonOrder[App.Config.platform];
+				return ButtonOrder[App.Settings.get('platform')];
 			},
 			platform: function () {
-				return App.Config.platform;
+				return App.Settings.get('platform');
 			}
 		},
 

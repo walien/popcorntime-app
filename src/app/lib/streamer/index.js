@@ -163,7 +163,7 @@
 			data.type = type;
 
 			win.debug('Subtitle data request:', data);
-			var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+			var subtitleProvider = App.Providers.getByType('tvshowsubtitle');
 			subtitleProvider.fetch(data).then(function (subs) {
 				if (_.size(subs) > 0) {
 					App.vent.trigger('subtitles:ready', {

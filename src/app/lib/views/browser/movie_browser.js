@@ -4,8 +4,8 @@
 	var MovieBrowser = App.View.PCTBrowser.extend({
 		collectionModel: App.Model.MovieCollection,
 		filters: {
-			genres: App.Config.genres,
-			sorters: App.Config.sorters
+			genres: App.Settings.get('genres'),
+			sorters: App.Settings.get('sorters')
 		}
 	});
 

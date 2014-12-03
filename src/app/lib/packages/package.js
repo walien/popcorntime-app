@@ -36,7 +36,7 @@ function Package(path, metadata) {
 
 	SandboxApp = new Sandbox();
 
-	//console.log('Loading package: ' + this.name);
+	console.log('Loading package: ' + this.name);
 }
 
 Package.prototype.keymaps = null;
@@ -232,17 +232,21 @@ Package.prototype.activateResources = function () {
  * the sandbox
  */
 Package.prototype.requireMainModule = function () {
-
-	var mainModulePath;
-	if (this.mainModule != null) {
-		return this.mainModule;
-	}
-	if (!this.isCompatible()) {
-		return;
-	}
-	mainModulePath = this.getMainModulePath();
-	if (fs.isFileSync(mainModulePath)) {
-		return this.mainModule = SandboxApp.loadApp(this.mainModulePath);
+	try {
+		var mainModulePath;
+		if (this.mainModule != null) {
+			return this.mainModule;
+		}
+		if (!this.isCompatible()) {
+			return;
+		}
+		mainModulePath = this.getMainModulePath();
+		if (fs.isFileSync(mainModulePath)) {
+			return this.mainModule = SandboxApp.loadApp(this.mainModulePath);
+		}
+	} catch(e) {
+		console.log(e);
+		return false;
 	}
 };
 

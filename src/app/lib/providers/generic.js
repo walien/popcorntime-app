@@ -66,7 +66,24 @@
 		App.Providers[name] = fn;
 	}
 
+	function getProviderByType(type) {
+
+		var providers = App.Settings.get('providers');
+		var provider = providers[type];
+
+		if (typeof(provider) === 'object') {
+			return _.map(provider, function (t) {
+				return App.Providers.get(t);
+			});
+		}
+		return App.Providers.get(provider);
+	}
+
+	// helper to get our providers
 	App.Providers.get = getProvider;
+	App.Providers.getByType = getProviderByType;
+
+	// register a new provider
 	App.Providers.set = setProvider;
 
 	App.Providers.Generic = Provider;

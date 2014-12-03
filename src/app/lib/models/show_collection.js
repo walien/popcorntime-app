@@ -7,8 +7,8 @@
 		type: 'shows',
 		getProviders: function () {
 			return {
-				torrents: App.Config.getProvider('tvshow'),
-				//         subtitle: App.Config.getProvider('subtitle'),
+				torrents: App.Providers.getByType('tvshow'),
+				//         subtitle: App.Providers.getByType('subtitle'),
 				//         metadata: App.Trakt
 			};
 		},

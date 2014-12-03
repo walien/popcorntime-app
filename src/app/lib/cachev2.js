@@ -33,8 +33,7 @@
 		var self = this;
 
 		this.table = table;
-
-		var db = indexedDB.open(App.Config.cachev2.name, App.Config.cachev2.version);
+		var db = indexedDB.open(App.Settings.get('cachev2').name, App.Settings.get('cachev2').version);
 		db.onsuccess = function () {
 			self.db = this.result;
 		};
@@ -48,7 +47,7 @@
 
 		db.onupgradeneeded = function () {
 			var self = this;
-			App.Config.cachev2.tables.forEach(function (tableName) {
+			App.Settings.get('cachev2').tables.forEach(function (tableName) {
 				if (_.contains(self.result.objectStoreNames, tableName)) {
 					return;
 				}
@@ -145,7 +144,7 @@
 		var that = this;
 
 		return Q.Promise(function (resolve, reject) {
-			indexedDB.deleteDatabase(App.Config.cachev2.name);
+			indexedDB.deleteDatabase(App.Settings.get('cachev2').name);
 			resolve();
 		});
 	};

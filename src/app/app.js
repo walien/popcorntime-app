@@ -518,7 +518,7 @@ window.ondragenter = function (e) {
 };
 
 var handleTorrent = function (torrent) {
-	App.Config.getProvider('torrentCache').resolve(torrent);
+	App.Providers.getByType('torrentCache').resolve(torrent);
 };
 
 // var startTorrentStream = function(torrentFile) {

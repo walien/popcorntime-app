@@ -6,7 +6,6 @@
 	var PopCollection = Backbone.Collection.extend({
 		popid: 'imdb_id',
 		initialize: function (models, options) {
-			this.providers = this.getProviders();
 
 			options = options || {};
 			options.filter = options.filter || new App.Model.Filter();
@@ -20,7 +19,11 @@
 		},
 
 		fetch: function () {
+
+			this.providers = this.getProviders();
+
 			var self = this;
+
 
 			if (this.state === 'loading' && !this.hasMore) {
 				return;
@@ -33,9 +36,9 @@
 			var metadata = this.providers.metadata;
 			var torrents = this.providers.torrents;
 
-
 			// Aggregate all torrents from providers
 			var providerPromises = _.map(torrents, function (provider) {
+
 				// Fetch torrents
 				return provider
 					.fetch(self.filter);

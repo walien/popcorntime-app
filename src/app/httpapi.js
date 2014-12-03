@@ -309,17 +309,17 @@
 			switch (App.currentview) {
 			case 'shows':
 				popcornCallback(callback, false, {
-					'genres': App.Config.genres_tv
+					'genres': App.Settings.get('genres_tv')
 				});
 				break;
 			case 'anime':
 				popcornCallback(callback, false, {
-					'genres': App.Config.genres_anime
+					'genres': App.Settings.get('genres_anime')
 				});
 				break;
 			case 'movies':
 				popcornCallback(callback, false, {
-					'genres': App.Config.genres
+					'genres': App.Settings.get('genres')
 				});
 				break;
 			default:
@@ -335,12 +335,12 @@
 			case 'shows':
 			case 'anime':
 				popcornCallback(callback, false, {
-					'sorters': App.Config.sorters_tv
+					'sorters': App.Settings.get('sorters_tv')
 				});
 				break;
 			case 'movies':
 				popcornCallback(callback, false, {
-					'sorters': App.Config.sorters
+					'sorters': App.Settings.get('sorters')
 				});
 				break;
 			default:
@@ -355,7 +355,7 @@
 			switch (App.currentview) {
 			case 'anime':
 				popcornCallback(callback, false, {
-					'types': App.Config.types_anime
+					'types': App.Settings.get('types_anime')
 				});
 				break;
 			default:
