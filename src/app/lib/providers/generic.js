@@ -62,8 +62,21 @@
 		return cache[name];
 	}
 
-	function setProvider(name, fn) {
+	function setProvider(name, type, fn) {
+		// we get our available providers
+		var availableProviders = App.Settings.get('availableProviders');
+
+		if (availableProviders[type]) {
+			availableProviders[type].push(name);
+		} else {
+			availableProviders[type] = [];
+			availableProviders[type].push(name);
+		}
+
+		App.Settings.set('availableProviders', availableProviders);
 		App.Providers[name] = fn;
+
+		return;
 	}
 
 	function getProviderByType(type) {
@@ -77,6 +90,37 @@
 			});
 		}
 		return App.Providers.get(provider);
+	}
+
+	function enable(type, provider) {
+		var providers = App.Settings.get('providers');
+
+		if (typeof(providers[type]) === 'object') {
+			// actually we'll overwrite till we have a better
+			// way to manage it
+			providers[type] = [provider];
+		} else {
+			providers[type] = provider;
+		}
+
+		App.Settings.set('providers', providers);
+
+		return;
+	}
+
+	function disable(type, provider) {
+		var providers = App.Settings.get('providers');
+
+		if (typeof(providers[type]) === 'object' && providers[type].length > 0) {
+			// ok looks like we can disable it
+			providers[type] = _.without(providers[type], provider);
+		} else {
+			// we cant disable the last provider...
+			return false;
+		}
+
+		App.Settings.set('providers', providers);
+		return true;
 	}
 
 	// helper to get our providers

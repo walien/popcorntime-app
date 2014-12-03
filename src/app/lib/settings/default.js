@@ -215,6 +215,9 @@ config = {
 		torrentCache: 'TorrentCache'
 	},
 
+	// dynamics
+	availableProviders: {}
+
 };
 
 // Export config
