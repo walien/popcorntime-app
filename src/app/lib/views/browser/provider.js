@@ -3,8 +3,6 @@
 
     App.View.ProviderBrowser = App.View.PCTBrowser.extend({
         collectionModel: App.Model.Collection.extend({
-            popid: 'imdb_id',
-            type: 'movies',
             getProviders: function () {
                 var subtitles = false,
                     metadata = false;

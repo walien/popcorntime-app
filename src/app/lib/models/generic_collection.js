@@ -20,6 +20,8 @@
 
 		fetch: function () {
 
+			this.popid = App.ActiveProvider.config.uniqueId;
+
 			this.providers = this.getProviders();
 			var self = this;
 			if (this.state === 'loading' && !this.hasMore) {
