@@ -37,8 +37,6 @@
 
 			// Aggregate all torrents from providers
 			var providerPromises = _.map(torrents, function (provider) {
-
-				// Fetch torrents
 				return provider
 					.fetch(self.filter);
 			});
@@ -48,7 +46,10 @@
 				// Wait for the torrent provider
 				return provider
 					// Then extract the torrent/item IDs
-					.then(_.bind(torrents[pid].extractIds, torrents[pid]));
+					.then(_.bind(torrents[pid].extractIds, torrents[pid]))
+					.catch(function (e) {
+					    console.log(e);
+					});
 			});
 
 			// If has a metadata provider, fetch it
@@ -58,7 +59,10 @@
 					// Waits for the IDs from the torrent provider
 					return provider
 						// Then fetch metadata from the provider
-						.then(_.bind(metadata.movie.listSummary, metadata));
+						.then(_.bind(metadata.movie.listSummary, metadata))
+						.catch(function (e) {
+							console.log(e);
+						});
 				});
 			} else {
 				// Make sure anything depending on metadata
@@ -73,7 +77,10 @@
 					// Waits for the IDs from the torrent provider
 					return provider
 						// Then fetch subtitles from the provider
-						.then(_.bind(subtitle.fetch, subtitle));
+						.then(_.bind(subtitle.fetch, subtitle))
+						.catch(function (e) {
+							console.log(e);
+						});
 				});
 			} else {
 				// Make sure anything depending on subtitles
