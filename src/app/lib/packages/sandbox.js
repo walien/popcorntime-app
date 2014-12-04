@@ -64,17 +64,23 @@ AppSandbox.prototype.loadModule = function loadModuleSandboxed(modulePath) {
 			newOpts.parent = currentModule.parent;
 
 			innerBox = new AppSandbox(newOpts);
-
-			return innerBox.loadModule(module);
+			try {
+				return innerBox.loadModule(module);
+			} catch(e) {
+				throw e;
+			}
 		}
 
 		// original require method for listed named modules
 		return nodeRequire.call(currentModule, module);
 	};
 
-	currentModule.load(currentModule.id);
-
-	return currentModule.exports;
+	try {
+		currentModule.load(currentModule.id);
+		return currentModule.exports;
+	} catch(e) {
+		throw e;
+	}
 };
 
 AppSandbox.defaults = {

@@ -21,7 +21,13 @@ function Package(path, metadata) {
 	this.bundledPackage = false;
 
 	if (this.metadata == null) {
-		this.metadata = Package.loadMetadata(this.path);
+
+		try {
+			this.metadata = Package.loadMetadata(this.path);
+		} catch(e) {
+			console.log(e);
+		}
+
 	}
 
 	this.name = (_ref1 = (_ref2 = this.metadata) != null ? _ref2.name : void 0) != null ? _ref1 : path.basename(this.path);
@@ -35,7 +41,6 @@ function Package(path, metadata) {
 	});
 
 	SandboxApp = new Sandbox();
-
 	console.log('Loading package: ' + this.name);
 }
 
@@ -56,12 +61,8 @@ Package.loadMetadata = function (packagePath, ignoreErrors) {
 
 		try {
 			metadata = CSON.readFileSync(metadataPath);
-		} catch (_error) {
-
-			error = _error;
-			if (!ignoreErrors) {
-				throw error;
-			}
+		} catch (e) {
+			throw e;
 		}
 	}
 
@@ -101,10 +102,9 @@ Package.prototype.load = function () {
 					return _this.requireMainModule();
 				}
 
-			} catch (_error) {
-				error = _error;
-				//return console.log('Failed to load package named ' + _this.name, (_ref1 = error.stack) != null ? _ref1 : error);
-				return 'Failed to load package named ' + _this.name, (_ref1 = error.stack) != null ? _ref1 : error;
+			} catch (e) {
+				console.log('Failed to activate package named ' + this.name, e.stack);
+				return false;
 			}
 		};
 	})(this));
@@ -167,9 +167,9 @@ Package.prototype.activateNow = function () {
 
 			}
 		}
-	} catch (_error) {
-		e = _error;
-		//console.log('Failed to activate package named ' + this.name, e.stack);
+	} catch (e) {
+		console.log('Failed to activate package named ' + this.name, e.stack);
+		this.activationDeferred.reject();
 	}
 
 	return this.activationDeferred.resolve();

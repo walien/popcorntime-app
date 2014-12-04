@@ -1,40 +1,16 @@
-var
-// Minimum percentage to open video
-	MIN_PERCENTAGE_LOADED = 0.5,
-
-	// Minimum bytes loaded to open video
+var MIN_PERCENTAGE_LOADED = 0.5,
 	MIN_SIZE_LOADED = 10 * 1024 * 1024,
-
-	// Load native UI library
 	gui = require('nw.gui'),
-
-	// browser window object
 	win = gui.Window.get(),
-
-	// os object
 	os = require('os'),
-
-	// path object
 	path = require('path'),
-
-	// fs object
 	fs = require('fs'),
-
-	// url object
 	url = require('url'),
-
-	// i18n module (translations)
 	i18n = require('i18n'),
-
-	// Mime type parsing
 	mime = require('mime'),
-
 	moment = require('moment'),
-
 	Q = require('q'),
-
 	Handlebars = require('handlebars'),
-
 	Database = require('./lib/database')(gui.App.dataPath),
 	Settings = require('./lib/settings')(Database),
 	Updater = require('./lib/updater')(Settings, $),
@@ -64,7 +40,6 @@ win.error = function () {
 	params.unshift('%c[%cERROR%c] ' + arguments[0], 'color: black;', 'color: red;', 'color: black;');
 	console.error.apply(console, params);
 };
-
 
 if (gui.App.fullArgv.indexOf('--reset') !== -1) {
 
@@ -98,9 +73,7 @@ if (gui.App.fullArgv.indexOf('--reset') !== -1) {
 			throw err;
 		}
 	});
-
 }
-
 
 // Global App skeleton for backbone
 var App = new Backbone.Marionette.Application();
@@ -152,8 +125,6 @@ Handlebars.registerHelper('date', function (date) {
 });
 
 Handlebars.registerHelper('capitalize', function (data) {
-	console.log(data);
-
 	return data.charAt(0).toUpperCase() + data.slice(1);
 });
 

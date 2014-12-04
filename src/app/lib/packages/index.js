@@ -68,7 +68,11 @@ PackageManager.prototype.loadPackages = function (callback) {
 		// afterActivate event available
 		_.each(this.loadedPackages, function (myPackage) {
 			if (_.isFunction(myPackage.bundledPackage.afterActivate)) {
-				myPackage.bundledPackage.afterActivate();
+				try {
+					myPackage.bundledPackage.afterActivate();
+				} catch(e) {
+					throw new Error(e);
+				}
 			}
 		});
 
