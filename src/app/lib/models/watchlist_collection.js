@@ -9,7 +9,7 @@
 
 		getProviders: function () {
 			return {
-				torrents: [App.Providers.get('Watchlist')]
+				torrents: [App.Providers.get('watchlist')]
 			};
 		}
 
