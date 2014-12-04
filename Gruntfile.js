@@ -214,6 +214,11 @@ module.exports = function (grunt) {
 					'git submodule update --init'
 				].join('&&')
 			},
+			submoduleUpdate: {
+				command: [
+					'git submodule foreach git pull origin master'
+				].join('&&')
+			},
 			setexecutable: {
 				command: [
 					'pct_rel="build/releases/Popcorn-Time"',
