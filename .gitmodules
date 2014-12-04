@@ -7,3 +7,36 @@
 [submodule "src/content/packages/airplay"]
 	path = src/content/packages/airplay
 	url = https://git.popcorntime.io/stash/scm/pkg/airplay.git
+[submodule "src/content/packages/airplay-xbmc"]
+	path = src/content/packages/airplay-xbmc
+	url = https://git.popcorntime.io/stash/scm/pkg/airplay-xbmc.git
+[submodule "src/content/packages/chromecast"]
+	path = src/content/packages/chromecast
+	url = https://git.popcorntime.io/stash/scm/pkg/chromecast.git
+[submodule "src/content/packages/eztv"]
+	path = src/content/packages/eztv
+	url = https://git.popcorntime.io/stash/scm/pkg/eztv.git
+[submodule "src/content/packages/haruhichan"]
+	path = src/content/packages/haruhichan
+	url = https://git.popcorntime.io/stash/scm/pkg/haruhichan.git
+[submodule "src/content/packages/opensubtitles"]
+	path = src/content/packages/opensubtitles
+	url = https://git.popcorntime.io/stash/scm/pkg/opensubtitles.git
+[submodule "src/content/packages/remote"]
+	path = src/content/packages/remote
+	url = https://git.popcorntime.io/stash/scm/pkg/remote.git
+[submodule "src/content/packages/trakttv"]
+	path = src/content/packages/trakttv
+	url = https://git.popcorntime.io/stash/scm/pkg/trakttv.git
+[submodule "src/content/packages/trakttv-watchlist"]
+	path = src/content/packages/trakttv-watchlist
+	url = https://git.popcorntime.io/stash/scm/pkg/trakttv-watchlist.git
+[submodule "src/content/packages/watchlist"]
+	path = src/content/packages/watchlist
+	url = https://git.popcorntime.io/stash/scm/pkg/watchlist.git
+[submodule "src/content/packages/ysubs"]
+	path = src/content/packages/ysubs
+	url = https://git.popcorntime.io/stash/scm/pkg/ysubs.git
+[submodule "src/content/packages/yts"]
+	path = src/content/packages/yts
+	url = https://git.popcorntime.io/stash/scm/pkg/yts.git
