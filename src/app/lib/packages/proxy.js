@@ -66,6 +66,11 @@ function generateProxyFunctions(name, permissions) {
 				_.pick(window.Mousetrap, 'trigger')
 			),
 
+			devices: {
+				generic: window.App.Device.Generic,
+				collection: window.App.Device.Collection
+			},
+
 			player: API.player,
 			currentStack: API.currentStack,
 			currentTab: API.currentTab,
