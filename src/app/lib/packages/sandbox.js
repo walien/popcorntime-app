@@ -55,7 +55,6 @@ AppSandbox.prototype.loadModule = function loadModuleSandboxed(modulePath) {
 				throw new Error('Unsafe App require: ' + relPath);
 			}
 
-
 			// Assign as new module path
 			module = resolvedPath;
 

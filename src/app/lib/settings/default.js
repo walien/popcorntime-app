@@ -78,16 +78,6 @@ config = {
 
 	// providers mapping
 	providers: {
-
-		movie: ['yts'],
-		tvshow: ['eztv'],
-		anime: ['haruhichan'],
-
-		metadata: 'trakttv',
-
-		subtitle: 'ysubs',
-		tvshowsubtitle: 'opensubtitles',
-
 		torrentCache: 'TorrentCache'
 	},
 

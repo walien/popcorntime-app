@@ -93,10 +93,6 @@
 
 			themes: function () {
 				return App.ThemesManager.getAllThemes();
-			},
-
-			availableProviders: function () {
-				return App.Settings.get('availableProviders');
 			}
 		},
 
@@ -394,13 +390,6 @@
 				} else {
 					return;
 				}
-				break;
-			case 'activeProviders':
-				// enable the provider for the selected type
-				value = {};
-				value[field.attr('data-type')] = field.val();
-
-				App.Providers.enable(field.attr('data-type'), field.val());
 				break;
 			default:
 				if (field.is(':checkbox')) {
