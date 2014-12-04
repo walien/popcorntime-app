@@ -212,7 +212,7 @@ App.addRegions({
 App.ActiveProvider = {
 	filters: false,
 	config: false
-}
+};
 
 
 //Keeps a list of stacked views

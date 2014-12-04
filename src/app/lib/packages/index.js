@@ -41,7 +41,7 @@ PackageManager.prototype.getAvailablePackagePaths = function () {
 			if (fs.isDirectorySync(packagePath)) {
 				packagePaths.push(packagePath);
 			}
-		})
+		});
 	});
 
 	return _.uniq(packagePaths);
