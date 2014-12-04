@@ -101,11 +101,13 @@
 			App.vent.on('player:close', _.bind(this.showViews, this));
 			App.vent.on('player:close', _.bind(this.Player.close, this.Player));
 
+			// Subtitles for tvShows
+			App.vent.on('subtitles:ready', _.bind(this.showSubtitles, this));
+
 			App.vent.on('updatePostersSizeStylesheet', _.bind(this.updatePostersSizeStylesheet, this));
 		},
 
 		showSubtitles: function (model) {
-			console.log('Show subs', model);
 			var s = new App.View.Subtitles({
 				model: model
 			});

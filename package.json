@@ -11,7 +11,7 @@
 	"version": "0.4.0",
 	"releaseName": "",
 	"scripts": {
-		"postinstall": "node_modules/.bin/bower install && grunt",
+		"postinstall": "node_modules/.bin/bower install && grunt build",
 		"postupdate": "node_modules/.bin/bower update && grunt",
 		"test": "grunt --verbose"
 	},

@@ -72,8 +72,9 @@
 				//self.stop();
 			});
 
-
-			//this.getSubtitles(data.metadata, filename, data.type);
+			if (data.type !== 'movie') {
+				this.getSubtitles(data.metadata, filename, data.type);
+			}
 
 			win.debug('Streaming to %s', path.join(App.Settings.get('tmpLocation'), filename));
 			this.updateInfo();
@@ -163,7 +164,7 @@
 			data.type = type;
 
 			win.debug('Subtitle data request:', data);
-			var subtitleProvider = App.Providers.getByType('tvshowsubtitle');
+			var subtitleProvider = App.Providers.get(App.ActiveProvider.config.subtitle);
 			subtitleProvider.fetch(data).then(function (subs) {
 				if (_.size(subs) > 0) {
 					App.vent.trigger('subtitles:ready', {

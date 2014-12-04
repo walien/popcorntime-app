@@ -72,7 +72,7 @@
 
 			// If has a subtitle provider, fetch it
 			var subtitlesFetchPromises;
-			if (subtitle) {
+			if (subtitle && App.ActiveProvider.config.type !== 'tvshow') {
 				subtitlesFetchPromises = _.map(providerIdPromises, function (provider) {
 					// Waits for the IDs from the torrent provider
 					return provider
