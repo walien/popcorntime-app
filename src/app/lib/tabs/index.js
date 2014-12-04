@@ -6,7 +6,7 @@
         tabs.push({
             ui: uiName,
             provider: providerName
-        })
+        });
         App.Settings.set('tabs', tabs);
     }
 
