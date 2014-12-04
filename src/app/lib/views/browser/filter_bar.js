@@ -44,7 +44,7 @@
 			App.currentview = 'provider:'+provider;
 			App.vent.trigger('about:close');
 			App.vent.trigger('provider:list', provider);
-			$(e.currentTarget).addClass('active')
+			$(e.currentTarget).addClass('active');
 
 		},
 
