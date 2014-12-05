@@ -1,0 +1,11 @@
+{
+    "name": "popcorn-bundled-ppm",
+    "description": "Popcorn Time bundled ppm",
+    "repository": {
+        "type": "git",
+        "url": "https://git.popcorntime.io/stash/scm/pt/ppm.git"
+    },
+    "dependencies": {
+        "popcorn-package-manager": "git+https://git.popcorntime.io/stash/scm/pt/ppm.git"
+    }
+}

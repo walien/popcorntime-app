@@ -52,7 +52,6 @@
     "pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git",
     "peerflix": "^0.21.0",
     "popcorn-opensubtitles": "git+https://git.popcorntime.io/stash/scm/thrd/popcorn-opensubtitles.git",
-    "popcorn-package-manager": "0.0.2",
     "popcorn-streamer-server": "git+https://git.popcorntime.io/stash/scm/pt/popcorn-streamer-server.git",
     "q": "^1.1.2",
     "read-torrent": "1.0.0",
