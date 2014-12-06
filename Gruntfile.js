@@ -220,12 +220,17 @@ module.exports = function (grunt) {
 				].join('&&')
 			},
 			setexecutable: {
-				command: [
-					'pct_rel="build/releases/Popcorn-Time"',
-					'chmod -R +x ${pct_rel}/mac/Popcorn-Time.app || : ',
-					'chmod +x ${pct_rel}/linux*/Popcorn-Time/Popcorn-Time || : '
-
-				].join('&&')
+			    command: function () {
+			        if (process.platform === "win32") {
+			            // This will fail on windows and isn't necessary on windows
+			            return '';
+			        }
+			        return [
+					    'pct_rel="build/releases/Popcorn-Time"',
+					    'chmod -R +x ${pct_rel}/mac/Popcorn-Time.app || : ',
+					    'chmod +x ${pct_rel}/linux*/Popcorn-Time/Popcorn-Time || : '
+			        ].join('&&');
+			    }
 			},
 			packageLinux64: {
 				command: [
