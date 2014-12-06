@@ -1,6 +1,6 @@
 {
-    "name": "atom-build",
-    "description": "Atom build",
+    "name": "popcorntime-build",
+    "description": "Popcorn Time build",
     "repository": {
         "type": "git",
         "url": "https://git.popcorntime.io/stash/scm/pt/popcorn-app.git"

@@ -51,16 +51,21 @@ function bootstrap() {
         cwd: ppmInstallPath
     };
 
+    var moduleInstallCommand = ppmPath + ' install' + ppmFlags;
+    var dedupeNpmCommand = npmPath + npmFlags + 'dedupe';
+
     if (process.argv.indexOf('--no-quiet') === -1) {
         buildInstallCommand  += ' --quiet';
+        moduleInstallCommand += ' --quiet';
         ppmInstallCommand += ' --quiet';
+        dedupeNpmCommand     += ' --quiet';
+        buildInstallOptions.ignoreStdout = true;
         ppmInstallOptions.ignoreStdout = true;
     }
 
     if (process.env.JANKY_SHA1 && process.platform === 'win32') {
         ppmInstallCommand += ' --arch=ia32';
     }
-
 
     var commands = [{
         command: buildInstallCommand,
@@ -71,8 +76,16 @@ function bootstrap() {
         command: ppmInstallCommand,
         message: 'Installing ppm...',
         options: ppmInstallOptions
-    }];
-
+    },
+    ppmPath + ' clean' + ppmFlags,
+    moduleInstallCommand,
+    {
+        command: dedupeNpmCommand + ' request semver',
+        options: {
+            cwd: path.resolve(__dirname, '..', 'ppm', 'node_modules', 'popcorn-package-manager')
+        }
+    }
+    ];
 
     process.chdir(path.dirname(__dirname));
     executeCommands(commands, process.exit);
