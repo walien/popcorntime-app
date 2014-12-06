@@ -39,9 +39,10 @@ module.exports = function (grunt) {
                 download_url: 'http://get.popcorntime.io/nw/'
             },
             src: [__dirname +  '/../src/**',
-            __dirname + '/../node_modules/**', '!'+__dirname+'/../node_modules/bower/**', '!'+__dirname+'/../node_modules/*grunt*/**',
+            __dirname + '/../ppm/**', __dirname + '/../node_modules/**', '!'+__dirname+'/../node_modules/bower/**', '!'+__dirname+'/../node_modules/*grunt*/**', '!'+__dirname+'/../ppm/node_modules/**/tests/*-BIG.xml', '!'+__dirname+'/../node_modules/**/samples/*.json',
+            '!'+__dirname+'/../**/oniguruma/deps', '!'+__dirname+'/../**/git-utils/deps', '!'+__dirname+'/../**/git-utils/deps', '!'+__dirname+'/../**/npm/doc', '!'+__dirname+'/../**/npm/html', '!'+__dirname+'/../**/npm/node_modules/.bin/beep',
             '!'+__dirname+'/../**/test*/**', '!'+__dirname+'/../**/doc*/**', '!'+__dirname+'/../**/example*/**', '!'+__dirname+'/../**/demo*/**', '!'+__dirname+'/../**/bin/**', '!'+__dirname+'/../**/build/**', '!'+__dirname+'/../**/.*/**',
-            __dirname + '/../package.json', __dirname + '/../README.md', __dirname + '/../LICENSE.txt', __dirname + '/../.git.json', __dirname + '/../ppm/**'
+            __dirname + '/../package.json', __dirname + '/../README.md', __dirname + '/../LICENSE.txt', __dirname + '/../.git.json'
             ]
         },
 
