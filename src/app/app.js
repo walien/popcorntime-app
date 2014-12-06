@@ -16,6 +16,7 @@ var MIN_PERCENTAGE_LOADED = 0.5,
 	Updater = require('./lib/updater')(Settings, $),
 	PackagesManager = require('./lib/packages'),
 	ThemesManager = require('./lib/themes')(Settings),
+	PPM_Client = require('./lib/packages/ppm'),
 	Localization = require('./lib/localization');
 
 // Special Debug Console Calls!
@@ -457,6 +458,18 @@ Mousetrap.bind('ctrl+shift+p', function (e) {
 		PackagesManager.generatePackage(packageName);
 	}
 });
+Mousetrap.bind('ctrl+shift+k', function (e) {
+	e.preventDefault();
+	PPM_Client.loadPackage('chromecast51', function(err, data) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log(data);
+		}
+	})
+});
+
+
 
 
 /**
