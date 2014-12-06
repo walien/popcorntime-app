@@ -1,0 +1,18 @@
+{
+    "name": "atom-build",
+    "description": "Atom build",
+    "repository": {
+        "type": "git",
+        "url": "https://git.popcorntime.io/stash/scm/pt/popcorn-app.git"
+    },
+    "dependencies": {
+        "fs-plus": "2.x",
+        "grunt-cli": "~0.1.9",
+        "npm": "~1.4.5",
+        "temp": "~0.8.1",
+        "underscore-plus": "1.x",
+        "unzip": "~0.1.9",
+        "grunt-node-webkit-builder": "~0.3.1",
+        "vm-compatibility-layer": "~0.1.0"
+    }
+}

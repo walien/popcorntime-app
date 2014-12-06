@@ -4,7 +4,7 @@
   "bugs": "https://git.popcorntime.io/jira/",
   "repository": {
     "type": "git",
-    "url": "https://git.popcorntime.io/stash/projects/PT/repos/popcorn-app/browse"
+    "url": "https://git.popcorntime.io/stash/scm/pt/popcorn-app.git"
   },
   "license": "GPL-3.0",
   "main": "app://host/src/app/index.html",
