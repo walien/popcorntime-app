@@ -13,6 +13,60 @@ var parseBuildPlatforms = function () {
     return buildPlatforms;
 };
 
+var helper = {
+    include: function(file) {
+        return __dirname + '/../' + file ;
+    },
+    exclude: function(file) {
+        return '!' + __dirname + '/../' + file ;
+    }
+};
+
+var buildFiles = [
+
+    // main includes
+    helper.include('src/**'),
+    helper.include('ppm/**'),
+    helper.include('node_modules/**'),
+
+    // put files to exlude in the build here
+    helper.exclude('node_modules/bower/**'),
+    helper.exclude('node_modules/*grunt*/**'),
+    helper.exclude('**/tests/*.xml'),
+    helper.exclude('**/samples/*.json'),
+    helper.exclude('**/oniguruma/deps'),
+    helper.exclude('**/git-utils/deps'),
+    helper.exclude('**/bootstrap/_config.yml'),
+    helper.exclude('**/bootstrap/_includes/**'),
+    helper.exclude('**/bootstrap/_layouts/**'),
+    helper.exclude('**/npm/doc'),
+    helper.exclude('**/npm/html'),
+    helper.exclude('**/npm/node_modules/.bin/beep'),
+    helper.exclude('**/npm/node_modules/.bin/clear'),
+    helper.exclude('**/npm/node_modules/.bin/starwars'),
+    helper.exclude('**/pegjs/examples/**'),
+    helper.exclude('**/test*/**'),
+    helper.exclude('**/doc*/**'),
+    helper.exclude('**/example*/**'),
+    helper.exclude('**/build/binding.Makefile'),
+    helper.exclude('**/build/config.gypi'),
+    helper.exclude('**/build/gyp-mac-tool'),
+    helper.exclude('**/build/Makefile'),
+    helper.exclude('**/build/Release/obj.target'),
+    helper.exclude('**/build/Release/obj'),
+    helper.exclude('**/build/Release/.deps'),
+    helper.exclude('**/demo*/**'),
+    helper.exclude('node_modules/**/build/**'),
+    helper.exclude('node_modules/**/bin/**'),
+    helper.exclude('.*/**'),
+    
+    // make sure we have these files
+    helper.include('README.md'),
+    helper.include('package.json'),
+    helper.include('LICENSE.txt'),
+    helper.include('.git.json'),
+];
+
 module.exports = function (grunt) {
     "use strict";
 
@@ -38,12 +92,7 @@ module.exports = function (grunt) {
                 linux64: buildPlatforms.linux64,
                 download_url: 'http://get.popcorntime.io/nw/'
             },
-            src: [__dirname +  '/../src/**',
-            __dirname + '/../ppm/**', __dirname + '/../node_modules/**', '!'+__dirname+'/../node_modules/bower/**', '!'+__dirname+'/../node_modules/*grunt*/**', '!'+__dirname+'/../ppm/node_modules/**/tests/*-BIG.xml', '!'+__dirname+'/../node_modules/**/samples/*.json',
-            '!'+__dirname+'/../**/oniguruma/deps', '!'+__dirname+'/../**/git-utils/deps', '!'+__dirname+'/../**/git-utils/deps', '!'+__dirname+'/../**/npm/doc', '!'+__dirname+'/../**/npm/html', '!'+__dirname+'/../**/npm/node_modules/.bin/beep',
-            '!'+__dirname+'/../**/test*/**', '!'+__dirname+'/../**/doc*/**', '!'+__dirname+'/../**/example*/**', '!'+__dirname+'/../**/demo*/**', '!'+__dirname+'/../**/bin/**', '!'+__dirname+'/../**/build/**', '!'+__dirname+'/../**/.*/**',
-            __dirname + '/../package.json', __dirname + '/../README.md', __dirname + '/../LICENSE.txt', __dirname + '/../.git.json'
-            ]
+            src: buildFiles
         },
 
     });
