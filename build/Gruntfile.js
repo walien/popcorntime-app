@@ -46,7 +46,7 @@ var buildFiles = [
     helper.exclude('**/npm/node_modules/.bin/starwars'),
     helper.exclude('**/pegjs/examples/**'),
     helper.exclude('**/test*/**'),
-    helper.exclude('**/doc*/**'),
+    helper.exclude('**/doc/**'),
     helper.exclude('**/example*/**'),
     helper.exclude('**/build/binding.Makefile'),
     helper.exclude('**/build/config.gypi'),
@@ -59,7 +59,7 @@ var buildFiles = [
     helper.exclude('node_modules/**/build/**'),
     helper.exclude('node_modules/**/bin/**'),
     helper.exclude('.*/**'),
-    
+
     // make sure we have these files
     helper.include('README.md'),
     helper.include('package.json'),
