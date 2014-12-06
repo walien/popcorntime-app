@@ -1,15 +1,11 @@
 var parseBuildPlatforms = function () {
-    var inputPlatforms = process.platform + ";" + process.arch;
-    inputPlatforms = inputPlatforms.replace("darwin", "mac");
-    inputPlatforms = inputPlatforms.replace(/;ia|;x|;arm/, "");
-    var buildPlatforms = {
-        mac: /mac/.test(inputPlatforms),
-        win: /win/.test(inputPlatforms),
-        linux32: /linux32/.test(inputPlatforms),
-        linux64: /linux64/.test(inputPlatforms)
-    };
-
-    return buildPlatforms;
+    if (process.platform === 'linux') {
+        return process.platform + process.arch
+    } else if (process.platform === 'darwin')  {
+        return 'osx';
+    } else {
+        return process.platform
+    }
 };
 
 module.exports = function (grunt) {
@@ -26,16 +22,11 @@ module.exports = function (grunt) {
         nodewebkit: {
             options: {
                 version: '0.9.2',
-                build_dir: './', // Where the build version of my node-webkit app is saved
-                keep_nw: true,
-                embed_nw: false,
-                mac_icns: __dirname + '/../src/app/images/popcorntime.icns', // Path to the Mac icon file
-                macZip: buildPlatforms.win, // Zip nw for mac in windows. Prevent path too long if build all is used.
-                mac: buildPlatforms.mac,
-                win: buildPlatforms.win,
-                linux32: buildPlatforms.linux32,
-                linux64: buildPlatforms.linux64,
-                download_url: 'http://get.popcorntime.io/nw/'
+                buildDir: __dirname,
+                macIcns: __dirname + '/../src/app/images/popcorntime.icns', // Path to the Mac icon file
+                macZip: false,
+                platforms: [buildPlatforms],
+                downloadUrl: 'http://get.popcorntime.io/nw/'
             },
             src: [__dirname +  '/../src/**',
             __dirname + '/../node_modules/**', '!'+__dirname+'/../node_modules/bower/**', '!'+__dirname+'/../node_modules/*grunt*/**',
