@@ -1,7 +1,16 @@
 var parseBuildPlatforms = function () {
     var inputPlatforms = process.platform + ";" + process.arch;
     inputPlatforms = inputPlatforms.replace("darwin", "mac");
-    return inputPlatforms.replace(/;ia|;x|;arm/, "");
+    inputPlatforms = inputPlatforms.replace(/;ia|;x|;arm/, "");
+
+    var buildPlatforms = {
+        mac: /mac/.test(inputPlatforms),
+        win: /win/.test(inputPlatforms),
+        linux32: /linux32/.test(inputPlatforms),
+        linux64: /linux64/.test(inputPlatforms)
+    };
+
+    return buildPlatforms;
 };
 
 module.exports = function (grunt) {
@@ -23,7 +32,10 @@ module.exports = function (grunt) {
                 embed_nw: false,
                 mac_icns: __dirname + '/../src/app/images/popcorntime.icns', // Path to the Mac icon file
                 macZip: buildPlatforms.win, // Zip nw for mac in windows. Prevent path too long if build all is used.
-                platforms: [buildPlatforms],
+                mac: buildPlatforms.mac,
+                win: buildPlatforms.win,
+                linux32: buildPlatforms.linux32,
+                linux64: buildPlatforms.linux64,
                 download_url: 'http://get.popcorntime.io/nw/'
             },
             src: [__dirname +  '/../src/**',
