@@ -4,14 +4,15 @@ var MIN_PERCENTAGE_LOADED = 0.5,
 	win = gui.Window.get(),
 	os = require('os'),
 	path = require('path'),
-	fs = require('fs'),
+	fs = require('fs-plus'),
 	url = require('url'),
 	i18n = require('i18n'),
 	mime = require('mime'),
 	moment = require('moment'),
 	Q = require('q'),
 	Handlebars = require('handlebars'),
-	Database = require('./lib/database')(gui.App.dataPath),
+	homePath = fs.absolute('~/.popcorntime'),
+	Database = require('./lib/database')(homePath),
 	Settings = require('./lib/settings')(Database),
 	Updater = require('./lib/updater')(Settings, $),
 	PackagesManager = require('./lib/packages'),
@@ -176,6 +177,9 @@ App.gui = gui;
 
 // language
 App.Localization = Localization;
+
+// homepath
+App.HomePath = homePath;
 
 // Handles language detection and internationalization
 i18n.configure({
