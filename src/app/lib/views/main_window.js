@@ -170,7 +170,7 @@
 
 		},
 
-		showProvider: function(provider) {
+		showProvider: function (provider) {
 
 			if (provider === undefined) {
 				provider = App.Tabs.getFirst().provider;

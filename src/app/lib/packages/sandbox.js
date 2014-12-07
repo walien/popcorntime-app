@@ -66,7 +66,7 @@ AppSandbox.prototype.loadModule = function loadModuleSandboxed(modulePath) {
 			innerBox = new AppSandbox(newOpts);
 			try {
 				return innerBox.loadModule(module);
-			} catch(e) {
+			} catch (e) {
 				throw e;
 			}
 		}
@@ -78,7 +78,7 @@ AppSandbox.prototype.loadModule = function loadModuleSandboxed(modulePath) {
 	try {
 		currentModule.load(currentModule.id);
 		return currentModule.exports;
-	} catch(e) {
+	} catch (e) {
 		throw e;
 	}
 };

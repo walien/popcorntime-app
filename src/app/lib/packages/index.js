@@ -41,8 +41,8 @@ PackageManager.prototype.getAvailablePackagePaths = function () {
 	var packagePaths = [];
 
 	// return our packages paths
-	_.each(this.packageDirPaths, function(packageDirPath) {
-		_.each(fs.listSync(packageDirPath), function(packagePath) {
+	_.each(this.packageDirPaths, function (packageDirPath) {
+		_.each(fs.listSync(packageDirPath), function (packagePath) {
 			if (fs.isDirectorySync(packagePath)) {
 				packagePaths.push(packagePath);
 			}
@@ -75,7 +75,7 @@ PackageManager.prototype.loadPackages = function (callback) {
 			if (_.isFunction(myPackage.bundledPackage.afterActivate)) {
 				try {
 					myPackage.bundledPackage.afterActivate();
-				} catch(e) {
+				} catch (e) {
 					throw e;
 				}
 			}
@@ -154,7 +154,7 @@ PackageManager.prototype.generatePackage = function (name) {
 	var newPath = path.join(_.first(this.packageDirPaths), name);
 	if (!fs.isDirectorySync(newPath)) {
 
-		fs.mkdir(newPath,function(e){
+		fs.mkdir(newPath, function (e) {
 
 			var template = {};
 

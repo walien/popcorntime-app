@@ -115,6 +115,7 @@
 			that = this;
 			App.Settings.set('ipAddress', this.getIPAddress());
 
+			this.subLangTpl = $('#subtitle_langs').children().first().clone();
 
 		},
 
@@ -275,6 +276,14 @@
 			App.vent.trigger('keyboard:toggle');
 		},
 
+		addLanguage: function () {
+			var subtitleLangs = $('#subtitle_langs');
+			if (subtitleLangs.children().length < 6) {
+				var newSelect = this.subLangTpl.clone();
+				subtitleLangs.append(newSelect);
+			}
+		},
+
 		clickButtonPackage: function (e) {
 			var self = this;
 			var authPackages = this.model.get('authPackages');
@@ -343,7 +352,6 @@
 				return;
 			case 'subtitle_size':
 			case 'tv_detail_jump_to':
-			case 'subtitle_language':
 			case 'movies_quality':
 			case 'start_screen':
 				if ($('option:selected', field).val() === 'Last Open') {
@@ -390,6 +398,19 @@
 				} else {
 					return;
 				}
+				break;
+			case 'subtitle_language':
+				value = [];
+				var selects = $('#subtitle_langs select');
+				for (var i = 0; i < selects.length; ++i) {
+					var currentSelect = $(selects[i]);
+					if (currentSelect.val() === 'none' && selects.length > 1) {
+						currentSelect.parent().remove();
+						continue;
+					}
+					value.push(currentSelect.val());
+				}
+				this.addLanguage();
 				break;
 			default:
 				if (field.is(':checkbox')) {

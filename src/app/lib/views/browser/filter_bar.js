@@ -31,17 +31,17 @@
 		},
 
 		templateHelpers: {
-			tabs: function() {
+			tabs: function () {
 				return App.Settings.get('tabs');
 			}
 		},
 
-		changeProviderView: function(e) {
+		changeProviderView: function (e) {
 			e.preventDefault();
 			$('.filter-bar').find('.active').removeClass('active');
 			var provider = $(e.currentTarget).attr('data-provider');
 
-			App.currentview = 'provider:'+provider;
+			App.currentview = 'provider:' + provider;
 			App.vent.trigger('about:close');
 			App.vent.trigger('provider:list', provider);
 			$(e.currentTarget).addClass('active');

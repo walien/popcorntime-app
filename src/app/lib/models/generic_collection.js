@@ -48,7 +48,7 @@
 					// Then extract the torrent/item IDs
 					.then(_.bind(torrents[pid].extractIds, torrents[pid]))
 					.catch(function (e) {
-					    console.log(e);
+						console.log(e);
 					});
 			});
 

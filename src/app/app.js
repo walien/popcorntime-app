@@ -104,11 +104,25 @@ Handlebars.registerHelper('if_settings', function (key, value, options) {
 		options = value;
 		value = true;
 	}
-	if (Settings.get(key) === value) {
+	var setting = Settings.get(key);
+	if (!_.isArray(setting) && setting === value) {
+		return options.fn(this);
+	} else if (_.isArray(setting) && _.contains(setting, value)) {
 		return options.fn(this);
 	} else {
 		return options.inverse(this);
 	}
+});
+Handlebars.registerHelper('each_settings', function (key, options) {
+	var ret = '';
+
+	var items = Settings.get(key);
+
+	for (var i = 0, j = items.length; i < j; i++) {
+		ret = ret + options.fn(items[i]);
+	}
+
+	return ret;
 });
 Handlebars.registerHelper('pluralize', function (number, single, plural) {
 	if (number === 1) {
@@ -464,7 +478,7 @@ Mousetrap.bind('ctrl+shift+p', function (e) {
 });
 Mousetrap.bind('ctrl+shift+k', function (e) {
 	e.preventDefault();
-	PPM_Client.loadPackage('chromecast51', function(err, data) {
+	PPM_Client.loadPackage('chromecast51', function (err, data) {
 		if (err) {
 			console.log(err);
 		} else {
@@ -472,8 +486,6 @@ Mousetrap.bind('ctrl+shift+k', function (e) {
 		}
 	})
 });
-
-
 
 
 /**

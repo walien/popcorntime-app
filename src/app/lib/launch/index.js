@@ -21,7 +21,7 @@ Launcher.prototype.init = function () {
 			// maybe we should set user language? :D
 			i18n.setLocale(that.app.Settings.get('language'));
 		})
-		.then(function() {
+		.then(function () {
 			return that.app.PackagesManager.loadPackages();
 		});
 };

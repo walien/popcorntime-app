@@ -114,8 +114,8 @@ var health_checked = false;
 				bookmarked = false;
 
 				App.Database.delete('bookmarks', {
-					imdb_id: this.model.get('imdb_id')
-				})
+						imdb_id: this.model.get('imdb_id')
+					})
 					.then(function () {
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
@@ -254,8 +254,8 @@ var health_checked = false;
 
 			var episodesSeen = [];
 			App.Database.find('watched', {
-				tvdb_id: this.model.get('tvdb_id').toString()
-			})
+					tvdb_id: this.model.get('tvdb_id').toString()
+				})
 				.then(function (data) {
 					_.each(data, function (value, state) {
 						// we'll mark episode already watched
@@ -355,17 +355,17 @@ var health_checked = false;
 			};
 
 			App.Database.get('watched', {
-				tvdb_id: currentValue.tvdb_id.toString(),
-				imdb_id: currentValue.imdb_id.toString(),
-				season: currentValue.season.toString(),
-				episode: currentValue.episode.toString()
-			})
+					tvdb_id: currentValue.tvdb_id.toString(),
+					imdb_id: currentValue.imdb_id.toString(),
+					season: currentValue.season.toString(),
+					episode: currentValue.episode.toString()
+				})
 				.then(function (watched) {
 					if (watched) {
 
 						App.Database.find('watched', {
-							tvdb_id: currentValue.tvdb_id
-						})
+								tvdb_id: currentValue.tvdb_id
+							})
 							.then(function (response) {
 								if (response.length === 1) {
 									App.watchedShows.splice(App.watchedShows.indexOf(currentValue.imdb_id), 1);
@@ -386,8 +386,8 @@ var health_checked = false;
 					} else {
 
 						App.Database.find('watched', {
-							tvdb_id: currentValue.tvdb_id
-						})
+								tvdb_id: currentValue.tvdb_id
+							})
 							.then(function (response) {
 								if (response.length === 0) {
 									App.watchedShows.push(currentValue.imdb_id.toString());
@@ -756,8 +756,8 @@ var health_checked = false;
 					var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
 					$('.health-icon').tooltip({
-						html: true
-					})
+							html: true
+						})
 						.removeClass('fa-spin')
 						.removeClass('fa-spinner')
 						.addClass('fa-circle')
@@ -770,8 +770,8 @@ var health_checked = false;
 
 		resetHealth: function () {
 			$('.health-icon').tooltip({
-				html: true
-			})
+					html: true
+				})
 				.removeClass('fa-spin')
 				.removeClass('fa-spinner')
 				.addClass('fa-circle')
