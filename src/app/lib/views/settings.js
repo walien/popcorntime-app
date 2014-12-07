@@ -278,7 +278,7 @@
 
 		addLanguage: function () {
 			var subtitleLangs = $('#subtitle_langs');
-			if(subtitleLangs.children().length<6){
+			if (subtitleLangs.children().length < 6) {
 				var newSelect = this.subLangTpl.clone();
 				subtitleLangs.append(newSelect);
 			}
@@ -402,9 +402,9 @@
 			case 'subtitle_language':
 				value = [];
 				var selects = $('#subtitle_langs select');
-				for(var i=0; i<selects.length; ++i){
+				for (var i = 0; i < selects.length; ++i) {
 					var currentSelect = $(selects[i]);
-					if(currentSelect.val() === 'none' && selects.length>1 ){
+					if (currentSelect.val() === 'none' && selects.length > 1) {
 						currentSelect.parent().remove();
 						continue;
 					}

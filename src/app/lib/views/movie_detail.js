@@ -171,10 +171,10 @@
 
 			// switch to default subtitle
 			var subtitle_language = App.Settings.get('subtitle_language');
-			
-			for(var i=0; i<subtitle_language.length; ++i){
+
+			for (var i = 0; i < subtitle_language.length; ++i) {
 				this.switchSubtitle(subtitle_language[i]);
-				if(this.subtitle_selected !== 'none'){
+				if (this.subtitle_selected !== 'none') {
 					break;
 				}
 			}
@@ -328,8 +328,8 @@
 			var ratio = torrent.peer > 0 ? torrent.seed / torrent.peer : +torrent.seed;
 
 			$('.health-icon').tooltip({
-				html: true
-			})
+					html: true
+				})
 				.removeClass('Bad Medium Good Excellent')
 				.addClass(health)
 				.attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
@@ -345,8 +345,8 @@
 			var that = this;
 			if (this.model.get('bookmarked') === true) {
 				App.Database.delete('bookmarks', {
-					imdb_id: this.model.get('imdb_id')
-				})
+						imdb_id: this.model.get('imdb_id')
+					})
 					.then(function () {
 						win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 						App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);

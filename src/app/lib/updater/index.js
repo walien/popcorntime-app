@@ -108,7 +108,7 @@ Updater.prototype.check = function () {
 		if (!updateData.version.match(/-\d+$/)) {
 			updateData.version += '-0';
 		}
-		
+
 		if (!currentVersion.match(/-\d+$/)) {
 			currentVersion += '-0';
 		}

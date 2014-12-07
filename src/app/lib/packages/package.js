@@ -24,7 +24,7 @@ function Package(path, metadata) {
 
 		try {
 			this.metadata = Package.loadMetadata(this.path);
-		} catch(e) {
+		} catch (e) {
 			console.log(e);
 		}
 
@@ -244,7 +244,7 @@ Package.prototype.requireMainModule = function () {
 		if (fs.isFileSync(mainModulePath)) {
 			return this.mainModule = SandboxApp.loadApp(this.mainModulePath);
 		}
-	} catch(e) {
+	} catch (e) {
 		console.log(e);
 		return false;
 	}

@@ -84,7 +84,7 @@
 		var providers = App.Settings.get('providers');
 		var provider = providers[type];
 
-		if (typeof(provider) === 'object') {
+		if (typeof (provider) === 'object') {
 			return _.map(provider, function (t) {
 				return App.Providers.get(t);
 			});
@@ -95,7 +95,7 @@
 	function enable(type, provider) {
 		var providers = App.Settings.get('providers');
 
-		if (typeof(providers[type]) === 'object') {
+		if (typeof (providers[type]) === 'object') {
 			// actually we'll overwrite till we have a better
 			// way to manage it
 			providers[type] = [provider];
@@ -111,7 +111,7 @@
 	function disable(type, provider) {
 		var providers = App.Settings.get('providers');
 
-		if (typeof(providers[type]) === 'object' && providers[type].length > 0) {
+		if (typeof (providers[type]) === 'object' && providers[type].length > 0) {
 			// ok looks like we can disable it
 			providers[type] = _.without(providers[type], provider);
 		} else {
