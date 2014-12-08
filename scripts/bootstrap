@@ -46,6 +46,10 @@ function bootstrap() {
     var buildInstallCommand = initialNpmCommand + npmFlags + 'install';
     var buildInstallOptions = {cwd: path.resolve(__dirname, '..', 'build')};
 
+    var bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
+    var bowerInstallCommand = bowerPath + ' install';
+    var bowerInstallOptions = {cwd: path.resolve(__dirname, '..')};
+
     var ppmInstallCommand = npmPath + npmFlags + 'install';
     var ppmInstallOptions = {
         cwd: ppmInstallPath
@@ -71,6 +75,10 @@ function bootstrap() {
         command: buildInstallCommand,
         message: 'Installing build modules...',
         options: buildInstallOptions
+    },{
+        command: bowerInstallCommand,
+        message: 'Installing bower packages...',
+        options: bowerInstallOptions
     },
     {
         command: ppmInstallCommand,
@@ -86,6 +94,8 @@ function bootstrap() {
         }
     }
     ];
+
+    console.log(commands);
 
     process.chdir(path.dirname(__dirname));
     executeCommands(commands, process.exit);
