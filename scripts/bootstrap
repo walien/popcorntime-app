@@ -47,8 +47,8 @@ function bootstrap() {
     var buildInstallOptions = {cwd: path.resolve(__dirname, '..', 'build')};
 
     var bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
-    bowerPath = bowerPath + (process.platform === 'win32' ? '.cmd' : '');
-    
+    bowerPath = fs.existsSync(bowerPath) ? bowerPath : 'bower';
+
     var bowerInstallCommand = bowerPath + ' install';
     var bowerInstallOptions = {cwd: path.resolve(__dirname, '..')};
 
