@@ -80,10 +80,6 @@ module.exports = function(gruntObject) {
 };
 
 getAssets = function() {
-	var arch, assetName, assets, buildDir, cp, rpmName, sourcePath, squirrelAsset, version, _i, _len, _ref;
-	cp = require('./task-helper')(grunt).cp;
-	version = grunt.file.readJSON('package.json').version;
-	buildDir = grunt.config.get('atom.buildDir');
 	switch (process.platform) {
 		case 'darwin':
 			return [{
@@ -159,7 +155,7 @@ getRelease = function(callback) {
 			releases = [];
 		}
 		if (error != null) {
-			logError('Fetching atom/atom releases failed', error, releases);
+			logError('Fetching popcorn-official/nightly releases failed', error, releases);
 			return callback(error);
 		} else {
 			firstDraft = releases[0];
