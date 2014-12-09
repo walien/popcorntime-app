@@ -50,7 +50,7 @@ function bootstrap() {
     var bowerPath2 = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
     bowerPath = fs.existsSync(bowerPath) ? bowerPath : bowerPath2;
 
-    var bowerInstallCommand = bowerPath + ' install';
+    var bowerInstallCommand = bowerPath + ' install --allow-root';
     var bowerInstallOptions = {cwd: path.resolve(__dirname, '..')};
 
     var ppmInstallCommand = npmPath + npmFlags + 'install';
