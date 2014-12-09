@@ -169,7 +169,7 @@ module.exports = function (grunt) {
 
     ciTasks.push('publish-build');
 
-    return grunt.registerTask('default', buildTasks);
     return grunt.registerTask('ci', ciTasks);
+    return grunt.registerTask('default', buildTasks);
 
 };
