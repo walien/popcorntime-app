@@ -46,8 +46,9 @@ function bootstrap() {
     var buildInstallCommand = initialNpmCommand + npmFlags + 'install';
     var buildInstallOptions = {cwd: path.resolve(__dirname, '..', 'build')};
 
-    var bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
-    bowerPath = fs.existsSync(bowerPath) ? bowerPath : 'bower';
+    var bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', '.bin', 'bower.cmd');
+    var bowerPath2 = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
+    bowerPath = fs.existsSync(bowerPath) ? bowerPath : bowerPath2;
 
     var bowerInstallCommand = bowerPath + ' install';
     var bowerInstallOptions = {cwd: path.resolve(__dirname, '..')};
