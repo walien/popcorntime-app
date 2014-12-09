@@ -179,8 +179,6 @@ getRelease = function(callback) {
 						return callback(error != null ? error : new Error(response.statusCode));
 					} else {
 						firstDraft.assets = assets;
-                        console.log(firstDraft);
-                        process.exit();
 						return callback(null, firstDraft);
 					}
 				});
