@@ -95,7 +95,7 @@ getAssets = function() {
 			break;
 		case 'linux':
 			return [{
-				assetName: 'popcorn-time' + process.arch + '-linux.zip',
+				assetName: 'popcorn-time-linux' + process.arch.replace(/;ia|;x|;arm/, "") + '.zip',
 				sourcePath: 'Popcorn-Time'
 			}];
 			break;
