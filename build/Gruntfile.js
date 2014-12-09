@@ -1,3 +1,5 @@
+var path = require('path');
+var _ = require('lodash');
 var parseBuildPlatforms = function () {
     var inputPlatforms = process.platform + ";" + process.arch;
     inputPlatforms = inputPlatforms.replace("darwin", "mac");
@@ -6,6 +8,7 @@ var parseBuildPlatforms = function () {
     var buildPlatforms = {
         mac: /mac/.test(inputPlatforms),
         win: /win/.test(inputPlatforms),
+        linux: /linux/.test(inputPlatforms),
         linux32: /linux32/.test(inputPlatforms),
         linux64: /linux64/.test(inputPlatforms)
     };
@@ -21,6 +24,23 @@ var helper = {
         return '!' + __dirname + '/../' + file ;
     }
 };
+
+var getBuildDir = function(platforms) {
+    var dir = [];
+    if (platforms.mac) {
+        return path.join(__dirname, 'releases/Popcorn-Time/mac/');
+    }
+    if (platforms.win) {
+        return path.join(__dirname, 'releases/Popcorn-Time/win/');
+    }
+    if (platforms.linux32) {
+        return path.join(__dirname, 'releases/Popcorn-Time/linux32/');
+    }
+    if (platforms.linux64) {
+        return path.join(__dirname, 'releases/Popcorn-Time/linux64/');
+    }
+    return [];
+}
 
 var buildFiles = [
 
@@ -69,14 +89,61 @@ var buildFiles = [
 
 module.exports = function (grunt) {
     "use strict";
-
+    var contentsDir, appDir, installDir, killCommand, appName, shellAppDir;
     var buildPlatforms = parseBuildPlatforms();
     var pkgJson = grunt.file.readJSON('../package.json');
     var currentVersion = pkgJson.version;
+    var buildDir = getBuildDir(buildPlatforms);
+
+    if (process.platform === 'darwin') {
+        appName = 'Popcorn-Time.app'
+    } else {
+        appName = 'Popcorn-Time'
+    }
+
+    shellAppDir = path.join(buildDir, appName)
+
+    if (process.platform === 'win32') {
+
+        // we need to move it to build/win/Popcorn-Time
+        // then we generate our exe much better, because the
+        // current dist didnt allow us to build and use it,
+        // without NSIS
+
+        contentsDir = shellAppDir;
+        appDir = shellAppDir;
+
+    }else if (process.platform === 'darwin') {
+
+        contentsDir = path.join(shellAppDir, 'Contents')
+        appDir = path.join(contentsDir, 'Resources', 'app.nw');
+
+    }else {
+
+        contentsDir = shellAppDir
+        appDir = path.join(shellAppDir, 'Popcorn-Time');
+
+    }
 
     grunt.loadNpmTasks('grunt-node-webkit-builder');
+    grunt.loadTasks('tasks');
 
     grunt.initConfig({
+
+        popcorntime: {
+            // return an object of platforms to build
+            buildPlatforms: buildPlatforms,
+            // current PT version from package.json
+            currentVersion: currentVersion,
+            // source root path
+            rootPath: path.join(__dirname, ".."),
+            // wheres the build are located
+            buildDir: buildDir,
+            // wheres the build contents
+            contentsDir: contentsDir,
+            // full path to bundled app
+            shellAppDir: shellAppDir,
+        },
 
         nodewebkit: {
             options: {
@@ -97,8 +164,12 @@ module.exports = function (grunt) {
 
     });
 
+    var buildTasks = ['nodewebkit'];
     var ciTasks = ['nodewebkit'];
 
-    return grunt.registerTask('default', ciTasks);
+    ciTasks.push('publish-build');
+
+    return grunt.registerTask('default', buildTasks);
+    return grunt.registerTask('ci', ciTasks);
 
 };
