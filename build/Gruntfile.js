@@ -126,6 +126,8 @@ module.exports = function (grunt) {
     }
 
     grunt.loadNpmTasks('grunt-node-webkit-builder');
+    grunt.loadNpmTasks('grunt-shell');
+
     grunt.loadTasks('tasks');
 
     grunt.initConfig({
@@ -162,10 +164,22 @@ module.exports = function (grunt) {
             src: buildFiles
         },
 
+        shell: {
+			submodule: {
+				command: 'git submodule update --init',
+                options: {
+                    stderr: false,
+                    execOptions: {
+                        cwd: '../'
+                    }
+                }
+			}
+        }
+
     });
 
-    var buildTasks = ['nodewebkit'];
-    var ciTasks = ['nodewebkit'];
+    var buildTasks = ['shell:submodule','nodewebkit'];
+    var ciTasks = ['shell:submodule','nodewebkit'];
 
     ciTasks.push('publish-build');
 

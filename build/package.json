@@ -11,6 +11,7 @@
     "github-releases": "^0.2.0",
     "grunt-cli": "~0.1.9",
     "grunt-node-webkit-builder": "0.1.x",
+    "grunt-shell": "^1.1.1",
     "lodash": "^2.4.1",
     "npm": "~1.4.5",
     "temp": "~0.8.1",
