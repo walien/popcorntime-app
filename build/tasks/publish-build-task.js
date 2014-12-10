@@ -80,6 +80,10 @@ module.exports = function(gruntObject) {
 };
 
 getAssets = function() {
+	var buildDir = grunt.config.get('popcorntime.buildDir');
+	var rootPath = grunt.config.get('popcorntime.rootPath');
+	var cp = require('./task-helper')(grunt).cp;
+
 	switch (process.platform) {
 		case 'darwin':
 			return [{
@@ -94,10 +98,35 @@ getAssets = function() {
 			}];
 			break;
 		case 'linux':
-			return [{
+			var version = grunt.file.readJSON(path.join(rootPath, 'package.json')).version;
+
+			// default file
+			var files = [{
 				assetName: 'popcorn-time-linux-' + process.arch + '.zip',
 				sourcePath: 'Popcorn-Time'
 			}];
+
+			var arch;
+			if (process.arch === 'ia32') {
+				arch = 'i386';
+			} else {
+				arch = 'x86_64';
+			}
+
+			sourcePath = path.join(buildDir, 'popcorntime-' + version + '-' + arch + '.deb');
+      		assetName = 'popcorntime-' + arch +'.deb';
+
+			if (fs.isFileSync(sourcePath)) {
+
+				cp(sourcePath, path.join(buildDir, assetName));
+
+				files.push({
+					assetName: assetName,
+					sourcePath: sourcePath
+				});
+			}
+
+			return files;
 			break;
 	}
 };
