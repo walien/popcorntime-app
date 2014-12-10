@@ -107,6 +107,17 @@ function bootstrap() {
     }
     ];
 
+    // chmod ppm
+    if (process.platform !== 'win32') {
+        commands.push({
+            command: 'chmod a+x *',
+            message: 'Set ppm executable flag',
+            options: {
+                cwd: path.resolve(__dirname, '..', 'ppm', 'node_modules', 'popcorn-package-manager', 'bin')
+            }
+        });
+    }
+
     process.chdir(path.dirname(__dirname));
     executeCommands(commands, process.exit);
 }
