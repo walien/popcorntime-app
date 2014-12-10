@@ -32,7 +32,7 @@ module.exports = function(grunt) {
     if (process.arch === 'ia32') {
       arch = 'i386';
     } else if (process.arch === 'x64') {
-      arch = 'amd64';
+      arch = 'x86_64';
     } else {
       return done("Unsupported arch " + process.arch);
     }
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
       icon = path.join('src', 'app', 'images', 'icon.png');
       cmd = path.join(__dirname, '..', '..', 'scripts', 'mkdeb');
       args = [version, arch, controlFilePath, desktopFilePath, icon, buildDir];
-      
+
       return spawn({
         cmd: cmd,
         args: args

@@ -100,18 +100,18 @@ getAssets = function() {
 		case 'linux':
 			var version = grunt.file.readJSON(path.join(rootPath, 'package.json')).version;
 
-			// default file
-			var files = [{
-				assetName: 'popcorn-time-linux-' + process.arch + '.zip',
-				sourcePath: 'Popcorn-Time'
-			}];
-
 			var arch;
 			if (process.arch === 'ia32') {
 				arch = 'i386';
 			} else {
 				arch = 'x86_64';
 			}
+
+			// default file
+			var files = [{
+				assetName: 'popcorn-time-linux-' + arch + '.zip',
+				sourcePath: 'Popcorn-Time'
+			}];
 
 			sourcePath = path.join(buildDir, 'popcorntime-' + version + '-' + arch + '.deb');
       		assetName = 'popcorntime-' + arch +'.deb';
