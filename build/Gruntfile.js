@@ -145,6 +145,10 @@ module.exports = function (grunt) {
     if (process.platform === 'win32') {
         ciTasks.push('windows-pack');
     }
+    
+    if (process.platform === 'linux') {
+        ciTasks.push('mkdeb');
+    }
 
     ciTasks.push('publish-build');
     ciTasks.push('clean-releases');

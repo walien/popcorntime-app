@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Atom
+Comment=<%= description %>
+GenericName=Text Editor
+Exec=<%= installDir %>/share/Popcorn-Time/popcorntime %U
+Icon=<%= iconName %>
+Type=Application
+StartupNotify=true
+Categories=VideoPlayer;
+MimeType=text/plain;
