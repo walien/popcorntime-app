@@ -18,7 +18,7 @@ var parseBuildPlatforms = function () {
 
 var helper = {
     include: function(file) {
-        return __dirname + '/../' + file ;
+        return cacheDir + '/../' + file ;
     },
     exclude: function(file) {
         return '!' + __dirname + '/../' + file ;
@@ -42,50 +42,7 @@ var getBuildDir = function(platforms) {
     return [];
 }
 
-var buildFiles = [
 
-    // main includes
-    helper.include('src/**'),
-    helper.include('ppm/**'),
-    helper.include('node_modules/**'),
-
-    // put files to exlude in the build here
-    helper.exclude('node_modules/bower/**'),
-    helper.exclude('node_modules/*grunt*/**'),
-    helper.exclude('**/tests/*.xml'),
-    helper.exclude('**/samples/*.json'),
-    helper.exclude('**/oniguruma/deps/**'),
-    helper.exclude('**/git-utils/deps/**'),
-    helper.exclude('**/bootstrap/_config.yml'),
-    helper.exclude('**/bootstrap/_includes/**'),
-    helper.exclude('**/bootstrap/_layouts/**'),
-    helper.exclude('**/npm/doc/**'),
-    helper.exclude('**/npm/html/**'),
-    helper.exclude('**/npm/node_modules/.bin/beep'),
-    helper.exclude('**/npm/node_modules/.bin/clear'),
-    helper.exclude('**/npm/node_modules/.bin/starwars'),
-    helper.exclude('**/pegjs/examples/**'),
-    helper.exclude('**/test/**'),
-    helper.exclude('**/doc/**'),
-    helper.exclude('**/example/**'),
-    helper.exclude('**/build/binding.Makefile'),
-    helper.exclude('**/build/config.gypi'),
-    helper.exclude('**/build/gyp-mac-tool'),
-    helper.exclude('**/build/Makefile'),
-    helper.exclude('**/build/Release/obj.target'),
-    helper.exclude('**/build/Release/obj'),
-    helper.exclude('**/build/Release/.deps'),
-    helper.exclude('**/demo*/**'),
-    helper.exclude('node_modules/**/build/**'),
-    helper.exclude('node_modules/**/bin/**'),
-    helper.exclude('.*/**'),
-
-    // make sure we have these files
-    helper.include('README.md'),
-    helper.include('package.json'),
-    helper.include('LICENSE.txt'),
-    helper.include('.git.json'),
-];
 
 module.exports = function (grunt) {
     "use strict";
@@ -94,6 +51,7 @@ module.exports = function (grunt) {
     var pkgJson = grunt.file.readJSON('../package.json');
     var currentVersion = pkgJson.version;
     var buildDir = getBuildDir(buildPlatforms);
+    var cacheDir = path.join(__dirname, "cache/popcorntime");
 
     if (process.platform === 'darwin') {
         appName = 'Popcorn-Time.app'
@@ -141,6 +99,8 @@ module.exports = function (grunt) {
             rootPath: path.join(__dirname, ".."),
             // wheres the build are located
             buildDir: buildDir,
+            // wheres we create our tmp build
+            cacheDir: cacheDir,
             // wheres the build contents
             contentsDir: contentsDir,
             // full path to bundled app
@@ -161,7 +121,7 @@ module.exports = function (grunt) {
                 linux64: buildPlatforms.linux64,
                 download_url: 'http://get.popcorntime.io/nw/'
             },
-            src: buildFiles
+            src: [path.join(cacheDir, '**')]
         },
 
         shell: {
@@ -178,8 +138,13 @@ module.exports = function (grunt) {
 
     });
 
-    var buildTasks = ['shell:submodule','nodewebkit'];
-    var ciTasks = ['shell:submodule','nodewebkit'];
+    var buildTasks = ['prepare-build','shell:submodule','nodewebkit'];
+    var ciTasks = buildTasks;
+
+    // pack windows
+    if (process.platform === 'win32') {
+        //ciTasks.push('windows-pack');
+    }
 
     ciTasks.push('publish-build');
 

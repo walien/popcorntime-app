@@ -77,5 +77,8 @@
 		"load-grunt-tasks": "0.4.0",
 		"nw-gyp": "^0.12.2",
 		"tmp": "0.0.23"
+	},
+	"packageDependencies": {
+		"chromecast51": "0.2.5"
 	}
 }

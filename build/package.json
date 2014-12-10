@@ -12,10 +12,9 @@
     "grunt-cli": "~0.1.9",
     "grunt-node-webkit-builder": "0.1.x",
     "grunt-shell": "^1.1.1",
-    "lodash": "^2.4.1",
     "npm": "~1.4.5",
     "temp": "~0.8.1",
-    "underscore-plus": "1.x",
+    "underscore-plus": "^1.6.1",
     "unzip": "~0.1.9",
     "vm-compatibility-layer": "~0.1.0"
   }
