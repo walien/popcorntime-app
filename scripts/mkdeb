@@ -5,7 +5,7 @@ set -e
 
 SCRIPT=`readlink -f "$0"`
 ROOT=`readlink -f $(dirname $SCRIPT)/..`
-ECHO $ROOT
+echo $ROOT
 cd $ROOT
 
 VERSION="$1"
@@ -20,7 +20,7 @@ TARGET_ROOT="`mktemp -d`"
 chmod $FILE_MODE "$TARGET_ROOT"
 
 TARGET="$TARGET_ROOT/popcorntime-$VERSION-$ARCH"
-ECHO $TARGET;
+echo $TARGET;
 
 mkdir -m $FILE_MODE -p "$TARGET/usr"
 env INSTALL_PREFIX="$TARGET/usr" scripts/grunt install
