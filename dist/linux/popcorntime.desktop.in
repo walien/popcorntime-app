@@ -2,9 +2,9 @@
 Name=Atom
 Comment=<%= description %>
 GenericName=Text Editor
-Exec=<%= installDir %>/share/Popcorn-Time/popcorntime %U
+Exec=<%= installDir %>/share/Popcorn-Time/Popcorn-Time %U
 Icon=<%= iconName %>
 Type=Application
 StartupNotify=true
-Categories=VideoPlayer;
-MimeType=text/plain;
+Categories=AudioVideo;Player;
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;

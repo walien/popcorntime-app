@@ -70,16 +70,22 @@ module.exports = function (grunt) {
 
         contentsDir = shellAppDir;
         appDir = shellAppDir;
+        installDir = path.join(process.env.ProgramFiles, appName);
 
     }else if (process.platform === 'darwin') {
 
         contentsDir = path.join(shellAppDir, 'Contents')
         appDir = path.join(contentsDir, 'Resources', 'app.nw');
+        installDir = path.join('/Applications', appName);
+        killCommand = 'pkill -9 Popcorn-Time'
+        killCommand = 'taskkill /F /IM Popcorn-Time.exe'
 
     }else {
 
         contentsDir = shellAppDir
         appDir = path.join(shellAppDir, 'Popcorn-Time');
+        installDir = process.env.INSTALL_PREFIX ? '/usr/local';
+        killCommand ='pkill -9 Popcron-Time'
 
     }
 
@@ -105,6 +111,10 @@ module.exports = function (grunt) {
             contentsDir: contentsDir,
             // full path to bundled app
             shellAppDir: shellAppDir,
+            // PT install dir
+            shellAppDir: installDir,
+            // Kill command usefull for CI
+            killCommand: killCommand
         },
 
         nodewebkit: {
@@ -145,7 +155,7 @@ module.exports = function (grunt) {
     if (process.platform === 'win32') {
         ciTasks.push('windows-pack');
     }
-    
+
     if (process.platform === 'linux') {
         ciTasks.push('mkdeb');
     }
