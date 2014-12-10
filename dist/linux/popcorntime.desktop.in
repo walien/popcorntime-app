@@ -2,7 +2,7 @@
 Name=Atom
 Comment=<%= description %>
 GenericName=Text Editor
-Exec=<%= installDir %>/share/Popcorn-Time/Popcorn-Time %U
+Exec=<%= installDir %>/share/popcorntime/Popcorn-Time %U
 Icon=<%= iconName %>
 Type=Application
 StartupNotify=true

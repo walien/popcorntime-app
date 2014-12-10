@@ -17,7 +17,7 @@ module.exports = function(grunt) {
         if (process.platform === 'linux') {
             // only support linux for now
             var binDir = path.join(installDir, 'bin');
-            var shareDir = path.join(installDir, 'share', 'Popcorn-Time');
+            var shareDir = path.join(installDir, 'share', 'popcorntime');
             var binDir = path.join(installDir, 'bin');
             var iconName = path.join(shareDir, 'src', 'app', 'images', 'icon.png');
 
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
             rm(shareDir);
             mkdir(path.dirname(shareDir))
 
-            cp(buildDir, shareDir);
+            cp(path.join(buildDir, 'Popcorn-Time'), shareDir);
 
             process.chdir(binDir);
             rm('ppm');
