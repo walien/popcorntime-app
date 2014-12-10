@@ -118,7 +118,7 @@ module.exports = function(grunt) {
 
         var packageFilter = new RegExp("(" + (ignoredPaths.join('|')) + ")|(.+\\.(cson|coffee)$)");
 
-        filterPackage = function(pathToCopy) {
+        var filterPackage = function(pathToCopy) {
             if (benchmarkFolderPattern.test(pathToCopy)) {
                 return true;
             }
@@ -143,8 +143,6 @@ module.exports = function(grunt) {
         cp(path.join(rootDir, 'ppm'), path.join(cacheDir, 'ppm'), {
             filter: filterNodeModule
         });
-
-
 
         return;
 	});
