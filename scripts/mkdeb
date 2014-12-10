@@ -38,7 +38,7 @@ mkdir -m $FILE_MODE -p "$TARGET/usr/share/doc/popcorntime"
 
 # Add lintian overrides
 mkdir -m $FILE_MODE -p "$TARGET/usr/share/lintian/overrides"
-cp "$ROOT/resources/linux/debian/lintian-overrides" "$TARGET/usr/share/lintian/overrides/popcorntime"
+cp "$ROOT/dist/linux/debian/lintian-overrides" "$TARGET/usr/share/lintian/overrides/popcorntime"
 
 # Remove executable bit from .node files
 find "$TARGET" -type f -name "*.node" -exec chmod a-x {} \;
