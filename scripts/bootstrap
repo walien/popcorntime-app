@@ -36,19 +36,6 @@ function bootstrap() {
         fs.mkdirSync(path.join(ppmInstallPath, 'node_modules'));
     }
 
-    var packagesToDedupe = [
-        'q',
-        'request',
-        'fs',
-        'fs-plus',
-        'i18n',
-        'lodash',
-        'pdk',
-        'bencode',
-        'async',
-        'magnet-uri'
-    ];
-
     var ppmPath = path.resolve(__dirname, '..', 'ppm', 'node_modules', 'popcorn-package-manager', 'bin', 'ppm')
     var ppmFlags = process.env.JANKY_SHA1 || process.argv.indexOf('--no-color') !== -1 ? ' --no-color' : '';
 
@@ -105,11 +92,17 @@ function bootstrap() {
     },
     ppmPath + ' clean' + ppmFlags,
     moduleInstallCommand,
-    dedupePpmCommand + ' ' + packagesToDedupe.join(' '),
+    dedupePpmCommand,
     {
-        command: dedupeNpmCommand + ' ' + packagesToDedupe.join(' '),
+        command: dedupeNpmCommand,
         options: {
             cwd: path.resolve(__dirname, '..', 'ppm', 'node_modules', 'popcorn-package-manager')
+        }
+    },
+    {
+        command: dedupeNpmCommand,
+        options: {
+            cwd: path.resolve(__dirname, '..')
         }
     }
     ];
