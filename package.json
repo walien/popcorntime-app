@@ -50,6 +50,7 @@
 		"pdk": "git+https://git.popcorntime.io/stash/scm/pt/pdk.git",
 		"popcorn-opensubtitles": "git+https://git.popcorntime.io/stash/scm/thrd/popcorn-opensubtitles.git",
 		"popcorn-streamer-server": "git+https://git.popcorntime.io/stash/scm/pt/popcorn-streamer-server.git",
+		"popcorn-streamer": "0.1.0",
 		"q": "^1.1.2",
 		"read-torrent": "^1.0.0",
 		"readdirp": "*",
