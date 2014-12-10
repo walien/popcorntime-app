@@ -71,6 +71,7 @@ module.exports = function (grunt) {
         contentsDir = shellAppDir;
         appDir = shellAppDir;
         installDir = path.join(process.env.ProgramFiles, appName);
+        killCommand = 'taskkill /F /IM Popcorn-Time.exe'
 
     }else if (process.platform === 'darwin') {
 
@@ -78,13 +79,12 @@ module.exports = function (grunt) {
         appDir = path.join(contentsDir, 'Resources', 'app.nw');
         installDir = path.join('/Applications', appName);
         killCommand = 'pkill -9 Popcorn-Time'
-        killCommand = 'taskkill /F /IM Popcorn-Time.exe'
 
     }else {
 
         contentsDir = shellAppDir
         appDir = path.join(shellAppDir, 'Popcorn-Time');
-        installDir = process.env.INSTALL_PREFIX ? '/usr/local';
+        installDir = (process.env.INSTALL_PREFIX) ? process.env.INSTALL_PREFIX : '/usr/local';
         killCommand ='pkill -9 Popcron-Time'
 
     }
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
             // full path to bundled app
             shellAppDir: shellAppDir,
             // PT install dir
-            shellAppDir: installDir,
+            installDir: installDir,
             // Kill command usefull for CI
             killCommand: killCommand
         },
