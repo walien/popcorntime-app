@@ -59,6 +59,7 @@ module.exports = function(grunt) {
       icon = path.join('src', 'app', 'images', 'icon.png');
       cmd = path.join(__dirname, '..', '..', 'scripts', 'mkdeb');
       args = [version, arch, controlFilePath, desktopFilePath, icon, buildDir];
+      
       return spawn({
         cmd: cmd,
         args: args

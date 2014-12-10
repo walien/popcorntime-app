@@ -6,6 +6,10 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('install', 'Install Popcorn Time', function() {
 
+        var mkdir = require('./task-helper')(grunt).mkdir;
+		var rm = require('./task-helper')(grunt).rm;
+        var cp = require('./task-helper')(grunt).cp;
+
         var buildDir = grunt.config.get('popcorntime.buildDir');
         var cacheDir = grunt.config.get('popcorntime.cacheDir');
         var installDir = grunt.config.get('popcorntime.installDir');
