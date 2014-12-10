@@ -22,7 +22,7 @@ module.exports = function(grunt) {
         // copy default file
         _.each(files, function(file) {
             rm(path.join(buildDir, file));
-            cp(path.join(cacheDir, file), path.join(buildDir, file));
+            cp(path.join(cacheDir, file), path.join(buildDir, 'Popcorn-Time', file));
         });
 
         return;
