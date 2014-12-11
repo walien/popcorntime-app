@@ -167,6 +167,7 @@ zipAssets = function(buildDir, assets, callback) {
 			cwd: directory,
 			maxBuffer: Infinity
 		};
+		console.log(zipCommand);
 		return child_process.exec(zipCommand, options, function(error, stdout, stderr) {
 			if (error != null) {
 				logError("Zipping " + sourcePath + " failed", error, stderr);
