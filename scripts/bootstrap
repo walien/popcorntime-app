@@ -76,7 +76,17 @@ function bootstrap() {
         ppmInstallCommand += ' --arch=ia32';
     }
 
+    var cacheCleanCommand = initialNpmCommand + npmFlags + 'cache clean';
+    var cacheCleanoptions =  {
+        cwd:  path.resolve(__dirname, '..')
+    };
+
     var commands = [{
+        command: cacheCleanCommand,
+        message: 'Cleaning NPM cache...',
+        options: cacheCleanoptions
+    },
+    {
         command: buildInstallCommand,
         message: 'Installing build modules...',
         options: buildInstallOptions

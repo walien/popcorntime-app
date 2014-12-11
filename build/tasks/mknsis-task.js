@@ -13,7 +13,9 @@ module.exports = function(grunt) {
 			return spawn({
 	          cmd: cmd,
 	          args: [path.join(rootPath, 'dist', 'windows', 'installer.nsi')]
-	        });
+		}, function(error) {
+			console.log("Windows Installer created");
+		});
 		} else {
 			grunt.log.ok("C:/psmodules/makensis.exe not found");
 		}
