@@ -8,10 +8,10 @@ module.exports = function(grunt) {
 
         var exec = require('child_process').exec;
 
-        var cmd = "C:/psmodules/makensis.exe installer.nsi";
+        var cmd = "C:/psmodules/makensis.exe";
         var rootPath = grunt.config.get('popcorntime.rootPath');
 		if (fs.isFileSync(cmd)) {
-			return exec(cmd, options = {
+			return exec(cmd + ' installer.nsi', options = {
 				cwd: path.join(rootPath, 'dist', 'windows'),
 				maxBuffer: Infinity
 			}, function(error, stdout, stderr) {
