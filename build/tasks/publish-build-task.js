@@ -104,7 +104,7 @@ getAssets = function() {
 				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-windows.zip',
-				sourcePath: path.join(buildDir, 'ppm')
+				sourcePath: path.join(buildDir, 'ppm', '*')
 			}];
 			break;
 		case 'linux':
