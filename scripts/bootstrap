@@ -127,7 +127,7 @@ function bootstrap() {
             }
         });
     }
-
+    console.log(commands);
     process.chdir(path.dirname(__dirname));
     executeCommands(commands, process.exit);
 }
