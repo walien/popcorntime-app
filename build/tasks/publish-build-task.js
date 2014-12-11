@@ -101,10 +101,10 @@ getAssets = function() {
 		case 'win32':
 			return [{
 				assetName: 'popcorn-time-windows.zip',
-				sourcePath: 'Popcorn-Time/'
+				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-windows.zip',
-				sourcePath: 'ppm/'
+				sourcePath: path.join(buildDir, 'ppm')
 			}];
 			break;
 		case 'linux':
