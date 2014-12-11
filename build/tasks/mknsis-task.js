@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('mknsis', 'Generate Windows Installer', function() {
 
-        var spwan = require('./task-helper')(grunt).spawn;
+        var spawn = require('./task-helper')(grunt).spawn;
         var cmd = "C:/psmodules/makensis.exe";
         var rootPath = grunt.config.get('popcorntime.rootPath');
 		if (fs.isFileSync(cmd)) {
