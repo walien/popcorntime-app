@@ -46,9 +46,10 @@ function bootstrap() {
     var buildInstallCommand = initialNpmCommand + npmFlags + 'install';
     var buildInstallOptions = {cwd: path.resolve(__dirname, '..', 'build')};
 
-    var bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', '.bin', 'bower.cmd');
-    var bowerPath2 = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
-    bowerPath = fs.existsSync(bowerPath) ? bowerPath : bowerPath2;
+    var bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', 'bower', 'bin', 'bower');
+    if (process.platform === 'win32') {
+        bowerPath = path.resolve(__dirname, '..', 'build', 'node_modules', '.bin', 'bower.cmd');
+    }
 
     var bowerInstallCommand = bowerPath + ' install --allow-root';
     var bowerInstallOptions = {cwd: path.resolve(__dirname, '..')};
