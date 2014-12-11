@@ -35,9 +35,9 @@ cp.safeExec.bind(global, 'node scripts/clean', function(error) {
     if (error) {
         process.exit(1);
     }
-    
+
     cp.safeExec.bind(global, 'npm install npm', {cwd: path.resolve(__dirname, '..', 'build')}, function() {
-      cp.safeExec.bind(global, 'node scripts/bootstrap', function(error) {
+      cp.safeExec.bind(global, 'node scripts/bootstrap --no-quiet', function(error) {
         if (error) {
             process.exit(1);
         }
