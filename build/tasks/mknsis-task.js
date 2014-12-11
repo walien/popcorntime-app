@@ -6,20 +6,20 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('mknsis', 'Generate Windows Installer', function() {
 
-        var spawn = require('./task-helper')(grunt).spawn;
-        var cmd = "C:/psmodules/makensis.exe";
+        var exec = require('child_process').exec;
+
+        var cmd = "C:/psmodules/makensis.exe installer.nsi";
         var rootPath = grunt.config.get('popcorntime.rootPath');
 		if (fs.isFileSync(cmd)) {
-			return spawn({
-	          cmd: cmd,
-	          args: [path.join(rootPath, 'dist', 'windows', 'installer.nsi')]
-		}, function(error) {
-			console.log("Windows Installer created");
+			return exec(cmd, options = {
+				cwd: path.join(rootPath, 'dist', 'windows'),
+				maxBuffer: Infinity
+			}, function(error, stdout, stderr) {
+			grunt.log.ok("Windows Installer created");
 		});
 		} else {
 			grunt.log.ok("C:/psmodules/makensis.exe not found");
 		}
-
 		return;
 	});
 }

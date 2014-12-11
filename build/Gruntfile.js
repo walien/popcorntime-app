@@ -154,7 +154,7 @@ module.exports = function (grunt) {
     // pack windows
     if (process.platform === 'win32') {
         ciTasks.push('windows-pack');
-        ciTasks.push('mknsis');        
+        ciTasks.push('mknsis');
     }
 
     if (process.platform === 'linux') {
@@ -162,7 +162,7 @@ module.exports = function (grunt) {
     }
 
     ciTasks.push('publish-build');
-    ciTasks.push('clean-releases');
+    //ciTasks.push('clean-releases');
 
     return grunt.registerTask('ci', ciTasks);
     return grunt.registerTask('default', buildTasks);

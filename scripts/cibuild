@@ -31,22 +31,28 @@ function readEnvironmentVariables() {
 }
 
 readEnvironmentVariables();
-cp.safeExec.bind(global, 'npm install npm', {cwd: path.resolve(__dirname, '..', 'build')}, function() {
-  cp.safeExec.bind(global, 'node scripts/bootstrap', function(error) {
+cp.safeExec.bind(global, 'node scripts/clean', function(error) {
     if (error) {
         process.exit(1);
     }
-    // clean all cache
-    require('fs-plus').removeSync.bind(global, path.join(homeDir, '.popcorntime'))
+    
+    cp.safeExec.bind(global, 'npm install npm', {cwd: path.resolve(__dirname, '..', 'build')}, function() {
+      cp.safeExec.bind(global, 'node scripts/bootstrap', function(error) {
+        if (error) {
+            process.exit(1);
+        }
+        // clean all cache
+        require('fs-plus').removeSync.bind(global, path.join(homeDir, '.popcorntime'))
 
-    var async = require('async');
-    var gruntPath = path.join('build', 'node_modules', '.bin', 'grunt') + (process.platform === 'win32' ? '.cmd' : '');
-    var tasks = [
-      cp.safeExec.bind(global, 'git clean -dff'),
-      cp.safeExec.bind(global, gruntPath + ' ci --gruntfile build/Gruntfile.js --stack --no-color'),
-    ]
-    async.series(tasks, function(error) {
-      process.exit(error ? 1 : 0);
-    });
-  })();
+        var async = require('async');
+        var gruntPath = path.join('build', 'node_modules', '.bin', 'grunt') + (process.platform === 'win32' ? '.cmd' : '');
+        var tasks = [
+          cp.safeExec.bind(global, 'git clean -dff'),
+          cp.safeExec.bind(global, gruntPath + ' ci --gruntfile build/Gruntfile.js --stack --no-color'),
+        ]
+        async.series(tasks, function(error) {
+          process.exit(error ? 1 : 0);
+        });
+      })();
+    })();
 })();
