@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('fs-plus');
 var path = require('path');
 var _ = require('underscore-plus');
 
