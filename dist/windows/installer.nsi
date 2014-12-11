@@ -238,17 +238,33 @@ FunctionEnd
 Section ; PPM Files
 
     ;Set output path to InstallDir
-    SetOutPath "$INSTDIR\ppm"
+    SetOutPath "$INSTDIR\ppm\node_modules\popcorn-package-manager"
 
     ;Add the files
     !ifdef WIN_PATHS
-        File /r "..\..\build\cache\popcorntime\ppm"
+        File /r "..\..\build\cache\popcorntime\ppm\node_modules\popcorn-package-manager"
     !else
-        File /r "../../build/cache/popcorntime/ppm"
+        File /r "../../build/cache/popcorntime/ppm/node_modules/popcorn-package-manager"
     !endif
 
-    !ifdef DATFILES
-        File "${DATPATH}*.dat"
+    SetOutPath "$INSTDIR\ppm\node_modules\.bin"
+
+    ;Add the files
+    !ifdef WIN_PATHS
+        File /r "..\..\build\cache\popcorntime\ppm\node_modules\.bin"
+    !else
+        File /r "../../build/cache/popcorntime/ppm/node_modules/.bin"
+    !endif
+
+    SetOutPath "$INSTDIR\ppm\"
+
+    ;Add the files
+    !ifdef WIN_PATHS
+        File /r "..\..\build\cache\popcorntime\ppm\README.md"
+        File /r "..\..\build\cache\popcorntime\ppm\package.json"
+    !else
+        File /r "../../build/cache/popcorntime/ppm/README.md"
+        File /r "../../build/cache/popcorntime/ppm/package.json"
     !endif
 
 SectionEnd
