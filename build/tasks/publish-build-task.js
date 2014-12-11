@@ -60,12 +60,10 @@ module.exports = function(gruntObject) {
 					return done(error);
 				}
 				assetNames = (function() {
-					var _i, _len, _results;
-					_results = [];
-					for (_i = 0, _len = assets.length; _i < _len; _i++) {
-						asset = assets[_i];
+					var _results = [];
+					_.each(assets, function(asset) {
 						_results.push(asset.assetName);
-					}
+					});
 					return _results;
 				})();
 				return deleteExistingAssets(release, assetNames, function(error) {
@@ -86,6 +84,10 @@ getAssets = function() {
 
 	var cp = require('./task-helper')(grunt).cp;
 
+	// copy ppm to be packaged as well
+	var sourcePath = path.join(cacheDir, 'ppm');
+	cp(sourcePath, path.join(buildDir, 'ppm'));
+
 	switch (process.platform) {
 		case 'darwin':
 			return [{
@@ -93,7 +95,7 @@ getAssets = function() {
 				sourcePath: 'Popcorn-Time.app'
 			},{
 				assetName: 'ppm-mac.zip',
-				sourcePath: path.join(cacheDir, 'ppm')
+				sourcePath: 'ppm'
 			}];
 			break;
 		case 'win32':
@@ -102,7 +104,7 @@ getAssets = function() {
 				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-windows.zip',
-				sourcePath: path.join(cacheDir, 'ppm')
+				sourcePath: 'ppm'
 			}];
 			break;
 		case 'linux':
@@ -121,7 +123,7 @@ getAssets = function() {
 				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-linux-' + arch + '.zip',
-				sourcePath: path.join(cacheDir, 'ppm')
+				sourcePath: 'ppm'
 			}];
 
 			sourcePath = path.join(buildDir, 'popcorntime-' + version + '-' + arch + '.deb');
