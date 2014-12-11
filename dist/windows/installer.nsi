@@ -62,7 +62,7 @@ VIAddVersionKey "FileVersion" "v${PT_VERSION}"
 VIAddVersionKey "CompanyName" "Popcorn Official"
 VIAddVersionKey "LegalCopyright" "${APP_URL}"
 VIProductVersion "${PT_VERSION_CLEAN}.0"
-OutFile "../../build/releases/Popcorn-Time/win/${APP_NAME}-${PT_VERSION}-Setup.exe"
+OutFile "${APP_NAME}-${PT_VERSION}-Setup.exe"
 CRCCheck on
 SetCompressor /SOLID lzma
 

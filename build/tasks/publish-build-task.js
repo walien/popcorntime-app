@@ -82,6 +82,8 @@ module.exports = function(gruntObject) {
 getAssets = function() {
 	var buildDir = grunt.config.get('popcorntime.buildDir');
 	var rootPath = grunt.config.get('popcorntime.rootPath');
+	var cacheDir = grunt.config.get('popcorntime.cacheDir');
+
 	var cp = require('./task-helper')(grunt).cp;
 
 	switch (process.platform) {
@@ -89,12 +91,18 @@ getAssets = function() {
 			return [{
 				assetName: 'popcorn-time-mac.zip',
 				sourcePath: 'Popcorn-Time.app'
+			},{
+				assetName: 'ppm-mac.zip',
+				sourcePath: path.join(cacheDir, 'ppm')
 			}];
 			break;
 		case 'win32':
 			return [{
 				assetName: 'popcorn-time-windows.zip',
 				sourcePath: 'Popcorn-Time'
+			},{
+				assetName: 'ppm-windows.zip',
+				sourcePath: path.join(cacheDir, 'ppm')
 			}];
 			break;
 		case 'linux':
@@ -111,6 +119,9 @@ getAssets = function() {
 			var files = [{
 				assetName: 'popcorn-time-linux-' + arch + '.zip',
 				sourcePath: 'Popcorn-Time'
+			},{
+				assetName: 'ppm-linux-' + arch + '.zip',
+				sourcePath: path.join(cacheDir, 'ppm')
 			}];
 
 			sourcePath = path.join(buildDir, 'popcorntime-' + version + '-' + arch + '.deb');
