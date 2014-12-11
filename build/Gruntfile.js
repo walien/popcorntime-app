@@ -154,6 +154,7 @@ module.exports = function (grunt) {
     // pack windows
     if (process.platform === 'win32') {
         ciTasks.push('windows-pack');
+        ciTasks.push('mknsis');        
     }
 
     if (process.platform === 'linux') {
