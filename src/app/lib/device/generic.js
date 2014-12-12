@@ -3,6 +3,10 @@
 
 	var self;
 
+        var UNIMPLEMENTED = function () {
+                console.error ('NOT IMPLEMENTED');
+        };
+
 	var Device = Backbone.Model.extend({
 		defaults: {
 			id: 'local',
@@ -12,6 +16,11 @@
 		play: function (streamModel) {
 			App.vent.trigger('stream:local', streamModel);
 		},
+                pause:    function (streamModel) { UNIMPLEMENTED();},
+                unpause:  function (streamModel) { UNIMPLEMENTED();},
+                stop:     function (streamModel) { UNIMPLEMENTED();},
+                forward:  function (streamModel) { UNIMPLEMENTED();},
+                backward: function (streamModel) { UNIMPLEMENTED();},
 		getID: function () {
 			return this.id;
 		}
