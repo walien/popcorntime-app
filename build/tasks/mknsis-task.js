@@ -16,11 +16,11 @@ module.exports = function(grunt) {
 				cwd: path.join(rootPath),
 				maxBuffer: Infinity
 			}, function(error, stdout, stderr) {
+				console.log(stdout);
 				if (error) {
 					console.log(error);
 					process.exit(1);
 				}
-				console.log(stdout);
 				grunt.log.ok("Windows Installer created");
 				return done();
 		});

@@ -16,15 +16,6 @@ var parseBuildPlatforms = function () {
     return buildPlatforms;
 };
 
-var helper = {
-    include: function(file) {
-        return cacheDir + '/../' + file ;
-    },
-    exclude: function(file) {
-        return '!' + __dirname + '/../' + file ;
-    }
-};
-
 var getBuildDir = function(platforms) {
     var dir = [];
     if (platforms.mac) {
@@ -41,8 +32,6 @@ var getBuildDir = function(platforms) {
     }
     return [];
 }
-
-
 
 module.exports = function (grunt) {
     "use strict";
@@ -134,6 +123,7 @@ module.exports = function (grunt) {
             src: [path.join(cacheDir, '**')]
         },
 
+        // to be removed ; submodules SUX!
         shell: {
 			submodule: {
 				command: 'git submodule update --init',

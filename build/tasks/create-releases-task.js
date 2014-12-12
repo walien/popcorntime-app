@@ -111,8 +111,7 @@ logError = function(message, error, details) {
 // zip assets
 zipAssets = function(buildDir, assets, callback) {
 
-	// make release available to jenkins
-	var outDir = path.resolve(grunt.config.get('popcorntime.buildDir'), '..');
+	var buildDir = grunt.config.get('popcorntime.buildDir');
 
 	var zip = function(directory, sourcePath, assetName, callback) {
 		var zipCommand;
@@ -146,8 +145,10 @@ zipAssets = function(buildDir, assets, callback) {
 
 		// zip file
 		if (path.extname(assetName) === '.zip') {
-			fs.removeSync(path.join(outDir, assetName));
-			tasks.push(zip.bind(this, outDir, sourcePath, assetName));
+			// make it available for jenkins
+			assetName = path.join('..', assetName);
+			fs.removeSync(path.join(buildDir, assetName));
+			tasks.push(zip.bind(this, buildDir, sourcePath, assetName));
 		}
 
 	});
