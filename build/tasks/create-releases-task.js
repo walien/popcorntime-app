@@ -11,13 +11,9 @@ module.exports = function(gruntObject) {
 	grunt = gruntObject;
 
 	var cp = require('./task-helper')(grunt).cp;
+	var rm = require('./task-helper')(grunt).rm;
 
 	grunt.registerTask('create-releases', 'Create the releases', function() {
-		return grunt.task.run('zip-assets');
-	});
-
-	return grunt.registerTask('zip-assets', 'ZIP the assets', function() {
-
 		var done = this.async();
 
 		return zipAssets(grunt.config.get('popcorntime.buildDir'), getAssets(), function(error) {
@@ -25,10 +21,15 @@ module.exports = function(gruntObject) {
 			if (error) {
 				return done(error);
 			}
+			var buildDir = grunt.config.get('popcorntime.buildDir');
+
+			// we don't need the generic .nw
+			rm(path.resolve(buildDir, '..', 'Popcorn-Time.nw'));
 
 			return done();
 		});
 	});
+
 };
 
 var getAssets = function() {
