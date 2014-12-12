@@ -2,7 +2,6 @@
 var cp = require('./utils/child-process-wrapper.js');
 var fs = require('fs');
 var path = require('path');
-var async = require('async');
 
 process.chdir(path.dirname(__dirname));
 
@@ -32,6 +31,7 @@ cp.safeExec.bind(global, 'node scripts/clean', function(error) {
               cp.safeExec.bind(global, gruntPath + ' ci --gruntfile build/Gruntfile.js --stack --no-color'),
             ];
 
+            var async = require('async');
             async.series(tasks, function(error) {
               process.exit(error ? 1 : 0);
             });

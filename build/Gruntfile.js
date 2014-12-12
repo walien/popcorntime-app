@@ -74,7 +74,7 @@ module.exports = function (grunt) {
         contentsDir = shellAppDir
         appDir = path.join(shellAppDir, 'Popcorn-Time');
         installDir = (process.env.INSTALL_PREFIX) ? process.env.INSTALL_PREFIX : '/usr/local';
-        killCommand ='pkill -9 Popcron-Time'
+        killCommand ='pkill -9 Popcorn-Time'
 
     }
 
