@@ -110,9 +110,6 @@ var getAssets = function() {
 				arch = 'x86_64';
 			}
 
-			// linux installer
-			cp(path.join(rootPath, 'dist','linux', 'linux-installer'), path.join(buildDir, 'linux-installer'));
-
 			// default file
 			var files = [{
 				assetName: 'popcorn-time-linux-' + arch + '.tar.xz',

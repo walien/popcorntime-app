@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 
         // call linux-installer with buildDir arg
         return exec('scripts/linux-installer ' + buildDir, {
-            cwd: path.join(rootPath),
+            cwd: rootPath,
             maxBuffer: Infinity
         }, function(error, stdout, stderr) {
             console.log(stdout);
