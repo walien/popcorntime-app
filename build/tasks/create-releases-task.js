@@ -31,38 +31,76 @@ module.exports = function(gruntObject) {
 	});
 };
 
-getAssets = function() {
+var getAssets = function() {
 	var buildDir = grunt.config.get('popcorntime.buildDir');
 	var rootPath = grunt.config.get('popcorntime.rootPath');
 	var cacheDir = grunt.config.get('popcorntime.cacheDir');
 
 	var cp = require('./task-helper')(grunt).cp;
+	var rm = require('./task-helper')(grunt).rm;
 
 	// copy ppm to be packaged as well
 	var sourcePath = path.join(cacheDir, 'ppm');
 	cp(sourcePath, path.join(buildDir, 'ppm'));
 
 	switch (process.platform) {
+
 		case 'darwin':
+
+			// updater
+			cp(cacheDir, path.join(buildDir, 'updater'));
+			cp(path.join(buildDir, 'updater'), path.join(buildDir, 'updater-without-ppm'));
+			rm(path.join(buildDir, 'updater-without-ppm', 'ppm'));
+
 			return [{
 				assetName: 'popcorn-time-mac.zip',
 				sourcePath: 'Popcorn-Time.app'
 			},{
 				assetName: 'ppm-mac.zip',
-				sourcePath: 'ppm'
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'ppm')
+			},{
+				assetName: 'update-mac.nw',
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'updater')
+			},{
+				assetName: 'update-without-ppm-mac.nw',
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'updater-without-ppm')
 			}];
 			break;
 		case 'win32':
+
+			// updater
+			// win need to be in Popcorn-Time/
+			cp(cacheDir, path.join(buildDir, 'updater', 'Popcorn-Time'));
+			cp(path.join(buildDir, 'updater'), path.join(buildDir, 'updater-without-ppm'));
+			rm(path.join(buildDir, 'updater-without-ppm', 'Popcorn-Time', 'ppm'));
+
 			return [{
 				assetName: 'popcorn-time-windows.zip',
 				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-windows.zip',
-				sourcePath: path.join(buildDir, 'ppm', '*')
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'ppm')
+			},{
+				assetName: 'update-windows.nw',
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'updater')
+			},{
+				assetName: 'update-without-ppm-windows.nw',
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'updater-without-ppm')
 			}];
 			break;
 		case 'linux':
 			var version = grunt.file.readJSON(path.join(rootPath, 'package.json')).version;
+
+			// updater
+			cp(cacheDir, path.join(buildDir, 'updater'));
+			cp(path.join(buildDir, 'updater'), path.join(buildDir, 'updater-without-ppm'));
+			rm(path.join(buildDir, 'updater-without-ppm', 'ppm'));
 
 			var arch;
 			if (process.arch === 'ia32') {
@@ -84,6 +122,14 @@ getAssets = function() {
 			},{
 				assetName: 'linux-installer',
 				sourcePath: 'linux-installer'
+			},{
+				assetName: 'update-linux-' + arch + '.nw',
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'updater')
+			},{
+				assetName: 'update-without-ppm-linux-' + arch + '.nw',
+				sourcePath: '.',
+				cwd: path.join(buildDir, 'updater-without-ppm')
 			}];
 
 			sourcePath = path.join(buildDir, 'popcorntime-' + version + '-' + arch + '.deb');
@@ -104,7 +150,8 @@ getAssets = function() {
 	}
 };
 
-logError = function(message, error, details) {
+// log errors
+var logError = function(message, error, details) {
 	grunt.log.error(message);
 	if (error) {
 		grunt.log.error(error);
@@ -115,7 +162,7 @@ logError = function(message, error, details) {
 };
 
 // zip assets
-zipAssets = function(buildDir, assets, callback) {
+var zipAssets = function(buildDir, assets, callback) {
 
 	var buildDir = grunt.config.get('popcorntime.buildDir');
 
@@ -124,7 +171,7 @@ zipAssets = function(buildDir, assets, callback) {
 
 		if (process.platform === 'win32') {
 			zipCommand = "C:/psmodules/7z.exe a -r " + assetName + " " + sourcePath;
-		} else if (process.platform === 'linux') {
+		} else if (process.platform === 'linux' && path.extname(assetName) != '.nw') {
 			zipCommand = "tar --exclude-vcs -caf " + assetName + " " + sourcePath;
 		} else {
 			zipCommand = "zip -r --symlinks " + assetName + " " + sourcePath;
@@ -135,7 +182,7 @@ zipAssets = function(buildDir, assets, callback) {
 			maxBuffer: Infinity
 		};
 
-		console.log(zipCommand);
+		console.log(zipCommand + " @ " + directory);
 
 		return child_process.exec(zipCommand, options, function(error, stdout, stderr) {
 			if (error) {
@@ -151,14 +198,23 @@ zipAssets = function(buildDir, assets, callback) {
 		var assetName = asset.assetName;
 		var sourcePath = asset.sourcePath;
 
-		console.log(path.extname(assetName));
-
 		// zip file
-		if (path.extname(assetName) === '.zip' || path.extname(assetName) === '.xz') {
+		if (path.extname(assetName) === '.zip' || path.extname(assetName) === '.xz' || path.extname(assetName) === '.nw') {
 			// make it available for jenkins
-			assetName = path.join('..', assetName);
+
+
+			var dir;
+			if (asset.cwd) {
+				dir = asset.cwd;
+				assetName = path.join('..', '..', assetName);
+			} else {
+				dir = buildDir;
+				assetName = path.join('..', assetName);
+			}
+
+
 			fs.removeSync(path.join(buildDir, assetName));
-			tasks.push(zip.bind(this, buildDir, sourcePath, assetName));
+			tasks.push(zip.bind(this, dir, sourcePath, assetName));
 		}
 
 	});
