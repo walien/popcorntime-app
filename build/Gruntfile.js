@@ -144,11 +144,14 @@ module.exports = function (grunt) {
     // pack windows
     if (process.platform === 'win32') {
         ciTasks.push('windows-pack');
-        ciTasks.push('mknsis');
+        // disabled till we got our workspace path changed...
+        // it's too long and generate issue caused by long path
+        //ciTasks.push('mknsis');
     }
 
     if (process.platform === 'linux') {
         ciTasks.push('mkdeb');
+        ciTasks.push('linux-installer');
     }
 
     ciTasks.push('create-releases');

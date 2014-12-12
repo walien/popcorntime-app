@@ -2,57 +2,42 @@
 var cp = require('./utils/child-process-wrapper.js');
 var fs = require('fs');
 var path = require('path');
+var async = require('async');
 
 process.chdir(path.dirname(__dirname));
 
 var homeDir = process.platform == 'win32' ? process.env.USERPROFILE : process.env.HOME;
 
-function loadEnvironmentVariables(filePath) {
-  try {
-    var lines = fs.readFileSync(filePath, 'utf8').trim().split('\n');
-    for (i in lines) {
-      var parts = lines[i].split('=');
-      var key = parts[0].trim();
-      var value = parts[1].trim();
-      process.env[key] = value;
-    }
-  } catch(error) {
-    console.error("Failed to load environment variables: " + filePath, error.code);
-  }
-}
-
-function readEnvironmentVariables() {
-  if (process.platform === 'win32')
-    loadEnvironmentVariables(path.resolve('/jenkins/config/popcorncredentials'));
-  else if (process.platform === 'darwin') {
-    loadEnvironmentVariables('/var/lib/jenkins/config/popcorncredentials');
-    loadEnvironmentVariables('/var/lib/jenkins/config/xcodekeychain');
-  }
-}
-
-readEnvironmentVariables();
+// clean .popcorntime cache (npm and other things)
 cp.safeExec.bind(global, 'node scripts/clean', function(error) {
+
     if (error) {
         process.exit(1);
     }
 
+    // make sure we have npm installed
     cp.safeExec.bind(global, 'npm install npm', {cwd: path.resolve(__dirname, '..', 'build')}, function() {
-      cp.safeExec.bind(global, 'node scripts/bootstrap --no-quiet', function(error) {
-        if (error) {
-            process.exit(1);
-        }
-        // clean all cache
-        require('fs-plus').removeSync.bind(global, path.join(homeDir, '.popcorntime'))
 
-        var async = require('async');
-        var gruntPath = path.join('build', 'node_modules', '.bin', 'grunt') + (process.platform === 'win32' ? '.cmd' : '');
-        var tasks = [
-          cp.safeExec.bind(global, 'git clean -dff'),
-          cp.safeExec.bind(global, gruntPath + ' ci --gruntfile build/Gruntfile.js --stack --no-color'),
-        ]
-        async.series(tasks, function(error) {
-          process.exit(error ? 1 : 0);
-        });
-      })();
+        // bootstrap the app
+        cp.safeExec.bind(global, 'node scripts/bootstrap --no-quiet', function(error) {
+
+            if (error) {
+                process.exit(1);
+            }
+
+            var gruntPath = path.join('build', 'node_modules', '.bin', 'grunt') + (process.platform === 'win32' ? '.cmd' : '');
+
+            var tasks = [
+              cp.safeExec.bind(global, 'git clean -dff'),
+              cp.safeExec.bind(global, gruntPath + ' ci --gruntfile build/Gruntfile.js --stack --no-color'),
+            ];
+
+            async.series(tasks, function(error) {
+              process.exit(error ? 1 : 0);
+            });
+
+        })();
+
     })();
+
 })();

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# require args for output path
+
+#remove old script
+rm -rf $1/linux-installer
+
+#copy basefile
+cp dist/linux/exec_basefile.sh $1/linux-installer
+
+#get version from package.json
+version=$(cat package.json | sed '/version/!d' | sed s/\"version\"://g | sed s/\"//g | sed s/\ //g | sed s/\	//g | sed s/,//g)
+
+#write version in script
+sed -i "s/PT_VERSION/$version/g" $1/linux-installer

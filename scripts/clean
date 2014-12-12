@@ -5,22 +5,17 @@ var path = require('path');
 var os = require('os');
 
 var removeCommand = process.platform === 'win32' ? 'rmdir /S /Q ' : 'rm -rf ';
-var productName = require('../package.json').name;
 
 process.chdir(path.dirname(__dirname));
 var home = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
-var tmpdir = os.tmpdir();
-
-var killatom = process.platform === 'win32' ? 'START taskkill /F /IM ' + productName + '.exe' : 'pkill -9 ' + productName + ' || true';
 
 var commands = [
-  killatom,
   [__dirname, '..', 'node_modules'],
   [__dirname, '..', 'build', 'node_modules'],
   [__dirname, '..', 'ppm', 'node_modules'],
-  [home, '.popcorntime', '.node-gyp'],
-  [home, '.popcorntime', '.npm']
+  [home, '.popcorntime']
 ];
+
 var run = function() {
   var next = commands.shift();
   if (!next)
@@ -36,4 +31,5 @@ var run = function() {
 
   cp.safeExec(next, run);
 };
+
 run();

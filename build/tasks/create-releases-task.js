@@ -71,13 +71,19 @@ getAssets = function() {
 				arch = 'x86_64';
 			}
 
+			// linux installer
+			cp(path.join(rootPath, 'dist','linux', 'linux-installer'), path.join(buildDir, 'linux-installer'));
+
 			// default file
 			var files = [{
-				assetName: 'popcorn-time-linux-' + arch + '.zip',
+				assetName: 'popcorn-time-linux-' + arch + '.tar.xz',
 				sourcePath: 'Popcorn-Time'
 			},{
-				assetName: 'ppm-linux-' + arch + '.zip',
+				assetName: 'ppm-linux-' + arch + '.tar.xz',
 				sourcePath: 'ppm'
+			},{
+				assetName: 'linux-installer',
+				sourcePath: 'linux-installer'
 			}];
 
 			sourcePath = path.join(buildDir, 'popcorntime-' + version + '-' + arch + '.deb');
@@ -118,6 +124,8 @@ zipAssets = function(buildDir, assets, callback) {
 
 		if (process.platform === 'win32') {
 			zipCommand = "C:/psmodules/7z.exe a -r " + assetName + " " + sourcePath;
+		} else if (process.platform === 'linux') {
+			zipCommand = "tar --exclude-vcs -caf " + assetName + " " + sourcePath;
 		} else {
 			zipCommand = "zip -r --symlinks " + assetName + " " + sourcePath;
 		}
@@ -143,8 +151,10 @@ zipAssets = function(buildDir, assets, callback) {
 		var assetName = asset.assetName;
 		var sourcePath = asset.sourcePath;
 
+		console.log(path.extname(assetName));
+
 		// zip file
-		if (path.extname(assetName) === '.zip') {
+		if (path.extname(assetName) === '.zip' || path.extname(assetName) === '.xz') {
 			// make it available for jenkins
 			assetName = path.join('..', assetName);
 			fs.removeSync(path.join(buildDir, assetName));
