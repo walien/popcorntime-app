@@ -83,15 +83,15 @@ var getAssets = function() {
 				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-windows.zip',
-				sourcePath: '.',
+				sourcePath: '*',
 				cwd: path.join(buildDir, 'ppm')
 			},{
 				assetName: 'update-windows.nw',
-				sourcePath: '.',
+				sourcePath: '*',
 				cwd: path.join(buildDir, 'updater')
 			},{
 				assetName: 'update-without-ppm-windows.nw',
-				sourcePath: '.',
+				sourcePath: '*',
 				cwd: path.join(buildDir, 'updater-without-ppm')
 			}];
 			break;
