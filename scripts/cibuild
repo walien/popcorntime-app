@@ -5,8 +5,6 @@ var path = require('path');
 
 process.chdir(path.dirname(__dirname));
 
-var homeDir = process.platform == 'win32' ? process.env.USERPROFILE : process.env.HOME;
-
 // clean .popcorntime cache (npm and other things)
 cp.safeExec.bind(global, 'node scripts/clean', function(error) {
 

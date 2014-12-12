@@ -83,15 +83,15 @@ var getAssets = function() {
 				sourcePath: 'Popcorn-Time'
 			},{
 				assetName: 'ppm-windows.zip',
-				sourcePath: '*',
+				sourcePath: '.',
 				cwd: path.join(buildDir, 'ppm')
 			},{
 				assetName: 'update-windows.nw',
-				sourcePath: '*',
+				sourcePath: '.',
 				cwd: path.join(buildDir, 'updater')
 			},{
 				assetName: 'update-without-ppm-windows.nw',
-				sourcePath: '*',
+				sourcePath: '.',
 				cwd: path.join(buildDir, 'updater-without-ppm')
 			}];
 			break;
@@ -168,7 +168,7 @@ var zipAssets = function(buildDir, assets, callback) {
 		var zipCommand;
 
 		if (process.platform === 'win32') {
-			zipCommand = "C:/psmodules/7z.exe a -r -tzip " + assetName + " " + sourcePath;
+			zipCommand = "C:/psmodules/7z.exe a -r " + assetName + " " + sourcePath;
 		} else if (process.platform === 'linux' && path.extname(assetName) != '.nw') {
 			zipCommand = "tar --exclude-vcs -caf " + assetName + " " + sourcePath;
 		} else {
