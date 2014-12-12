@@ -148,7 +148,7 @@ module.exports = function (grunt) {
 
     });
 
-    var buildTasks = ['prepare-build','shell:submodule','nodewebkit'];
+    var buildTasks = ['clean-releases', 'prepare-build','shell:submodule','nodewebkit'];
     var ciTasks = buildTasks;
 
     // pack windows
@@ -161,8 +161,7 @@ module.exports = function (grunt) {
         ciTasks.push('mkdeb');
     }
 
-    ciTasks.push('publish-build');
-    ciTasks.push('clean-releases');
+    ciTasks.push('create-releases');
 
     return grunt.registerTask('ci', ciTasks);
     return grunt.registerTask('default', buildTasks);
