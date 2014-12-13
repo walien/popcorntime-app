@@ -178,7 +178,8 @@
 
 			this.Settings.close();
 			this.MovieDetail.close();
-			App.ActiveProvider = App.PackagesManager.getLoadedPackage(provider).bundledPackage;
+
+			App.ActiveProvider = App.Providers.get(provider);
 			this.Content.show(new App.View.ProviderBrowser());
 		},
 
