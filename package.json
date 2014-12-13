@@ -2,6 +2,7 @@
 	"name": "Popcorn-Time",
 	"homepage": "https://popcorntime.io",
 	"bugs": "https://git.popcorntime.io/jira/",
+	"single-instance": false,
 	"repository": {
 		"type": "git",
 		"url": "https://git.popcorntime.io/stash/scm/pt/popcorn-app.git"
