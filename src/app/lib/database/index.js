@@ -32,9 +32,9 @@ var activeDatabase = [{
 
 // some helper
 function promisifyDatastore(datastore) {
-	datastore.insert = Q.denodeify(datastore.insert, datastore);
-	datastore.update = Q.denodeify(datastore.update, datastore);
-	datastore.remove = Q.denodeify(datastore.remove, datastore);
+	datastore.insert = Q.denodeify(datastore.insert.bind(datastore));
+	datastore.update = Q.denodeify(datastore.update.bind(datastore));
+	datastore.remove = Q.denodeify(datastore.remove.bind(datastore));
 }
 
 function promisifyDb(obj) {
