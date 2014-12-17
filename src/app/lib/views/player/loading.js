@@ -160,18 +160,49 @@
 				App.vent.trigger('movie:closeDetail');
 			});
 		},
-		augmentDropModel: function () {
-			App.Providers.trakttv.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
-				if (!data) {
-					win.warn('Unable to fetch data from Trakt.tv');
-				} else {
-					console.log(data);
-				}
-				handleTorrent_fnc();
-			}).catch(function (err) {
-				win.warn(err);
-			});
+		augmentDropModel: function (data) {
+			var metadata = data.metadata;
+			var that = this;
+			switch (data.type) {
+			case 'dropped-episode':
+				App.Providers.trakttv.show.episodeSummary(metadata.showName, metadata.season, metadata.episode).then(function (data) {
+					if (!data) {
+						win.warn('Unable to fetch data from Trakt.tv');
+					} else {
+						console.log(data);
+
+						var newData = {
+							torrent: that.model.get('data').torrent,
+							type: 'episode',
+							metadata: {
+								title: data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title,
+								showName: data.show.title,
+								season: data.episode.season,
+								episode: data.episode.number,
+								cover: data.show.images.poster,
+								tvdb_id: data.show.tvdb_id,
+								imdb_id: data.show.imdb_id,
+								backdrop: data.show.images.fanart
+							},
+							device: App.Device.Collection.selected
+						};
+						console.log(newData);
+						that.model.set('data', newData);
+						console.log(that.model);
+					}
+				}).catch(function (err) {
+					win.warn(err);
+				});
+				break;
+			case 'dropped-movie':
+				//movie lookup code here
+				break;
+			default:
+				//defualt none?
+			}
+
 		}
+
 	});
 
 	App.View.Loading = Loading;

@@ -72,7 +72,7 @@
 				//self.stop();
 			});
 
-			if (data.type !== 'movie') {
+			if (data.type !== 'movie' || !(data.type.indexOf('dropped') > -1)) {
 				this.getSubtitles(data.metadata, filename, data.type);
 			}
 
