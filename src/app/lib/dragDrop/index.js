@@ -13,7 +13,7 @@
 				var showname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
 				var season = se_re[2];
 				var episode = se_re[3];
-				title = i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
+				title = showname + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
 				type = 'dropped-episode';
 				console.log(title, season, episode);
 
@@ -40,16 +40,7 @@
 		};
 		console.log(torrentStart);
 		App.vent.trigger('streamer:start', torrentStart);
-		/*App.Providers.trakttv.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
-					if (!data) {
-						win.warn('Unable to fetch data from Trakt.tv');
-					} else {
-						console.log(data);
-					}
-					handleTorrent_fnc();
-				}).catch(function (err) {
-					win.warn(err);
-				});*/
+		/**/
 
 	}
 

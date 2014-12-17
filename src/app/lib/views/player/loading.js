@@ -53,6 +53,10 @@
 
 			win.info('Loading torrent');
 
+			if (this.model.attributes.data.type.indexOf('dropped') > -1) {
+				this.augmentDropModel(this.model.attributes.data); // olny call if droped torrent/magnet
+			}
+
 		},
 
 		initKeyboardShortcuts: function () {
@@ -154,6 +158,18 @@
 			Mousetrap.bind('esc', function (e) {
 				App.vent.trigger('show:closeDetail');
 				App.vent.trigger('movie:closeDetail');
+			});
+		},
+		augmentDropModel: function () {
+			App.Providers.trakttv.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
+				if (!data) {
+					win.warn('Unable to fetch data from Trakt.tv');
+				} else {
+					console.log(data);
+				}
+				handleTorrent_fnc();
+			}).catch(function (err) {
+				win.warn(err);
 			});
 		}
 	});
