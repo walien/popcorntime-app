@@ -2,17 +2,45 @@
 	'use strict';
 	var readTorrent = require('read-torrent');
 
-	function startStream(torrent) {
+	function startStream(torrent, torrentsrc) {
 
 		if (torrent.name) { // sometimes magnets don't have names for some reason
-			var title = $.trim(torrent.name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
-			var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i);
+			var torrenttitle = $.trim(torrent.name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.'),
+				title, type;
+			var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i);
+
 			if (se_re != null) {
-				var tvshowname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+				var showname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+				var season = se_re[2];
+				var episode = se_re[3];
+				title = i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
+				type = 'dropped-episode';
+				console.log(title, season, episode);
 
-				console.log(tvshowname, se_re[2], se_re[3]);
+			} else {
+				title = $.trim(torrenttitle.replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+				type = 'dropped-movie';
+			}
+		}
 
-				App.Providers.trakttv.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
+
+		var torrentStart = {
+			torrent: torrentsrc,
+			type: type,
+			metadata: {
+				title: title,
+				showName: showname,
+				season: season,
+				episode: episode,
+				cover: undefined,
+				backdrop: undefined
+			},
+			device: App.Device.Collection.selected
+
+		};
+		console.log(torrentStart);
+		App.vent.trigger('streamer:start', torrentStart);
+		/*App.Providers.trakttv.show.episodeSummary(tvshowname, se_re[2], se_re[3]).then(function (data) {
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
@@ -21,10 +49,7 @@
 					handleTorrent_fnc();
 				}).catch(function (err) {
 					win.warn(err);
-				});
-
-			}
-		}
+				});*/
 
 	}
 
@@ -44,9 +69,10 @@
 					} else {
 
 						if (file.name.indexOf('.torrent') !== -1) {
+							var torrentsrc = path.join(App.Settings.get('tmpLocation'), file.name);
 
-							readTorrent(path.join(App.Settings.get('tmpLocation'), file.name), function (err, torrent) {
-								startStream(torrent);
+							readTorrent(torrentsrc, function (err, torrent) {
+								startStream(torrent, torrentsrc);
 							});
 
 						} else if (file.name.indexOf('.srt') !== -1) {
@@ -74,9 +100,9 @@
 		}
 		var data = (e.originalEvent || e).clipboardData.getData('text/plain');
 
-
-		readTorrent(data, function (err, torrent) {
-			startStream(torrent);
+		var torrentsrc = data;
+		readTorrent(torrentsrc, function (err, torrent) {
+			startStream(torrent, torrentsrc);
 		});
 	}
 
