@@ -17,7 +17,7 @@ var parseBuildPlatforms = function (argumentPlatform) {
 
 	return buildPlatforms;
 };
-
+//test for git
 module.exports = function (grunt) {
 	"use strict";
 
