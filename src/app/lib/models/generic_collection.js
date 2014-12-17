@@ -59,7 +59,7 @@
 					// Waits for the IDs from the torrent provider
 					return provider
 						// Then fetch metadata from the provider
-						.then(_.bind(metadata.movie.listSummary, metadata))
+						.then(_.bind(metadata.listSummary, metadata))
 						.catch(function (e) {
 							console.log(e);
 						});
