@@ -1,6 +1,8 @@
 (function (App) {
 	'use strict';
 
+	function startStream() {}
+
 	function onDrop(e) {
 
 		var file = e.dataTransfer.files[0];
@@ -17,8 +19,9 @@
 					} else {
 
 						if (file.name.indexOf('.torrent') !== -1) {
-							// startTorrentStream(path.join(App.settings.tmpLocation, file.name));
-							handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
+
+							App.Providers.getByType('torrentCache').resolve(path.join(App.Settings.get('tmpLocation'), file.name));
+
 						} else if (file.name.indexOf('.srt') !== -1) {
 							App.Settings.set('droppedSub', file.name);
 							App.vent.trigger('videojs:drop_sub');
@@ -33,13 +36,9 @@
 
 		} else {
 			var data = e.dataTransfer.getData('text/plain');
-			handleTorrent(data);
-			// if (data != null && data.substring(0, 8) === 'magnet:?') {
-			//     startTorrentStream(data);
-			// }
+
 		}
 
-		return false;
 	}
 
 	function onPaste(e) {
@@ -47,9 +46,9 @@
 			return;
 		}
 		var data = (e.originalEvent || e).clipboardData.getData('text/plain');
-		e.preventDefault();
-		handleTorrent(data);
-		return true;
+
+		App.Providers.getByType('torrentCache').resolve(data);
+
 	}
 
 	function onDragUI(hide) {
@@ -91,13 +90,16 @@
 	function initDragDrop() {
 
 		window.ondragenter = function (e) {
+			e.preventDefault();
 			onDragUI(false);
 		}
 		window.ondrop = function (e) {
+			e.preventDefault();
 			onDragUI(true);
 			onDrop(e);
 		}
 		$(document).on('paste', function (e) {
+			e.preventDefault();
 			onPaste(e);
 		});
 
