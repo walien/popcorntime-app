@@ -174,8 +174,6 @@
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
-						console.log(that.model);
-
 						var newData = {
 							torrent: that.model.get('data').torrent,
 							type: 'episode',
@@ -192,7 +190,6 @@
 							device: App.Device.Collection.selected
 						};
 						that.model.set('data', newData);
-						console.log(that.model);
 						that.ui.title.text(newData.metadata.title);
 						that.ui.backdrop.css('background-image', 'url(' + newData.metadata.backdrop + ')');
 
