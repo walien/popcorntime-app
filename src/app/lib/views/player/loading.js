@@ -175,7 +175,7 @@
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
 
-						that.model.attributes.data.metadata.type = 'episode';
+						that.model.attributes.data.type = 'episode';
 						that.model.attributes.data.metadata.title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title;
 						that.model.attributes.data.metadata.showName = data.show.title;
 						that.model.attributes.data.metadata.season = data.episode.season;
@@ -184,7 +184,6 @@
 						that.model.attributes.data.metadata.tvdb_id = data.show.tvdb_id;
 						that.model.attributes.data.metadata.imdb_id = data.show.imdb_id;
 						that.model.attributes.data.metadata.backdrop = data.show.images.fanart;
-
 
 						that.ui.title.text(newData.metadata.title);
 						that.ui.backdrop.css('background-image', 'url(' + newData.metadata.backdrop + ')');
