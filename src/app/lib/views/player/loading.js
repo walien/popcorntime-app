@@ -188,7 +188,7 @@
 						that.ui.title.text(newData.metadata.title);
 						that.ui.backdrop.css('background-image', 'url(' + newData.metadata.backdrop + ')');
 
-						App.Streamer.getSubtitles(newData.metadata, data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), newData.type);
+						App.Streamer.getSubtitles(newData.metadata, data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'episode');
 
 					}
 				}).catch(function (err) {
