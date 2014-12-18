@@ -30,9 +30,7 @@
 				title: title,
 				showName: showname,
 				season: season,
-				episode: episode,
-				cover: undefined,
-				backdrop: undefined
+				episode: episode
 			},
 			device: App.Device.Collection.selected
 
