@@ -155,7 +155,7 @@
 
 
 								} else {
-									win.warn('Unable to find %s on Trakt.tv', id);
+									win.warn('Unable to find %s on', id, metadata.name);
 								}
 
 							});
