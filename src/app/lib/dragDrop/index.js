@@ -18,8 +18,16 @@
 				console.log(title, season, episode);
 
 			} else {
-				title = $.trim(torrenttitle.replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+
+				var title = $.trim(torrenttitle.replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, ' ').replace(/ +/g, ' ').split(filename.split(/[^\d]/).filter(function (n) {
+					if ((n >= 1800) && (n <= 2099)) {
+						return n
+					}
+				}))[0].trim();
+
 				type = 'dropped-movie';
+				console.log(title);
+
 			}
 		}
 
