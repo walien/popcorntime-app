@@ -174,24 +174,22 @@
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
-						var newData = {
-							torrent: that.model.get('data').torrent,
-							type: 'episode',
-							metadata: {
-								title: data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title,
-								showName: data.show.title,
-								season: data.episode.season,
-								episode: data.episode.number,
-								cover: data.show.images.poster,
-								tvdb_id: data.show.tvdb_id,
-								imdb_id: data.show.imdb_id,
-								backdrop: data.show.images.fanart
-							},
-							device: App.Device.Collection.selected
-						};
-						that.model.set('data', newData);
+
+						that.model.attributes.data.metadata.type = 'episode';
+						that.model.attributes.data.metadata.title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title;
+						that.model.attributes.data.metadata.showName = data.show.title;
+						that.model.attributes.data.metadata.season = data.episode.season;
+						that.model.attributes.data.metadata.episode = data.episode.number;
+						that.model.attributes.data.metadata.cover = data.show.images.poster;
+						that.model.attributes.data.metadata.tvdb_id = data.show.tvdb_id;
+						that.model.attributes.data.metadata.imdb_id = data.show.imdb_id;
+						that.model.attributes.data.metadata.backdrop = data.show.images.fanart;
+
+
 						that.ui.title.text(newData.metadata.title);
 						that.ui.backdrop.css('background-image', 'url(' + newData.metadata.backdrop + ')');
+
+						App.Streamer.getSubtitles(newData.metadata, data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), newData.type);
 
 					}
 				}).catch(function (err) {
