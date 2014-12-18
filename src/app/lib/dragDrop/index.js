@@ -23,7 +23,6 @@
 			}
 		}
 
-
 		var torrentStart = {
 			torrent: torrentsrc,
 			type: type,

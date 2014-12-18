@@ -1,5 +1,5 @@
-var _ = require('lodash');
-Q = require('q'),
+var _ = require('lodash'),
+	Q = require('q'),
 	semver = require('semver'),
 	path = require('path'),
 	url = require('url'),
@@ -21,7 +21,7 @@ PPM_Client.prototype.getPath = function () {
 	var commandName = 'ppm';
 
 	if (process.platform === 'win32') {
-		commandName += '.cmd'
+		commandName += '.cmd';
 	}
 
 	// back to our root
@@ -74,7 +74,7 @@ PPM_Client.prototype.loadPackage = function (packageName, callback) {
 			}
 			return callback(null, packages);
 		} else {
-			error = new Error("Fetching package '" + packageName + "' failed.");
+			error = new Error('Fetching package: ' + packageName + ' failed.');
 			error.stdout = stdout;
 			error.stderr = stderr;
 			return callback(error);

@@ -484,7 +484,7 @@ Mousetrap.bind('ctrl+shift+k', function (e) {
 		} else {
 			console.log(data);
 		}
-	})
+	});
 });
 
 
@@ -495,8 +495,7 @@ var last_arg = gui.App.argv.pop();
 
 if (last_arg && (last_arg.substring(0, 8) === 'magnet:?' || last_arg.substring(0, 7) === 'http://' || last_arg.endsWith('.torrent'))) {
 	App.vent.on('main:ready', function () {
-		// startTorrentStream(last_arg);
-		handleTorrent(last_arg);
+		// DO SOMETHING WITH 'last_arg' DATA LATER
 	});
 }
 
