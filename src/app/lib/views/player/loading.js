@@ -24,7 +24,10 @@
 			player: '.player-name',
 			streaming: '.external-play',
 			controls: '.player-controls',
-			cancel_button: '.cancel-button'
+			cancel_button: '.cancel-button',
+
+			title: '.title',
+			backdrop: '.loading-background'
 		},
 
 		events: {
@@ -33,7 +36,9 @@
 			'click .stop': 'stopStreaming',
 			'click .play': 'resumeStreaming'
 		},
+		templateHelpers: {
 
+		},
 		initialize: function () {
 			var that = this;
 
@@ -169,7 +174,7 @@
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
-						console.log(data);
+						console.log(that.model);
 
 						var newData = {
 							torrent: that.model.get('data').torrent,
@@ -186,9 +191,11 @@
 							},
 							device: App.Device.Collection.selected
 						};
-						console.log(newData);
 						that.model.set('data', newData);
 						console.log(that.model);
+						that.ui.title.text(newData.metadata.title);
+						that.ui.backdrop.css('background-image', 'url(' + newData.metadata.backdrop + ')');
+
 					}
 				}).catch(function (err) {
 					win.warn(err);
