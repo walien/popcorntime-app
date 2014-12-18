@@ -185,10 +185,10 @@
 						that.model.attributes.data.metadata.imdb_id = data.show.imdb_id;
 						that.model.attributes.data.metadata.backdrop = data.show.images.fanart;
 
-						that.ui.title.text(newData.metadata.title);
-						that.ui.backdrop.css('background-image', 'url(' + newData.metadata.backdrop + ')');
+						that.ui.title.text(that.model.attributes.data.metadata.title);
+						that.ui.backdrop.css('background-image', 'url(' + that.model.attributes.data.metadata.backdrop + ')');
 
-						App.Streamer.getSubtitles(newData.metadata, data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'episode');
+						App.Streamer.getSubtitles(that.model.attributes.data.metadata, that.model.attributes.data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'episode');
 
 					}
 				}).catch(function (err) {
