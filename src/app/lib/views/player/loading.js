@@ -197,19 +197,25 @@
 				break;
 			case 'dropped-movie':
 				//movie lookup code here
-				App.Providers.trakttv.movie.search(metadata.title).then(function (data[0]) {
-					console.log(data)
-					that.model.attributes.data.type = 'movie';
-					that.model.attributes.data.metadata.title = data.title;
-					that.model.attributes.data.metadata.cover = data.images.poster;
-					that.model.attributes.data.metadata.imdb_id = data.imdb_id;
-					that.model.attributes.data.metadata.backdrop = data..images.fanart;
+				App.Providers.trakttv.movie.search(metadata.title).then(function (data) {
+					if (!data) {
+						win.warn('Unable to fetch data from Trakt.tv');
+					} else {
+						data = data[0];
+						that.model.attributes.data.type = 'movie';
+						that.model.attributes.data.metadata.title = data.title;
+						that.model.attributes.data.metadata.cover = data.images.poster;
+						that.model.attributes.data.metadata.imdb_id = data.imdb_id;
+						that.model.attributes.data.metadata.backdrop = data.images.fanart;
 
-					that.ui.title.text(that.model.attributes.data.metadata.title);
-					that.ui.backdrop.css('background-image', 'url(' + that.model.attributes.data.metadata.backdrop + ')');
+						that.ui.title.text(that.model.attributes.data.metadata.title);
+						that.ui.backdrop.css('background-image', 'url(' + that.model.attributes.data.metadata.backdrop + ')');
 
-					App.Streamer.getSubtitles(that.model.attributes.data.metadata, that.model.attributes.data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'movie');
+						App.Streamer.getSubtitles(that.model.attributes.data.metadata, that.model.attributes.data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'movie');
 
+					}
+				}).catch(function (err) {
+					win.warn(err);
 				});
 
 				break;

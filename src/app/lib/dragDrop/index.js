@@ -24,10 +24,9 @@
 					if ((n >= 1900) && (n <= 2099)) {
 						return n
 					}
-				}));
-				title = title[0];
+				}))[0];
+
 				type = 'dropped-movie';
-				console.log(title);
 
 			}
 		}
