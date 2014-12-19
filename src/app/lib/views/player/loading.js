@@ -168,9 +168,10 @@
 		augmentDropModel: function (data) {
 			var metadata = data.metadata;
 			var that = this;
+
 			switch (data.type) {
 			case 'dropped-episode':
-				App.Providers.trakttv.show.episodeSummary(metadata.showName, metadata.season, metadata.episode).then(function (data) {
+				App.Providers['tvshow-metadata'].episodeSummary(metadata.showName, metadata.season, metadata.episode).then(function (data) {
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
@@ -197,7 +198,7 @@
 				break;
 			case 'dropped-movie':
 				//movie lookup code here
-				App.Providers.trakttv.movie.search(metadata.title).then(function (data) {
+				App.Providers['movie-metadata'].search(metadata.title).then(function (data) {
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
