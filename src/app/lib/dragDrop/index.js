@@ -68,7 +68,19 @@
 							var torrentsrc = path.join(App.Settings.get('tmpLocation'), file.name);
 
 							readTorrent(torrentsrc, function (err, torrent) {
-								startStream(torrent, torrentsrc);
+
+								console.log(torrent);
+								_.each(torrent.announce, function (value) {
+									console.log(value);
+								});
+								var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+
+								console.log(torrentMagnet);
+
+								//startStream(torrent, torrentMagnet);
+								//magnet:?xt=urn:btih:6B61B866C03ED7DB5ABE10328E13DF5F2FE90B10&dn=the+fall+s02e02+crime+drama+x264+rb58&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
+
+
 							});
 
 						} else if (file.name.indexOf('.srt') !== -1) {
