@@ -1,7 +1,6 @@
 (function (App) {
 	'use strict';
-	var peerflix = require('peerflix'),
-		Q = require('q'),
+	var Q = require('q'),
 		path = require('path'),
 		mkdirp = require('mkdirp'),
 		rimraf = require('rimraf'),

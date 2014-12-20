@@ -1,6 +1,10 @@
 (function (App) {
 	'use strict';
-	var readTorrent = require('read-torrent');
+	var readTorrent = require('read-torrent'),
+		path = require('path'),
+		fs = require('fs'),
+		request = require('request'),
+		zlib = require('zlib');
 
 	function startStream(torrent, torrentsrc) {
 
@@ -57,39 +61,26 @@
 
 			reader.onload = function (event) {
 				var content = reader.result;
-
 				fs.writeFile(path.join(App.Settings.get('tmpLocation'), file.name), content, function (err) {
 					if (err) {
 						window.alert('Error Loading File: ' + err);
 					} else {
-
 						if (file.name.indexOf('.torrent') !== -1) {
 							var torrentsrc = path.join(App.Settings.get('tmpLocation'), file.name);
 							readTorrent(torrentsrc, function (err, torrent) {
-
-
 								var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
 								_.each(torrent.announce, function (value) {
 									var announce = '&tr=' + encodeURIComponent(value);
 									torrentMagnet += announce;
-									console.log(announce);
 								});
-
-
 								startStream(torrent, torrentMagnet);
-								//magnet:?xt=urn:btih:6B61B866C03ED7DB5ABE10328E13DF5F2FE90B10&dn=the+fall+s02e02+crime+drama+x264+rb58&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
-
-
 							});
-
 						} else if (file.name.indexOf('.srt') !== -1) {
 							App.Settings.set('droppedSub', file.name);
 							App.vent.trigger('videojs:drop_sub');
 						}
-
 					}
 				});
-
 			};
 
 			reader.readAsBinaryString(file);
@@ -108,9 +99,55 @@
 		var data = (e.originalEvent || e).clipboardData.getData('text/plain');
 
 		var torrentsrc = data;
-		readTorrent(torrentsrc, function (err, torrent) {
-			startStream(torrent, torrentsrc);
-		});
+		if (torrentsrc.toLowerCase().indexOf('magnet') < -1) {
+			readTorrent(torrentsrc, function (err, torrent) {
+				startStream(torrent, torrentsrc);
+			});
+		} else {
+			var ws = fs.createWriteStream(path.join(App.Settings.get('tmpLocation'), 'pct-remote-torrent.torrent'));
+
+			if (fs.exists(path.join(App.Settings.get('tmpLocation'), 'pct-remote-torrent.torrent'))) {
+				fs.unlink(path.join(App.Settings.get('tmpLocation'), 'pct-remote-torrent.torrent'));
+			}
+			request(torrentsrc).on('response', function (resp) {
+				if (resp.statusCode >= 400) {
+					return done('Invalid status: ' + resp.statusCode);
+				}
+				switch (resp.headers['content-encoding']) {
+				case 'gzip':
+					resp.pipe(zlib.createGunzip()).pipe(ws);
+					break;
+				case 'deflate':
+					resp.pipe(zlib.createInflate()).pipe(ws);
+					break;
+				default:
+					resp.pipe(ws);
+					break;
+				}
+				ws
+					.on('error', function () {
+						console.log('error')
+					})
+					.on('close', function () {
+						console.log('done');
+						console.log(ws.path);
+						readTorrent(ws.path, function (err, torrent) {
+
+							var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+							_.each(torrent.announce, function (value) {
+								var announce = '&tr=' + encodeURIComponent(value);
+								torrentMagnet += announce;
+							});
+
+							startStream(torrent, torrentMagnet);
+							//magnet:?xt=urn:btih:6B61B866C03ED7DB5ABE10328E13DF5F2FE90B10&dn=the+fall+s02e02+crime+drama+x264+rb58&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
+
+
+						});
+
+					});
+			});
+		}
 	}
 
 	function onDragUI(hide) {
