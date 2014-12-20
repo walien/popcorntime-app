@@ -66,7 +66,6 @@
 
 						if (file.name.indexOf('.torrent') !== -1) {
 							var torrentsrc = path.join(App.Settings.get('tmpLocation'), file.name);
-
 							readTorrent(torrentsrc, function (err, torrent) {
 
 								console.log(torrent);

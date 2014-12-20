@@ -84,9 +84,13 @@
 					App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 				} else {
 					if (type === 'episode') {
-						this.Trakt.show.cancelWatching();
+						App.Providers['tvshow-metadata'].cancelWatching();
 					} else {
-						this.Trakt[type].cancelWatching();
+						try {
+							this.Trakt[type].cancelWatching();
+						} catch (err) {
+							console.log(err);
+						}
 					}
 
 				}
