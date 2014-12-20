@@ -197,8 +197,7 @@
 				});
 				break;
 			case 'dropped-movie':
-				//movie lookup code here
-				App.Providers['movie-metadata'].search(metadata.title).then(function (data) {
+				App.Providers['movie-metadata'].findSummary(metadata.title).then(function (data) {
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
