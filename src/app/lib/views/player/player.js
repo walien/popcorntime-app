@@ -81,7 +81,7 @@
 
 					App.Providers[metatype].cancelWatching();
 				}
-
+				App.Settings.set('playerVolume', this.player.volume());
 			}
 
 			try {
@@ -97,12 +97,11 @@
 
 		onShow: function () {
 
-
 			this.prossessType();
 			this.setUI();
 			this.setPlayerEvents();
 			this.bindKeyboardShortcuts();
-			console.log(this.model.get('type'));
+			this.restoreUserPref();
 
 		},
 
@@ -191,7 +190,9 @@
 
 		},
 
-
+		restoreUserPref: function () {
+			this.player.volume(App.Settings.get('playerVolume'));
+		},
 		setPlayerEvents: function () {
 			var that = this;
 			var type = this.model.get('type');
