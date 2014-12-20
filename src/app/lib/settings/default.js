@@ -68,7 +68,7 @@ config = {
 	tv_detail_jump_to: 'next',
 
 	activeTheme: 'cinematografik',
-
+	playerVolume: 100,
 
 	cachev2: {
 		name: 'popcorntime',
