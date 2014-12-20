@@ -112,7 +112,6 @@
 			this.setPlayerEvents();
 			this.bindKeyboardShortcuts();
 			this.restoreUserPref();
-			console.log(App.Settings.get('playerVolume'));
 
 
 		},
@@ -714,7 +713,6 @@
 				win.leaveFullscreen();
 			}
 			_this.unbindKeyboardShortcuts();
-
 
 			if (type !== 'trailer') {
 				App.vent.trigger('streamer:stop');
