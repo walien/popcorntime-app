@@ -64,6 +64,10 @@
 		},
 
 		closePlayer: function () {
+			if (type !== 'trailer') {
+				var playerVolume = this.player.volume();
+				App.Settings.set('playerVolume', playerVolume);
+			}
 			var that = this;
 			win.info('Player closed');
 			if (this._WatchingTimer) {
@@ -107,8 +111,13 @@
 			this.setUI();
 			this.setPlayerEvents();
 			this.bindKeyboardShortcuts();
-			console.log(this.model.get('type'));
+			this.restoreUserPref();
+			console.log(App.Settings.get('playerVolume'));
 
+
+		},
+		restoreUserPref: function () {
+			this.player.volume(App.Settings.get('playerVolume'));
 		},
 
 		prossessType: function () {
@@ -705,8 +714,11 @@
 				win.leaveFullscreen();
 			}
 			_this.unbindKeyboardShortcuts();
+
+
 			if (type !== 'trailer') {
 				App.vent.trigger('streamer:stop');
+
 			}
 			if (this._WatchingTimer) {
 				clearInterval(this._WatchingTimer);
