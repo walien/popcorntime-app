@@ -24,7 +24,10 @@
 			player: '.player-name',
 			streaming: '.external-play',
 			controls: '.player-controls',
-			cancel_button: '.cancel-button'
+			cancel_button: '.cancel-button',
+
+			title: '.title',
+			backdrop: '.loading-background'
 		},
 
 		events: {
@@ -33,7 +36,9 @@
 			'click .stop': 'stopStreaming',
 			'click .play': 'resumeStreaming'
 		},
+		templateHelpers: {
 
+		},
 		initialize: function () {
 			var that = this;
 
@@ -52,6 +57,10 @@
 			});
 
 			win.info('Loading torrent');
+
+			if (this.model.attributes.data.type.indexOf('dropped') > -1) {
+				this.augmentDropModel(this.model.attributes.data); // olny call if droped torrent/magnet
+			}
 
 		},
 
@@ -155,7 +164,67 @@
 				App.vent.trigger('show:closeDetail');
 				App.vent.trigger('movie:closeDetail');
 			});
+		},
+		augmentDropModel: function (data) {
+			var metadata = data.metadata;
+			var that = this;
+
+			switch (data.type) {
+			case 'dropped-tvshow':
+				App.Providers['tvshow-metadata'].episodeSummary(metadata.showname, metadata.season, metadata.episode).then(function (data) {
+					if (!data) {
+						win.warn('Unable to fetch data from Trakt.tv');
+					} else {
+
+						that.model.attributes.data.type = 'tvshow';
+						that.model.attributes.data.metadata.title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title;
+						that.model.attributes.data.metadata.showname = data.show.title;
+						that.model.attributes.data.metadata.season = data.episode.season;
+						that.model.attributes.data.metadata.episode = data.episode.number;
+						that.model.attributes.data.metadata.cover = data.show.images.poster;
+						that.model.attributes.data.metadata.tvdb_id = data.show.tvdb_id;
+						that.model.attributes.data.metadata.imdb_id = data.show.imdb_id;
+						that.model.attributes.data.metadata.backdrop = data.show.images.fanart;
+
+						that.ui.title.text(that.model.attributes.data.metadata.title);
+						that.ui.backdrop.css('background-image', 'url(' + that.model.attributes.data.metadata.backdrop + ')');
+
+						App.Streamer.getSubtitles(that.model.attributes.data.metadata, that.model.attributes.data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'episode');
+
+					}
+				}).catch(function (err) {
+					win.warn(err);
+				});
+				break;
+			case 'dropped-movie':
+				App.Providers['movie-metadata'].findSummary(metadata.title).then(function (data) {
+					if (!data) {
+						win.warn('Unable to fetch data from Trakt.tv');
+					} else {
+						data = data[0];
+						that.model.attributes.data.type = 'movie';
+						that.model.attributes.data.metadata.title = data.title;
+						that.model.attributes.data.metadata.cover = data.images.poster;
+						that.model.attributes.data.metadata.imdb_id = data.imdb_id;
+						that.model.attributes.data.metadata.backdrop = data.images.fanart;
+
+						that.ui.title.text(that.model.attributes.data.metadata.title);
+						that.ui.backdrop.css('background-image', 'url(' + that.model.attributes.data.metadata.backdrop + ')');
+
+						App.Streamer.getSubtitles(that.model.attributes.data.metadata, that.model.attributes.data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(), 'movie');
+
+					}
+				}).catch(function (err) {
+					win.warn(err);
+				});
+
+				break;
+			default:
+				//defualt none?
+			}
+
 		}
+
 	});
 
 	App.View.Loading = Loading;

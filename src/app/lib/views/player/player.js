@@ -59,15 +59,9 @@
 			this.video = false;
 			this.inFullscreen = win.isFullscreen;
 
-			this.Trakt = App.Providers.get('trakttv');
-
 		},
 
 		closePlayer: function () {
-			if (type !== 'trailer') {
-				var playerVolume = this.player.volume();
-				App.Settings.set('playerVolume', playerVolume);
-			}
 			var that = this;
 			win.info('Player closed');
 			if (this._WatchingTimer) {
@@ -83,14 +77,11 @@
 				if (this.video.currentTime() / this.video.duration() >= 0.8) {
 					App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 				} else {
-					if (type === 'episode') {
-						this.Trakt.show.cancelWatching();
-					} else {
-						this.Trakt[type].cancelWatching();
-					}
+					var metatype = type + '-metadata';
 
+					App.Providers[metatype].cancelWatching();
 				}
-
+				App.Settings.set('playerVolume', this.player.volume());
 			}
 
 			try {
@@ -106,17 +97,12 @@
 
 		onShow: function () {
 
-
 			this.prossessType();
 			this.setUI();
 			this.setPlayerEvents();
 			this.bindKeyboardShortcuts();
 			this.restoreUserPref();
 
-
-		},
-		restoreUserPref: function () {
-			this.player.volume(App.Settings.get('playerVolume'));
 		},
 
 		prossessType: function () {
@@ -204,16 +190,17 @@
 
 		},
 
-
+		restoreUserPref: function () {
+			this.player.volume(App.Settings.get('playerVolume'));
+		},
 		setPlayerEvents: function () {
 			var that = this;
 			var type = this.model.get('type');
 			this.player.on('error', function (error) {
-				if (type === 'movie') {
-					that.Trakt.movie.cancelWatching();
-				} else {
-					that.Trakt.show.cancelWatching();
-				}
+
+				var metatype = type + '-metadata';
+				App.Providers[metatype].cancelWatching();
+
 				// TODO: user errors
 				if (type === 'trailer') {
 					setTimeout(function () {
@@ -226,10 +213,8 @@
 
 			this.player.one('play', function () {
 				that.player.one('durationchange', function () {
-					that.sendToTrakt(that);
+					//_.bind(that.updateWatching(), that);
 				});
-				that._WatchingTimer = setInterval(that.sendToTrakt(that), 10 * 60 * 1000); // 10 minutes
-
 
 				if (that.model.get('auto_play')) {
 					that._AutoPlayCheckTimer = setInterval(that.checkAutoPlay(that), 10 * 100 * 1); // every 1 sec
@@ -239,11 +224,8 @@
 
 			this.player.on('ended', function () {
 				// For now close player. In future we will check if auto-play etc and get next episode
-
 				if (that.model.get('auto_play')) {
-
 					that.playNextNow();
-
 				} else {
 					that.closePlayer();
 				}
@@ -267,18 +249,18 @@
 
 		},
 
-		sendToTrakt: function (_this) {
-			_this = _this || this;
-			if (_this.model.get('type') === 'movie') {
-				win.debug('Reporting we are watching ' + _this.model.get('imdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '% ' + (_this.video.duration() / 60 | 0));
-				_this.Trakt.movie.watching(_this.model.get('imdb_id'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+		updateWatching: function () {
+			if (this.model.get('type') === 'movie') {
+				win.debug('Reporting we are watching ' + this.model.get('metadata').imdb_id + ' ' + (this.video.currentTime() / this.video.duration() * 100 | 0) + '% ' + (this.video.duration() / 60 | 0));
+				App.Providers['movie-metadata'].watching(this.model.get('metadata').imdb_id, this.video.currentTime() / this.video.duration() * 100 | 0, this.video.duration() / 60 | 0);
 			} else {
-				win.debug('Reporting we are watching ' + _this.model.get('tvdb_id') + ' ' + (_this.video.currentTime() / _this.video.duration() * 100 | 0) + '%');
-				_this.Trakt.show.watching(_this.model.get('tvdb_id'), _this.model.get('season'), _this.model.get('episode'), _this.video.currentTime() / _this.video.duration() * 100 | 0, _this.video.duration() / 60 | 0);
+				win.debug('Reporting we are watching ' + this.model.get('metadata').tvdb_id + ' ' + (this.video.currentTime() / this.video.duration() * 100 | 0) + '%');
+				console.log(this.model.get('metadata').tvdb_id, this.model.get('metadata').season, this.model.get('metadata').episode, this.video.currentTime() / this.video.duration() * 100 | 0, this.video.duration() / 60 | 0);
+				App.Providers['tvshow-metadata'].watching(this.model.get('metadata').tvdb_id, this.model.get('metadata').season, this.model.get('metadata').episode, this.video.currentTime() / this.video.duration() * 100 | 0, this.video.duration() / 60 | 0);
 			}
 		},
 
-		checkAutoPlay: function (_this) {
+		checkAutoPlay: function () {
 			if (this.model.get('type') !== 'movie' && this.next_episode_model) {
 				if ((this.video.duration() - this.video.currentTime()) < 60 && this.video.currentTime() > 30) {
 
@@ -325,7 +307,7 @@
 			this.ui.percentCompleted.text(percent + '%');
 		},
 		isMovie: function () {
-			return this.model.get('tvdb_id') === undefined;
+			return this.model.get('type') === 'movie';
 		},
 		playNextNow: function () {
 
@@ -342,7 +324,8 @@
 			if (this.video.currentTime() / this.video.duration() >= 0.8) {
 				App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 			} else {
-				this.Trakt[type].cancelWatching();
+				var metatype = type + '-metadata';
+				App.Providers[metatype].cancelWatching();
 			}
 
 			try {
@@ -702,22 +685,18 @@
 		},
 
 		onClose: function () {
-			var _this = this;
 			var type = this.model.get('type');
 			if (type === 'trailer') { // XXX Sammuel86 Trailer UI Show FIX/HACK -START
 				$('.trailer_mouse_catch').remove();
+			} else {
+				App.vent.trigger('streamer:stop');
 			}
 			$('#player_drag').hide();
 			$('#header').show();
 			if (!this.dontTouchFS && !this.inFullscreen && win.isFullscreen) {
 				win.leaveFullscreen();
 			}
-			_this.unbindKeyboardShortcuts();
-
-			if (type !== 'trailer') {
-				App.vent.trigger('streamer:stop');
-
-			}
+			this.unbindKeyboardShortcuts();
 			if (this._WatchingTimer) {
 				clearInterval(this._WatchingTimer);
 			}

@@ -484,123 +484,9 @@ Mousetrap.bind('ctrl+shift+k', function (e) {
 		} else {
 			console.log(data);
 		}
-	})
+	});
 });
 
-
-/**
- * Drag n' Drop Torrent Onto PT Window to start playing (ALPHA)
- */
-
-
-window.ondragenter = function (e) {
-
-	$('#drop-mask').show();
-	var showDrag = true;
-	var timeout = -1;
-	$('#drop-mask').on('dragenter',
-		function (e) {
-			$('.drop-indicator').show();
-			console.log('drag init');
-		});
-	$('#drop-mask').on('dragover',
-		function (e) {
-			var showDrag = true;
-		});
-
-	$('#drop-mask').on('dragleave',
-		function (e) {
-			var showDrag = false;
-			clearTimeout(timeout);
-			timeout = setTimeout(function () {
-				if (!showDrag) {
-					console.log('drag aborted');
-					$('.drop-indicator').hide();
-					$('#drop-mask').hide();
-				}
-			}, 100);
-		});
-};
-
-var handleTorrent = function (torrent) {
-	App.Providers.getByType('torrentCache').resolve(torrent);
-};
-
-// var startTorrentStream = function(torrentFile) {
-//     var torrentStart = new Backbone.Model({
-//         torrent: torrentFile
-//     });
-//     $('.close-info-player').click();
-//     App.vent.trigger('stream:start', torrentStart);
-// };
-
-window.ondrop = function (e) {
-	e.preventDefault();
-	$('#drop-mask').hide();
-	console.log('drag completed');
-	$('.drop-indicator').hide();
-
-	var file = e.dataTransfer.files[0];
-
-	if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
-		var reader = new FileReader();
-
-		reader.onload = function (event) {
-			var content = reader.result;
-
-			fs.writeFile(path.join(App.Settings.get('tmpLocation'), file.name), content, function (err) {
-				if (err) {
-					window.alert('Error Loading File: ' + err);
-				} else {
-
-					if (file.name.indexOf('.torrent') !== -1) {
-						// startTorrentStream(path.join(App.settings.tmpLocation, file.name));
-						handleTorrent(path.join(App.Settings.get('tmpLocation'), file.name));
-					} else if (file.name.indexOf('.srt') !== -1) {
-						App.Settings.set('droppedSub', file.name);
-						App.vent.trigger('videojs:drop_sub');
-					}
-
-				}
-			});
-
-		};
-
-		reader.readAsBinaryString(file);
-
-	} else {
-		var data = e.dataTransfer.getData('text/plain');
-		handleTorrent(data);
-		// if (data != null && data.substring(0, 8) === 'magnet:?') {
-		//     startTorrentStream(data);
-		// }
-	}
-
-	return false;
-};
-
-/**
- * Paste Magnet Link to start stream
- */
-
-$(document).on('paste', function (e) {
-	// if (data.substring(0, 8) !== 'magnet:?' && (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA')) {
-	//     return;
-	// } else {
-	//     e.preventDefault();
-	//     if (data != null && data.substring(0, 8) === 'magnet:?') {
-	//         startTorrentStream(data);
-	//     }
-	//     return true;
-	// }
-	if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') {
-		return;
-	}
-	var data = (e.originalEvent || e).clipboardData.getData('text/plain');
-	e.preventDefault();
-	handleTorrent(data);
-	return true;
-});
 
 /**
  * Pass magnet link as last argument to start stream
@@ -609,8 +495,7 @@ var last_arg = gui.App.argv.pop();
 
 if (last_arg && (last_arg.substring(0, 8) === 'magnet:?' || last_arg.substring(0, 7) === 'http://' || last_arg.endsWith('.torrent'))) {
 	App.vent.on('main:ready', function () {
-		// startTorrentStream(last_arg);
-		handleTorrent(last_arg);
+		// DO SOMETHING WITH 'last_arg' DATA LATER
 	});
 }
 

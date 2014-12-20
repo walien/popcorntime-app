@@ -11,7 +11,7 @@ module.exports = BufferedProcess = (function () {
 		if (options == null) {
 			options = {};
 		}
-		if (process.platform === "win32") {
+		if (process.platform === 'win32') {
 			if (args != null) {
 				cmdArgs = args.map(function (arg) {
 					if ((command === 'explorer.exe' || command === 'explorer') && /^\/[a-zA-Z]+,.*$/.test(arg)) {
@@ -45,7 +45,7 @@ module.exports = BufferedProcess = (function () {
 				return;
 			}
 			if (stdoutClosed && stderrClosed && processExited) {
-				return typeof exit === "function" ? exit(exitCode) : void 0;
+				return typeof exit === 'function' ? exit(exitCode) : void 0;
 			}
 		};
 		if (stdout) {
@@ -107,7 +107,7 @@ module.exports = BufferedProcess = (function () {
 		var args, cmd, output, parentPid, wmicProcess;
 		parentPid = this.process.pid;
 		cmd = 'wmic';
-		args = ['process', 'where', "(ParentProcessId=" + parentPid + ")", 'get', 'processid'];
+		args = ['process', 'where', '(ParentProcessId=' + parentPid + ')', 'get', 'processid'];
 		wmicProcess = ChildProcess.spawn(cmd, args);
 		wmicProcess.on('error', function () {});
 		output = '';

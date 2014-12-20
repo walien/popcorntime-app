@@ -29,7 +29,7 @@ function PackageManager(options) {
 	this.packageDirPaths.push(path.join(this.options.path, 'src', 'content', 'packages'));
 
 	// package installed by PPM
-	console.log(path.join(fs.absolute('~/.popcorntime'), 'packages'))
+	console.log(path.join(fs.absolute('~/.popcorntime'), 'packages'));
 	this.packageDirPaths.push(path.join(fs.absolute('~/.popcorntime'), 'packages'));
 
 }
