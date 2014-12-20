@@ -14,7 +14,7 @@
 				var season = se_re[2];
 				var episode = se_re[3];
 				title = showname + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
-				type = 'dropped-episode';
+				type = 'dropped-tvshow';
 				console.log(title, season, episode);
 
 			} else {

@@ -170,13 +170,13 @@
 			var that = this;
 
 			switch (data.type) {
-			case 'dropped-episode':
+			case 'dropped-tvshow':
 				App.Providers['tvshow-metadata'].episodeSummary(metadata.showname, metadata.season, metadata.episode).then(function (data) {
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
 
-						that.model.attributes.data.type = 'episode';
+						that.model.attributes.data.type = 'tvshow';
 						that.model.attributes.data.metadata.title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title;
 						that.model.attributes.data.metadata.showname = data.show.title;
 						that.model.attributes.data.metadata.season = data.episode.season;
