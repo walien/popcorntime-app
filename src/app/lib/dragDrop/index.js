@@ -15,8 +15,8 @@
 
 			if (se_re != null) {
 				var showname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').trim().replace(/ +/g, '-');
-				var season = se_re[2];
-				var episode = se_re[3];
+				var season = parseInt(se_re[2]);
+				var episode = parseInt(se_re[3]);
 				title = showname + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
 				type = 'dropped-tvshow';
 				console.log(title, season, episode);
