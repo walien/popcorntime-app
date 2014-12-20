@@ -14,7 +14,7 @@
 			var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i);
 
 			if (se_re != null) {
-				var showname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+				var showname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').trim().replace(/ +/g, '-');
 				var season = se_re[2];
 				var episode = se_re[3];
 				title = showname + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
@@ -99,7 +99,11 @@
 		var data = (e.originalEvent || e).clipboardData.getData('text/plain');
 
 		var torrentsrc = data;
-		if (torrentsrc.toLowerCase().indexOf('magnet') < -1) {
+		console.log(torrentsrc, torrentsrc.indexOf('magnet') > -1);
+
+
+		if (torrentsrc.indexOf('magnet') > -1) {
+
 			readTorrent(torrentsrc, function (err, torrent) {
 				startStream(torrent, torrentsrc);
 			});
@@ -132,17 +136,12 @@
 						console.log('done');
 						console.log(ws.path);
 						readTorrent(ws.path, function (err, torrent) {
-
 							var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
 							_.each(torrent.announce, function (value) {
 								var announce = '&tr=' + encodeURIComponent(value);
 								torrentMagnet += announce;
 							});
-
 							startStream(torrent, torrentMagnet);
-							//magnet:?xt=urn:btih:6B61B866C03ED7DB5ABE10328E13DF5F2FE90B10&dn=the+fall+s02e02+crime+drama+x264+rb58&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
-
-
 						});
 
 					});
