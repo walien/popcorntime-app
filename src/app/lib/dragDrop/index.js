@@ -14,10 +14,10 @@
 			var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i);
 
 			if (se_re != null) {
-				var showName = se_re[1].replace(/\./g, ' ').trim().replace(/ /g, '-');
+				var showName = capitaliseFirstLetter(se_re[1].replace(/\./g, ' ').trim().replace(/ /g, '-'));
 				var season = parseInt(se_re[2]);
 				var episode = parseInt(se_re[3]);
-				title = showName + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
+				title = showName + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
 				type = 'dropped-tvshow';
 
 			} else {
@@ -34,6 +34,9 @@
 			}
 		}
 
+		function capitaliseFirstLetter(string) {
+			return string.charAt(0).toUpperCase() + string.slice(1);
+		}
 		var torrentStart = {
 			torrent: torrentsrc,
 			type: type,
