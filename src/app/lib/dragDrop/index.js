@@ -14,12 +14,11 @@
 			var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i);
 
 			if (se_re != null) {
-				var showname = $.trim(se_re[1].replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, '').trim().replace(/ +/g, '-');
+				var showName = se_re[1].replace(/\./g, ' ').trim().replace(/ /g, '-');
 				var season = parseInt(se_re[2]);
 				var episode = parseInt(se_re[3]);
-				title = showname + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
+				title = showName + '-' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
 				type = 'dropped-tvshow';
-				console.log(title, season, episode);
 
 			} else {
 				var filename = $.trim(torrenttitle.replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, ' ').replace(/ +/g, ' ');
@@ -40,14 +39,13 @@
 			type: type,
 			metadata: {
 				title: title,
-				showName: showname,
+				showName: showName,
 				season: season,
 				episode: episode
 			},
 			device: App.Device.Collection.selected
 
 		};
-		console.log(torrentStart);
 		App.vent.trigger('streamer:start', torrentStart);
 
 	}
