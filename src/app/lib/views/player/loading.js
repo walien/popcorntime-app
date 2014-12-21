@@ -171,14 +171,14 @@
 
 			switch (data.type) {
 			case 'dropped-tvshow':
-				App.Providers['tvshow-metadata'].episodeSummary(metadata.showname, metadata.season, metadata.episode).then(function (data) {
+				App.Providers['tvshow-metadata'].episodeSummary(metadata.showName, metadata.season, metadata.episode).then(function (data) {
 					if (!data) {
 						win.warn('Unable to fetch data from Trakt.tv');
 					} else {
 
 						that.model.attributes.data.type = 'tvshow';
 						that.model.attributes.data.metadata.title = data.show.title + ' - ' + i18n.__('Season') + ' ' + data.episode.season + ', ' + i18n.__('Episode') + ' ' + data.episode.number + ' - ' + data.episode.title;
-						that.model.attributes.data.metadata.showname = data.show.title;
+						that.model.attributes.data.metadata.showName = data.show.title;
 						that.model.attributes.data.metadata.season = data.episode.season;
 						that.model.attributes.data.metadata.episode = data.episode.number;
 						that.model.attributes.data.metadata.cover = data.show.images.poster;

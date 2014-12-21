@@ -73,7 +73,7 @@
 			// Check if >80% is watched to mark as watched by user  (maybe add value to settings
 			var type = this.model.get('type');
 
-			if (type !== 'trailer') {
+			if (type !== 'trailer' || !(data.type.indexOf('dropped') > -1)) {
 				if (this.video.currentTime() / this.video.duration() >= 0.8) {
 					App.vent.trigger(type + ':watched', this.model.attributes, 'scrobble');
 				} else {
