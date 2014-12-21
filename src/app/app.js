@@ -419,7 +419,7 @@ win.on('close', function () {
 	if (App.Settings.get('deleteTmpOnClose')) {
 		deleteFolder(App.Settings.get('tmpLocation'));
 	}
-	deleteFolder(path.join(os.tmpDir(), 'webtorrent'));
+	deleteFolder(path.join(os.tmpDir(), 'torrent-stream'));
 	win.close(true);
 });
 
