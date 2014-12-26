@@ -37,3 +37,6 @@ dist/linux/linux-installer
 *.bat
 *.db
 *git.json
+
+*.iml
+.idea
